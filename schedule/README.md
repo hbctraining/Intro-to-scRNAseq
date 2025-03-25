@@ -1,4 +1,4 @@
-# Introduction to single-cell RNA-seq workshop
+# Introduction to single-cell RNA-seq
 
 ## Pre-reading
 
