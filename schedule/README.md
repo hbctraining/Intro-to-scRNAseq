@@ -1,4 +1,4 @@
-# Schedule for the single-cell RNA-seq data analysis workshop
+# Introduction to single-cell RNA-seq workshop
 
 ## Pre-reading
 
