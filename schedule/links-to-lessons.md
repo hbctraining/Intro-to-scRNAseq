@@ -1,4 +1,4 @@
-# Single-cell RNA-seq data analysis workshop 
+# Introduction to single-cell RNA-seq
 
 ### Learning Objectives
 
