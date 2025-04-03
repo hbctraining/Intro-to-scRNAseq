@@ -15,7 +15,7 @@ _**Image credit:** Papalexi E and Satija R. Single-cell RNA sequencing to explor
 The choice of method involves the biological question of interest. The following advantages are listed below for the methods:
 
 - **3' (or 5')-end sequencing:** 
-	- More accurate quantification through use of unique molecular identifiers distinguishing biological duplicates from amplification (PCR) duplicates
+	- More accurate quantification through the use of unique molecular identifiers distinguishing biological duplicates from amplification (PCR) duplicates
 	- Larger number of cells sequenced allows better identity of cell type populations
 	- Cheaper per cell cost
 	- Best results with > 10,000 cells
