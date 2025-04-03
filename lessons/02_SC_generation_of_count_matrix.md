@@ -115,7 +115,7 @@ The FASTQ files can then be used to parse out the cell barcodes, UMIs, and sampl
 - simple cells (RBCs, etc.) expressing few genes
 - cells that failed for some reason
 
-These excess barcodes need to be filtered out of the sequence data prior to read alignment. To do this filtering, the 'cellular barcode' and the 'molecular barcode' are extracted and saved for each cell. For example, if using 'umis' tools, the information is added to the header line for each read, with the following format:
+These excess barcodes need to be filtered out of the sequence data prior to read alignment. To do this filtering, the 'cellular barcode' and the 'molecular barcode' are extracted and saved for each cell. For example, if using `umi-tools`, the information is added to the header line for each read, with the following format:
 
     @HWI-ST808:130:H0B8YADXX:1:1101:2088:2222:CELL_GGTCCA:UMI_CCCT
     AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN
@@ -127,7 +127,7 @@ barcodes would be dropped, while allowing for an acceptable number of mismatches
 
 ## 2. Demultiplexing sample reads
 
-The next step of the process is to demultiplex the samples, if sequencing more than a single sample. This is the one step of this process not handled by the 'umis' tools, but is accomplished by 'zUMIs'. We would need to parse the reads to determine the sample barcode associated with each cell.
+The next step of the process is to demultiplex the samples, if sequencing more than a single sample. This is the one step of this process not handled by the `umi-tools`, but is accomplished by `zUMIs`. We would need to parse the reads to determine the sample barcode associated with each cell.
 
 ## 3. Mapping/pseudo-mapping to cDNAs
 
