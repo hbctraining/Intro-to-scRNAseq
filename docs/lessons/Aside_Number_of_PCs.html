@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Will Gammerdinger">
+<meta name="author" content="Noor Sohail">
+<meta name="author" content="Zhu Zhuo">
+<meta name="author" content="James Billingsley">
+<meta name="author" content="Shannan Ho Sui">
+<meta name="dcterms.date" content="2025-10-22">
+
+<title>Number of PCs – Introduction to single-cell RNA-seq</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-67e3698c9357a87fd1a0e9aab97ce577.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to single-cell RNA-seq</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lessons/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://bioinformatics.sph.harvard.edu/"> 
+<span class="menu-text">HBC</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/hbctraining/Intro-to-scRNAseq-Quarto"> 
+<span class="menu-text">GitHub</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:hbctraining@hsph.harvard.edu"> 
+<span class="menu-text">Contact us</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#number-of-pcs" id="toc-number-of-pcs" class="nav-link" data-scroll-target="#number-of-pcs">Number of PCs</a></li>
+  <li><a href="#creation-of-the-covariance-matrix" id="toc-creation-of-the-covariance-matrix" class="nav-link" data-scroll-target="#creation-of-the-covariance-matrix">Creation of the Covariance Matrix</a></li>
+  <li><a href="#comparing-the-gene-wise-and-cell-wise-covariance-matrices" id="toc-comparing-the-gene-wise-and-cell-wise-covariance-matrices" class="nav-link" data-scroll-target="#comparing-the-gene-wise-and-cell-wise-covariance-matrices">Comparing the gene-wise and cell-wise covariance matrices</a></li>
+  <li><a href="#sources-of-reducing-the-number-of-pcs-for-a-pca" id="toc-sources-of-reducing-the-number-of-pcs-for-a-pca" class="nav-link" data-scroll-target="#sources-of-reducing-the-number-of-pcs-for-a-pca">Sources of Reducing the Number of PCs for a PCA</a>
+  <ul class="collapse">
+  <li><a href="#duplicated-data" id="toc-duplicated-data" class="nav-link" data-scroll-target="#duplicated-data">Duplicated Data</a></li>
+  <li><a href="#scaled-data" id="toc-scaled-data" class="nav-link" data-scroll-target="#scaled-data">Scaled Data</a></li>
+  <li><a href="#linear-combinations-of-data" id="toc-linear-combinations-of-data" class="nav-link" data-scroll-target="#linear-combinations-of-data">Linear Combinations of Data</a></li>
+  <li><a href="#constants" id="toc-constants" class="nav-link" data-scroll-target="#constants">Constants</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Number of PCs</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Will Gammerdinger </p>
+             <p>Noor Sohail </p>
+             <p>Zhu Zhuo </p>
+             <p>James Billingsley </p>
+             <p>Shannan Ho Sui </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 22, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Approximate time: 45 minutes</p>
+<section id="learning-objectives" class="level1">
+<h1>Learning Objectives</h1>
+<ul>
+<li>Derive the number of PCs for a PCA</li>
+</ul>
+</section>
+<section id="number-of-pcs" class="level1">
+<h1>Number of PCs</h1>
+<p>When doing a Principal Components Analysis (PCA), you will be reducing the dimensionality of your data into Principal Components (PCs). The maximum number of PCs, sometimes called rank of the PCA, for scRNA-seq analysis will at most either be the the number of genes or the number of cells, whichever is fewer. In other words, <strong>the number of PCs ≤ minimum(number_of_genes, number_of_cells)</strong>. In the sections below we will discuss the reasons for this. For this lesson we will need to load <code>tidyverse</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load tidyverse</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creation-of-the-covariance-matrix" class="level1">
+<h1>Creation of the Covariance Matrix</h1>
+<p>Let’s consider the <code>expression_tibble</code> that we created in the <a href="../lessons/06_theory_of_PCA.html#Creating-an-example-data-set">Theory of PCA</a> lesson.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the expression_tibble</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>expression_tibble</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  cells  Gene_A Gene_B
+  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+1 Cell_1      0      4
+2 Cell_2     12     30
+3 Cell_3     65     57
+4 Cell_4     23     18</code></pre>
+</div>
+</div>
+<p>Next, we re-centered the data using:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine the center of the data by:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene A</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Gene_A_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_tibble<span class="sc">$</span>Gene_A)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene B</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>Gene_B_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_tibble<span class="sc">$</span>Gene_B)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Shift the data points so that they data is centered on the origin</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>recentered_expression_tibble <span class="ot">&lt;-</span> expression_tibble <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_A =</span> Gene_A <span class="sc">-</span> Gene_A_mean,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_B =</span> Gene_B <span class="sc">-</span> Gene_B_mean</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the re-centered data</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>recentered_expression_tibble</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  cells  Gene_A Gene_B
+  &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+1 Cell_1    -25 -23.2 
+2 Cell_2    -13   2.75
+3 Cell_3     40  29.8 
+4 Cell_4     -2  -9.25</code></pre>
+</div>
+</div>
+<p>We followed this up by creating a gene-wise covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the cell IDs to the rownames and convert the tibble to a matrix</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix <span class="ot">&lt;-</span> recentered_expression_tibble <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"cells"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a covariance matrix</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>cov_matrix <span class="ot">&lt;-</span> <span class="fu">cov</span>(recentered_expression_matrix)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the covariance matrix</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>cov_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Gene_A   Gene_B
+Gene_A 799.3333 584.6667
+Gene_B 584.6667 506.2500</code></pre>
+</div>
+</div>
+<p>From this we can see that it is a <strong>2x2 gene-wise</strong> covariance matrix. However, we could have alternatively created a <strong>4x4 cell-wise</strong> covariance matrix using. Unfortunately, we will need to do this using some for loops. One small note before we start, since we re-centered the data on based on gene, the mean of Gene_A and Gene_B are both 0, so those gene mean terms can drop out of the covariance equation. We can confirm that with:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the mean for Gene_A once it has been re-centered</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(recentered_expression_matrix[,<span class="st">"Gene_A"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the mean for Gene_B once it has been re-centered</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(recentered_expression_matrix[,<span class="st">"Gene_B"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>So now our covariance formula will look like:</p>
+<p><img src="https://latex.codecogs.com/svg.image?\mathrm{cov}(X,Y)=\frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i" width="300"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the number of cells</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="fu">nrow</span>(recentered_expression_matrix)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the number of genes</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>n_genes <span class="ot">&lt;-</span> <span class="fu">ncol</span>(recentered_expression_matrix)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty n_cells x n_cells matrix to hold cell-wise covariance values</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>cov_matrix_cells <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_cells, <span class="at">ncol =</span> n_cells)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Put the names of the cells as the row names of the cell-wise covariance matrix</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(cov_matrix_cells) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(recentered_expression_matrix)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Put the names of the cells as the column names of the cell-wise covariance matrix</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(cov_matrix_cells) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(recentered_expression_matrix)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the cell-wise covariance matrix</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_cells) {</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_cells) {</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    cov_matrix_cells[i, j] <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> (n_cells <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">*</span> <span class="fu">sum</span>(recentered_expression_matrix[i, ] <span class="sc">*</span> recentered_expression_matrix[j, ])</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the cell-wise covariance matrix</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>cov_matrix_cells</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Cell_1     Cell_2    Cell_3     Cell_4
+Cell_1  388.52083   87.02083 -563.8958   88.35417
+Cell_2   87.02083   58.85417 -146.0625    0.18750
+Cell_3 -563.89583 -146.06250  828.3542 -118.39583
+Cell_4   88.35417    0.18750 -118.3958   29.85417</code></pre>
+</div>
+</div>
+<p>In order to avoid confusion, let’s go ahead and rename our gene-wise covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the gene-wise covariance matrix to avoid confusion</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cov_matrix_genes <span class="ot">&lt;-</span> cov_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="comparing-the-gene-wise-and-cell-wise-covariance-matrices" class="level1">
+<h1>Comparing the gene-wise and cell-wise covariance matrices</h1>
+<p>Let’s remind ourselves of the eigenvalues returned by our gene-wise covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the eigenvalues for the gene-wise covariance matrix</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">eigen</span>(cov_matrix_genes)<span class="sc">$</span>values, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1255.543   50.040</code></pre>
+</div>
+</div>
+<p>And we can compare those eigenvalues to the eigenvalues returned by our cell-wise covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the eigenvalues for the cell-wise covariance matrix and compare them to the eigenvalues for the gene-wise covariance matrix</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">eigen</span>(cov_matrix_cells)<span class="sc">$</span>values, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1255.543   50.040    0.000    0.000</code></pre>
+</div>
+</div>
+<p>The eigenvalues are the same except the cell-wise covariance matrix returns two additonal zero value eigenvalues. We can remind ourselves that eigenvalues can be though of as influence, so eigenvalues with a value of zero have no influence and are not considered Principal Components. We can solve the <code>cov_matrix_cells</code>’s <span class="math inline">\(\lambda\)</span> values by hand and it will be a bit more clear why zero terms emerge.</p>
+<p><img src="https://latex.codecogs.com/svg.image?\det\left(%0A\begin{bmatrix}388.52083&amp;87.02083&amp;-563.8958&amp;88.35417\\87.02083&amp;58.85417&amp;-146.0625&amp;0.18750\\-563.89583&amp;-146.06250&amp;828.3542&amp;-118.39583\\88.35417&amp;0.18750&amp;-118.3958&amp;29.85417\end{bmatrix}-%20\lambda\begin{bmatrix}1&amp;0&amp;0&amp;0\\0&amp;1&amp;0&amp;0\\0&amp;0&amp;1&amp;0\\0&amp;0&amp;0&amp;1\end{bmatrix}\right)=0" width="600"></p>
+<p>Simplifying this would yield:</p>
+<p><img src="https://latex.codecogs.com/svg.image?\lambda^2(\lambda-1255.54)(\lambda-50.04)=0"></p>
+<p>Therefore, the values, which satisfy <span class="math inline">\(\lambda\)</span> would be <code>0</code>, <code>1255.54</code> and <code>50.04</code>.</p>
+<p>If we go back to our number of genes, 2, and numbers of cells, 4, we can see that the number of PCs was equal to the whichever was fewer, <code>n_cells</code> or <code>n_genes</code>. However, we stated that the number of PCs ≤ minimum(number_of_genes, number_of_cells), not just equal to it. In the next section we will explore why this is the case.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In practice, we usually use gene-wise covariance in scRNA-seq PCA, but the cell-wise perspective helps us see why zeros eigenvalues emerge and how the PCA is fundamentally about the geometry of the data rather than its orientation.</p>
+</div>
+</div>
+</section>
+<section id="sources-of-reducing-the-number-of-pcs-for-a-pca" class="level1">
+<h1>Sources of Reducing the Number of PCs for a PCA</h1>
+<p>Now that we have demonstrated how number of PCs = minimum(number_of_genes, number_of_cells), let’s understand sources of data that reduce the number of PCs so that the number of PCs ≤ minimum(number_of_genes, number_of_cells). Four major sources of this come from:</p>
+<ul>
+<li><a href="#duplicated-data">Duplicated Data</a></li>
+<li><a href="#scaled-data">Scaled Data</a></li>
+<li><a href="#linear-combinations-of-data">Linear Combinations of Data</a></li>
+<li><a href="#constants">Constants</a></li>
+</ul>
+<p>We will provide examples of each below, but first let’s make the expression matrix that we will be using:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an expression matrix to use</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>expression_matrix <span class="ot">&lt;-</span> expression_tibble <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"cells"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="duplicated-data" class="level2">
+<h2 class="anchored" data-anchor-id="duplicated-data">Duplicated Data</h2>
+<p>In the first case we will duplicate <code>Gene B</code> and create a new column called <code>Gene_C</code>. We will use the <code>prcomp()</code> function to expedite our PCA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have duplicated data in it</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>expression_matrix_duplicate <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_B"</span>])</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with duplicated data</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>duplicate_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_duplicate)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with duplicated data</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(duplicate_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1739.601   72.232    0.000</code></pre>
+</div>
+</div>
+<p>We note that we are returned 2 non-zero eigenvalues and an eigenvalue with the value of 0. We started with 4 rows (cells) and 3 columns (genes), but we were only returned a PCA with rank 2, because the third column was a duplicate of the second column.</p>
+</section>
+<section id="scaled-data" class="level2">
+<h2 class="anchored" data-anchor-id="scaled-data">Scaled Data</h2>
+<p>Another method of reduction is if a column of our data is scaled from data in another column. Let’s go ahead and see an example of this by adding a column for Gene_C that is double the value of Gene_B.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have scaled data in it</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>expression_matrix_scaled <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_B"</span>] <span class="sc">*</span> <span class="dv">2</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with scaled data</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>scaled_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_scaled)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with scaled data</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scaled_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3233.430   97.153    0.000</code></pre>
+</div>
+</div>
+<p>Once again, we can see that we are returned 2 non-zero eigenvalues and one eigenvalue that has a value of 0. Thus, the rank of the PCA is less than the minimum(number_of_genes, number_of_cells).</p>
+</section>
+<section id="linear-combinations-of-data" class="level2">
+<h2 class="anchored" data-anchor-id="linear-combinations-of-data">Linear Combinations of Data</h2>
+<p>Linear combinations of the data can also reduce the rank of a PCA. Now let’s consider a case where Gene_C is the sum of Gene_A and two times Gene_B.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have data that is linear combinations of Gene_A and Gene_B in it</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>expression_matrix_linear_combinations <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_A"</span>] <span class="sc">+</span> expression_matrix[,<span class="st">"Gene_B"</span>] <span class="sc">*</span> <span class="dv">2</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with data containing linear combinations of Gene_A and Gene_B</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>linear_combinations_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_linear_combinations)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with data containing linear combinations of Gene_A and Gene_B</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(linear_combinations_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6409.772   58.811    0.000</code></pre>
+</div>
+</div>
+<p>Again, we see a case where we have two non-zero eigenvalues and an eigenvalue with the value of 0.</p>
+</section>
+<section id="constants" class="level2">
+<h2 class="anchored" data-anchor-id="constants">Constants</h2>
+<p>The last case we will consider is a column of constants. Let’s consider the case where <code>Gene_C</code> has the value of 16 in every cell.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have constant data in it</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>expression_matrix_constant <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">16</span>, <span class="dv">16</span>, <span class="dv">16</span>))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with constant data</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>constant_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_constant)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with constant data</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(constant_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1255.543   50.040    0.000</code></pre>
+</div>
+</div>
+<p>This result can be a quite intuitive because let’s reflect on the process that got us here. First, we recentered our expression matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine the center of the data by:</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene A</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>Gene_A_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_A"</span>])</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene B</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>Gene_B_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_B"</span>])</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene C</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>Gene_C_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_C"</span>])</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Shift the data points so that they data is centered on the origin</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix_constant <span class="ot">&lt;-</span> expression_matrix_constant <span class="sc">%&gt;%</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_A =</span> Gene_A <span class="sc">-</span> Gene_A_mean_constant,</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_B =</span> Gene_B <span class="sc">-</span> Gene_B_mean_constant,</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_C =</span> Gene_C <span class="sc">-</span> Gene_C_mean_constant,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the re-centered data</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix_constant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Gene_A Gene_B Gene_C
+Cell_1    -25 -23.25      0
+Cell_2    -13   2.75      0
+Cell_3     40  29.75      0
+Cell_4     -2  -9.25      0</code></pre>
+</div>
+</div>
+<p>From here, we can see that the re-centered value of <code>Gene_C</code> is just 0 for all cells and thus it offers no variance.</p>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>The number of PCs, or rank, of a PCA is at most the fewer of the number of cells or the number of genes.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb30" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Number of PCs"</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> </span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - Will Gammerdinger</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - Noor Sohail</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">  - Zhu Zhuo</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">  - James Billingsley</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">  - Shannan Ho Sui</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "Tuesday, October 22, 2025"</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">  markdown: </span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">    wrap: 72</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_libraries</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector for Cell IDs</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>cells <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cell_1"</span>, <span class="st">"Cell_2"</span>, <span class="st">"Cell_3"</span>, <span class="st">"Cell_4"</span>)</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector to hold expression values for Gene A across all of the cells</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>Gene_A <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">12</span>, <span class="dv">65</span>, <span class="dv">23</span>)</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector to hold expression values for Gene B across all of the cells</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>Gene_B <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">30</span>, <span class="dv">57</span>, <span class="dv">18</span>)</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a tibble to hold the cell names and expression values</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>expression_tibble <span class="ot">&lt;-</span> <span class="fu">tibble</span>(cells, Gene_A, Gene_B)</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>Approximate time: 45 minutes</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Learning Objectives</span></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Derive the number of PCs for a PCA</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a><span class="fu"># Number of PCs</span></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>When doing a Principal Components Analysis (PCA), you will be reducing the dimensionality of your data into Principal Components (PCs). The maximum number of PCs, sometimes called rank of the PCA, for scRNA-seq analysis will at most either be the the number of genes or the number of cells, whichever is fewer. In other words, **the number of PCs ≤ minimum(number_of_genes, number_of_cells)**. In the sections below we will discuss the reasons for this. For this lesson we will need to load <span class="in">`tidyverse`</span>.</span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_tidyverse</span></span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Load tidyverse</span></span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a><span class="fu"># Creation of the Covariance Matrix</span></span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a>Let's consider the <span class="in">`expression_tibble`</span> that we created in the [Theory of</span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a>PCA](06_theory_of_PCA.qmd#Creating-an-example-data-set) lesson.</span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: print_expression_tibble</span></span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the expression_tibble</span></span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>expression_tibble</span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>Next, we re-centered the data using:</span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: center_of_data</span></span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine the center of the data by:</span></span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene A</span></span>
+<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>Gene_A_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_tibble<span class="sc">$</span>Gene_A)</span>
+<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene B</span></span>
+<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a>Gene_B_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_tibble<span class="sc">$</span>Gene_B)</span>
+<span id="cb30-74"><a href="#cb30-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-75"><a href="#cb30-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Shift the data points so that they data is centered on the origin</span></span>
+<span id="cb30-76"><a href="#cb30-76" aria-hidden="true" tabindex="-1"></a>recentered_expression_tibble <span class="ot">&lt;-</span> expression_tibble <span class="sc">%&gt;%</span></span>
+<span id="cb30-77"><a href="#cb30-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb30-78"><a href="#cb30-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_A =</span> Gene_A <span class="sc">-</span> Gene_A_mean,</span>
+<span id="cb30-79"><a href="#cb30-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_B =</span> Gene_B <span class="sc">-</span> Gene_B_mean</span>
+<span id="cb30-80"><a href="#cb30-80" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-81"><a href="#cb30-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-82"><a href="#cb30-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the re-centered data</span></span>
+<span id="cb30-83"><a href="#cb30-83" aria-hidden="true" tabindex="-1"></a>recentered_expression_tibble</span>
+<span id="cb30-84"><a href="#cb30-84" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-85"><a href="#cb30-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-86"><a href="#cb30-86" aria-hidden="true" tabindex="-1"></a>We followed this up by creating a gene-wise covariance matrix:</span>
+<span id="cb30-87"><a href="#cb30-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-90"><a href="#cb30-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-91"><a href="#cb30-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: create_gene_covariance_matrix</span></span>
+<span id="cb30-92"><a href="#cb30-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the cell IDs to the rownames and convert the tibble to a matrix</span></span>
+<span id="cb30-93"><a href="#cb30-93" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix <span class="ot">&lt;-</span> recentered_expression_tibble <span class="sc">%&gt;%</span> </span>
+<span id="cb30-94"><a href="#cb30-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"cells"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-95"><a href="#cb30-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb30-96"><a href="#cb30-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-97"><a href="#cb30-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a covariance matrix</span></span>
+<span id="cb30-98"><a href="#cb30-98" aria-hidden="true" tabindex="-1"></a>cov_matrix <span class="ot">&lt;-</span> <span class="fu">cov</span>(recentered_expression_matrix)</span>
+<span id="cb30-99"><a href="#cb30-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-100"><a href="#cb30-100" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the covariance matrix</span></span>
+<span id="cb30-101"><a href="#cb30-101" aria-hidden="true" tabindex="-1"></a>cov_matrix</span>
+<span id="cb30-102"><a href="#cb30-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-103"><a href="#cb30-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-104"><a href="#cb30-104" aria-hidden="true" tabindex="-1"></a>From this we can see that it is a **2x2 gene-wise** covariance matrix. However, we could have alternatively created a **4x4 cell-wise** covariance matrix using. Unfortunately, we will need to do this using some for loops. One small note before we start, since we re-centered the data on based on gene, the mean of Gene_A and Gene_B are both 0, so those gene mean terms can drop out of the covariance equation. We can confirm that with:</span>
+<span id="cb30-105"><a href="#cb30-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-108"><a href="#cb30-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-109"><a href="#cb30-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: confirm_recented_means</span></span>
+<span id="cb30-110"><a href="#cb30-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the mean for Gene_A once it has been re-centered</span></span>
+<span id="cb30-111"><a href="#cb30-111" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(recentered_expression_matrix[,<span class="st">"Gene_A"</span>])</span>
+<span id="cb30-112"><a href="#cb30-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the mean for Gene_B once it has been re-centered</span></span>
+<span id="cb30-113"><a href="#cb30-113" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(recentered_expression_matrix[,<span class="st">"Gene_B"</span>])</span>
+<span id="cb30-114"><a href="#cb30-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-115"><a href="#cb30-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-116"><a href="#cb30-116" aria-hidden="true" tabindex="-1"></a>So now our covariance formula will look like:</span>
+<span id="cb30-117"><a href="#cb30-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-118"><a href="#cb30-118" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://latex.codecogs.com/svg.image?\mathrm{cov}(X,Y)=\frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i"</span><span class="ot"> width</span><span class="op">=</span><span class="st">"300"</span><span class="dt">/&gt;</span></span>
+<span id="cb30-119"><a href="#cb30-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-122"><a href="#cb30-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-123"><a href="#cb30-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: create_cell_covariance_matrix</span></span>
+<span id="cb30-124"><a href="#cb30-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the number of cells</span></span>
+<span id="cb30-125"><a href="#cb30-125" aria-hidden="true" tabindex="-1"></a>n_cells <span class="ot">&lt;-</span> <span class="fu">nrow</span>(recentered_expression_matrix)</span>
+<span id="cb30-126"><a href="#cb30-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the number of genes</span></span>
+<span id="cb30-127"><a href="#cb30-127" aria-hidden="true" tabindex="-1"></a>n_genes <span class="ot">&lt;-</span> <span class="fu">ncol</span>(recentered_expression_matrix)</span>
+<span id="cb30-128"><a href="#cb30-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-129"><a href="#cb30-129" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty n_cells x n_cells matrix to hold cell-wise covariance values</span></span>
+<span id="cb30-130"><a href="#cb30-130" aria-hidden="true" tabindex="-1"></a>cov_matrix_cells <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_cells, <span class="at">ncol =</span> n_cells)</span>
+<span id="cb30-131"><a href="#cb30-131" aria-hidden="true" tabindex="-1"></a><span class="co"># Put the names of the cells as the row names of the cell-wise covariance matrix</span></span>
+<span id="cb30-132"><a href="#cb30-132" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(cov_matrix_cells) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(recentered_expression_matrix)</span>
+<span id="cb30-133"><a href="#cb30-133" aria-hidden="true" tabindex="-1"></a><span class="co"># Put the names of the cells as the column names of the cell-wise covariance matrix</span></span>
+<span id="cb30-134"><a href="#cb30-134" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(cov_matrix_cells) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(recentered_expression_matrix)</span>
+<span id="cb30-135"><a href="#cb30-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-136"><a href="#cb30-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the cell-wise covariance matrix</span></span>
+<span id="cb30-137"><a href="#cb30-137" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_cells) {</span>
+<span id="cb30-138"><a href="#cb30-138" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_cells) {</span>
+<span id="cb30-139"><a href="#cb30-139" aria-hidden="true" tabindex="-1"></a>    cov_matrix_cells[i, j] <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> (n_cells <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">*</span> <span class="fu">sum</span>(recentered_expression_matrix[i, ] <span class="sc">*</span> recentered_expression_matrix[j, ])</span>
+<span id="cb30-140"><a href="#cb30-140" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-141"><a href="#cb30-141" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-142"><a href="#cb30-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-143"><a href="#cb30-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the cell-wise covariance matrix</span></span>
+<span id="cb30-144"><a href="#cb30-144" aria-hidden="true" tabindex="-1"></a>cov_matrix_cells</span>
+<span id="cb30-145"><a href="#cb30-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-146"><a href="#cb30-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-147"><a href="#cb30-147" aria-hidden="true" tabindex="-1"></a>In order to avoid confusion, let's go ahead and rename our gene-wise covariance matrix:</span>
+<span id="cb30-148"><a href="#cb30-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-152"><a href="#cb30-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: relabel_gene_covariance_matrix</span></span>
+<span id="cb30-153"><a href="#cb30-153" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the gene-wise covariance matrix to avoid confusion</span></span>
+<span id="cb30-154"><a href="#cb30-154" aria-hidden="true" tabindex="-1"></a>cov_matrix_genes <span class="ot">&lt;-</span> cov_matrix</span>
+<span id="cb30-155"><a href="#cb30-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-156"><a href="#cb30-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-157"><a href="#cb30-157" aria-hidden="true" tabindex="-1"></a><span class="fu"># Comparing the gene-wise and cell-wise covariance matrices </span></span>
+<span id="cb30-158"><a href="#cb30-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-159"><a href="#cb30-159" aria-hidden="true" tabindex="-1"></a>Let's remind ourselves of the eigenvalues returned by our gene-wise covariance matrix:</span>
+<span id="cb30-160"><a href="#cb30-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-163"><a href="#cb30-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-164"><a href="#cb30-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: gene-wise_eigenvalues</span></span>
+<span id="cb30-165"><a href="#cb30-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the eigenvalues for the gene-wise covariance matrix</span></span>
+<span id="cb30-166"><a href="#cb30-166" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">eigen</span>(cov_matrix_genes)<span class="sc">$</span>values, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-167"><a href="#cb30-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-168"><a href="#cb30-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-169"><a href="#cb30-169" aria-hidden="true" tabindex="-1"></a>And we can compare those eigenvalues to the eigenvalues returned by our cell-wise covariance matrix: </span>
+<span id="cb30-170"><a href="#cb30-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-173"><a href="#cb30-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-174"><a href="#cb30-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: cell-wise_eigenvalues</span></span>
+<span id="cb30-175"><a href="#cb30-175" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the eigenvalues for the cell-wise covariance matrix and compare them to the eigenvalues for the gene-wise covariance matrix</span></span>
+<span id="cb30-176"><a href="#cb30-176" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">eigen</span>(cov_matrix_cells)<span class="sc">$</span>values, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-177"><a href="#cb30-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-178"><a href="#cb30-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-179"><a href="#cb30-179" aria-hidden="true" tabindex="-1"></a>The eigenvalues are the same except the cell-wise covariance matrix returns two additonal zero value eigenvalues. We can remind ourselves that eigenvalues can be though of as influence, so eigenvalues with a value of zero have no influence and are not considered Principal Components. We can solve the <span class="in">`cov_matrix_cells`</span>'s $\lambda$ values by hand and it will be a bit more clear why zero terms emerge.</span>
+<span id="cb30-180"><a href="#cb30-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-181"><a href="#cb30-181" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://latex.codecogs.com/svg.image?\det\left(%0A\begin{bmatrix}388.52083</span><span class="dv">&amp;amp;</span><span class="st">87.02083</span><span class="dv">&amp;amp;</span><span class="st">-563.8958</span><span class="dv">&amp;amp;</span><span class="st">88.35417\\87.02083</span><span class="dv">&amp;amp;</span><span class="st">58.85417</span><span class="dv">&amp;amp;</span><span class="st">-146.0625</span><span class="dv">&amp;amp;</span><span class="st">0.18750\\-563.89583</span><span class="dv">&amp;amp;</span><span class="st">-146.06250</span><span class="dv">&amp;amp;</span><span class="st">828.3542</span><span class="dv">&amp;amp;</span><span class="st">-118.39583\\88.35417</span><span class="dv">&amp;amp;</span><span class="st">0.18750</span><span class="dv">&amp;amp;</span><span class="st">-118.3958</span><span class="dv">&amp;amp;</span><span class="st">29.85417\end{bmatrix}-%20\lambda\begin{bmatrix}1</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">0\\0</span><span class="dv">&amp;amp;</span><span class="st">1</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">0\\0</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">1</span><span class="dv">&amp;amp;</span><span class="st">0\\0</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">0</span><span class="dv">&amp;amp;</span><span class="st">1\end{bmatrix}\right)=0"</span><span class="ot"> width</span><span class="op">=</span><span class="st">"600"</span><span class="dt">/&gt;</span></span>
+<span id="cb30-182"><a href="#cb30-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-183"><a href="#cb30-183" aria-hidden="true" tabindex="-1"></a>Simplifying this would yield:</span>
+<span id="cb30-184"><a href="#cb30-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-185"><a href="#cb30-185" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://latex.codecogs.com/svg.image?\lambda^2(\lambda-1255.54)(\lambda-50.04)=0"</span><span class="dt">/&gt;</span></span>
+<span id="cb30-186"><a href="#cb30-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-187"><a href="#cb30-187" aria-hidden="true" tabindex="-1"></a>Therefore, the values, which satisfy $\lambda$ would be <span class="in">`0`</span>, <span class="in">`1255.54`</span> and <span class="in">`50.04`</span>. </span>
+<span id="cb30-188"><a href="#cb30-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-189"><a href="#cb30-189" aria-hidden="true" tabindex="-1"></a>If we go back to our number of genes, <span class="in">`r n_genes`</span>, and numbers of cells, <span class="in">`r n_cells`</span>, we can see that the number of PCs was equal to the whichever was fewer, <span class="in">`n_cells`</span> or <span class="in">`n_genes`</span>. However, we stated that the number of PCs ≤ minimum(number_of_genes, number_of_cells), not just equal to it. In the next section we will explore why this is the case.</span>
+<span id="cb30-190"><a href="#cb30-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-191"><a href="#cb30-191" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb30-192"><a href="#cb30-192" aria-hidden="true" tabindex="-1"></a>In practice, we usually use gene-wise covariance in scRNA-seq PCA, but the cell-wise perspective helps us see why zeros eigenvalues emerge and how the PCA is fundamentally about the geometry of the data rather than its orientation.</span>
+<span id="cb30-193"><a href="#cb30-193" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb30-194"><a href="#cb30-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-195"><a href="#cb30-195" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sources of Reducing the Number of PCs for a PCA</span></span>
+<span id="cb30-196"><a href="#cb30-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-197"><a href="#cb30-197" aria-hidden="true" tabindex="-1"></a>Now that we have demonstrated how number of PCs = minimum(number_of_genes, number_of_cells), let's understand sources of data that reduce the number of PCs so that the number of PCs ≤ minimum(number_of_genes, number_of_cells). Four major sources of this come from:</span>
+<span id="cb30-198"><a href="#cb30-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-199"><a href="#cb30-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Duplicated Data</span><span class="co">](#duplicated-data)</span></span>
+<span id="cb30-200"><a href="#cb30-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Scaled Data</span><span class="co">](#scaled-data)</span></span>
+<span id="cb30-201"><a href="#cb30-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Linear Combinations of Data</span><span class="co">](#linear-combinations-of-data)</span></span>
+<span id="cb30-202"><a href="#cb30-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Constants</span><span class="co">](#constants)</span></span>
+<span id="cb30-203"><a href="#cb30-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-204"><a href="#cb30-204" aria-hidden="true" tabindex="-1"></a>We will provide examples of each below, but first let's make the expression matrix that we will be using:</span>
+<span id="cb30-205"><a href="#cb30-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-208"><a href="#cb30-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-209"><a href="#cb30-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: create_expression_matrix_for_reduced_rank</span></span>
+<span id="cb30-210"><a href="#cb30-210" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an expression matrix to use</span></span>
+<span id="cb30-211"><a href="#cb30-211" aria-hidden="true" tabindex="-1"></a>expression_matrix <span class="ot">&lt;-</span> expression_tibble <span class="sc">%&gt;%</span> </span>
+<span id="cb30-212"><a href="#cb30-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb30-213"><a href="#cb30-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"cells"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-214"><a href="#cb30-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb30-215"><a href="#cb30-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-216"><a href="#cb30-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-217"><a href="#cb30-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## Duplicated Data</span></span>
+<span id="cb30-218"><a href="#cb30-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-219"><a href="#cb30-219" aria-hidden="true" tabindex="-1"></a>In the first case we will duplicate <span class="in">`Gene B`</span> and create a new column called <span class="in">`Gene_C`</span>. We will use the <span class="in">`prcomp()`</span> function to expedite our PCA:</span>
+<span id="cb30-220"><a href="#cb30-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-223"><a href="#cb30-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-224"><a href="#cb30-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: duplicated_data</span></span>
+<span id="cb30-225"><a href="#cb30-225" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have duplicated data in it</span></span>
+<span id="cb30-226"><a href="#cb30-226" aria-hidden="true" tabindex="-1"></a>expression_matrix_duplicate <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb30-227"><a href="#cb30-227" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_B"</span>])</span>
+<span id="cb30-228"><a href="#cb30-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-229"><a href="#cb30-229" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with duplicated data</span></span>
+<span id="cb30-230"><a href="#cb30-230" aria-hidden="true" tabindex="-1"></a>duplicate_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_duplicate)</span>
+<span id="cb30-231"><a href="#cb30-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-232"><a href="#cb30-232" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with duplicated data</span></span>
+<span id="cb30-233"><a href="#cb30-233" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(duplicate_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-234"><a href="#cb30-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-235"><a href="#cb30-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-236"><a href="#cb30-236" aria-hidden="true" tabindex="-1"></a>We note that we are returned 2 non-zero eigenvalues and an eigenvalue with the value of 0. We started with 4 rows (cells) and 3 columns (genes), but we were only returned a PCA with rank 2, because the third column was a duplicate of the second column.</span>
+<span id="cb30-237"><a href="#cb30-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-238"><a href="#cb30-238" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scaled Data</span></span>
+<span id="cb30-239"><a href="#cb30-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-240"><a href="#cb30-240" aria-hidden="true" tabindex="-1"></a>Another method of reduction is if a column of our data is scaled from data in another column. Let's go ahead and see an example of this by adding a column for Gene_C that is double the value of Gene_B.</span>
+<span id="cb30-241"><a href="#cb30-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-244"><a href="#cb30-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-245"><a href="#cb30-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: scaled_data</span></span>
+<span id="cb30-246"><a href="#cb30-246" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have scaled data in it</span></span>
+<span id="cb30-247"><a href="#cb30-247" aria-hidden="true" tabindex="-1"></a>expression_matrix_scaled <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb30-248"><a href="#cb30-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_B"</span>] <span class="sc">*</span> <span class="dv">2</span>)</span>
+<span id="cb30-249"><a href="#cb30-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-250"><a href="#cb30-250" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with scaled data</span></span>
+<span id="cb30-251"><a href="#cb30-251" aria-hidden="true" tabindex="-1"></a>scaled_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_scaled)</span>
+<span id="cb30-252"><a href="#cb30-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-253"><a href="#cb30-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with scaled data</span></span>
+<span id="cb30-254"><a href="#cb30-254" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scaled_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-255"><a href="#cb30-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-256"><a href="#cb30-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-257"><a href="#cb30-257" aria-hidden="true" tabindex="-1"></a>Once again, we can see that we are returned 2 non-zero eigenvalues and one eigenvalue that has a value of 0. Thus, the rank of the PCA is less than the minimum(number_of_genes, number_of_cells).</span>
+<span id="cb30-258"><a href="#cb30-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-259"><a href="#cb30-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear Combinations of Data</span></span>
+<span id="cb30-260"><a href="#cb30-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-261"><a href="#cb30-261" aria-hidden="true" tabindex="-1"></a>Linear combinations of the data can also reduce the rank of a PCA. Now let's consider a case where Gene_C is the sum of Gene_A and two times Gene_B.</span>
+<span id="cb30-262"><a href="#cb30-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-265"><a href="#cb30-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-266"><a href="#cb30-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: linear_combinations_data</span></span>
+<span id="cb30-267"><a href="#cb30-267" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have data that is linear combinations of Gene_A and Gene_B in it</span></span>
+<span id="cb30-268"><a href="#cb30-268" aria-hidden="true" tabindex="-1"></a>expression_matrix_linear_combinations <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb30-269"><a href="#cb30-269" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> expression_matrix[,<span class="st">"Gene_A"</span>] <span class="sc">+</span> expression_matrix[,<span class="st">"Gene_B"</span>] <span class="sc">*</span> <span class="dv">2</span>)</span>
+<span id="cb30-270"><a href="#cb30-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-271"><a href="#cb30-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with data containing linear combinations of Gene_A and Gene_B</span></span>
+<span id="cb30-272"><a href="#cb30-272" aria-hidden="true" tabindex="-1"></a>linear_combinations_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_linear_combinations)</span>
+<span id="cb30-273"><a href="#cb30-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-274"><a href="#cb30-274" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with data containing linear combinations of Gene_A and Gene_B</span></span>
+<span id="cb30-275"><a href="#cb30-275" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(linear_combinations_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-276"><a href="#cb30-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-277"><a href="#cb30-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-278"><a href="#cb30-278" aria-hidden="true" tabindex="-1"></a>Again, we see a case where we have two non-zero eigenvalues and an eigenvalue with the value of 0.</span>
+<span id="cb30-279"><a href="#cb30-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-280"><a href="#cb30-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Constants </span></span>
+<span id="cb30-281"><a href="#cb30-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-282"><a href="#cb30-282" aria-hidden="true" tabindex="-1"></a>The last case we will consider is a column of constants. Let's consider the case where <span class="in">`Gene_C`</span> has the value of 16 in every cell.</span>
+<span id="cb30-283"><a href="#cb30-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-286"><a href="#cb30-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-287"><a href="#cb30-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: constants_data</span></span>
+<span id="cb30-288"><a href="#cb30-288" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the expression matrix to have constant data in it</span></span>
+<span id="cb30-289"><a href="#cb30-289" aria-hidden="true" tabindex="-1"></a>expression_matrix_constant <span class="ot">&lt;-</span> expression_matrix <span class="sc">%&gt;%</span> </span>
+<span id="cb30-290"><a href="#cb30-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">Gene_C =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="dv">16</span>, <span class="dv">16</span>, <span class="dv">16</span>))</span>
+<span id="cb30-291"><a href="#cb30-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-292"><a href="#cb30-292" aria-hidden="true" tabindex="-1"></a><span class="co"># Run prcomp to get PCA results on the expression matrix with constant data</span></span>
+<span id="cb30-293"><a href="#cb30-293" aria-hidden="true" tabindex="-1"></a>constant_PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(expression_matrix_constant)</span>
+<span id="cb30-294"><a href="#cb30-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-295"><a href="#cb30-295" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues from the PCA derived from the expression matrix with constant data</span></span>
+<span id="cb30-296"><a href="#cb30-296" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(constant_PCA<span class="sc">$</span>sdev <span class="sc">**</span> <span class="dv">2</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb30-297"><a href="#cb30-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-298"><a href="#cb30-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-299"><a href="#cb30-299" aria-hidden="true" tabindex="-1"></a>This result can be a quite intuitive because let's reflect on the process that got us here. First, we recentered our expression matrix:</span>
+<span id="cb30-300"><a href="#cb30-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-303"><a href="#cb30-303" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb30-304"><a href="#cb30-304" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: constant_center_of_data</span></span>
+<span id="cb30-305"><a href="#cb30-305" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine the center of the data by:</span></span>
+<span id="cb30-306"><a href="#cb30-306" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene A</span></span>
+<span id="cb30-307"><a href="#cb30-307" aria-hidden="true" tabindex="-1"></a>Gene_A_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_A"</span>])</span>
+<span id="cb30-308"><a href="#cb30-308" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene B</span></span>
+<span id="cb30-309"><a href="#cb30-309" aria-hidden="true" tabindex="-1"></a>Gene_B_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_B"</span>])</span>
+<span id="cb30-310"><a href="#cb30-310" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the average expression of gene C</span></span>
+<span id="cb30-311"><a href="#cb30-311" aria-hidden="true" tabindex="-1"></a>Gene_C_mean_constant <span class="ot">&lt;-</span> <span class="fu">mean</span>(expression_matrix_constant[, <span class="st">"Gene_C"</span>])</span>
+<span id="cb30-312"><a href="#cb30-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-313"><a href="#cb30-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Shift the data points so that they data is centered on the origin</span></span>
+<span id="cb30-314"><a href="#cb30-314" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix_constant <span class="ot">&lt;-</span> expression_matrix_constant <span class="sc">%&gt;%</span></span>
+<span id="cb30-315"><a href="#cb30-315" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb30-316"><a href="#cb30-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb30-317"><a href="#cb30-317" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_A =</span> Gene_A <span class="sc">-</span> Gene_A_mean_constant,</span>
+<span id="cb30-318"><a href="#cb30-318" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_B =</span> Gene_B <span class="sc">-</span> Gene_B_mean_constant,</span>
+<span id="cb30-319"><a href="#cb30-319" aria-hidden="true" tabindex="-1"></a>    <span class="at">Gene_C =</span> Gene_C <span class="sc">-</span> Gene_C_mean_constant,</span>
+<span id="cb30-320"><a href="#cb30-320" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-321"><a href="#cb30-321" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb30-322"><a href="#cb30-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-323"><a href="#cb30-323" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the re-centered data</span></span>
+<span id="cb30-324"><a href="#cb30-324" aria-hidden="true" tabindex="-1"></a>recentered_expression_matrix_constant</span>
+<span id="cb30-325"><a href="#cb30-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb30-326"><a href="#cb30-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-327"><a href="#cb30-327" aria-hidden="true" tabindex="-1"></a>From here, we can see that the re-centered value of <span class="in">`Gene_C`</span> is just 0 for all cells and thus it offers no variance. </span>
+<span id="cb30-328"><a href="#cb30-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-329"><a href="#cb30-329" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion</span></span>
+<span id="cb30-330"><a href="#cb30-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-331"><a href="#cb30-331" aria-hidden="true" tabindex="-1"></a>The number of PCs, or rank, of a PCA is at most the fewer of the number of cells or the number of genes.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>This lesson has been developed by members of the teaching team at the <a href="http://bioinformatics.sph.harvard.edu/">Harvard Chan Bioinformatics Core (HBC)</a>. <br> These are open access materials distributed under the terms of the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution license</a> (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. <br> A portion of these materials and hands-on activities were adapted from the <a href="https://satijalab.org/">Satija Lab’s</a> <a href="https://satijalab.org/seurat/pbmc3k_tutorial.html">Seurat - Guided Clustering Tutorial</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

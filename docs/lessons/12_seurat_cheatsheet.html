@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Noor Sohail">
+
+<title>Seurat Cheatsheet – Introduction to single-cell RNA-seq</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e5cb4ee4193d6a2f28a249434e39fb42.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to single-cell RNA-seq</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lessons/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://bioinformatics.sph.harvard.edu/"> 
+<span class="menu-text">HBC</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/hbctraining/Intro-to-scRNAseq-Quarto"> 
+<span class="menu-text">GitHub</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:hbctraining@hsph.harvard.edu"> 
+<span class="menu-text">Contact us</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/09_integration_code_harmony.html">Day 2 Self-learning</a></li><li class="breadcrumb-item"><a href="../lessons/12_seurat_cheatsheet.html">Seurat Cheatsheet</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Pre-reading:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/01_intro_to_scRNA-seq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction to single-cell RNA-seq</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/02_generation_of_count_matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generation of count matrix</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 1:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/03_quality_control-setup.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quality Control Setup</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 1 Self-learning:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/04_cellranger_QC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quality Control of Cellranger Output</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/05_quality_control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quality Control Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/06_theory_of_PCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Theory of PCA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 2:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/07_SCT_normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Normalization, identification of most variable genes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/08_integration_cca_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Integration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Day 2 Self-learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/09_integration_code_harmony.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performing Integration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/10_clustering_cells_SCT.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clustering Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/11_clustering_quality_control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clustering QC</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/12_seurat_cheatsheet.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Seurat Cheatsheet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 3:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/13_marker_identification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Marker identification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/14_scRNAseq_workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Workflow Overview</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#seurat-cheatsheet" id="toc-seurat-cheatsheet" class="nav-link active" data-scroll-target="#seurat-cheatsheet">Seurat Cheatsheet</a></li>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#accessing-cell-barcodes-and-gene-names" id="toc-accessing-cell-barcodes-and-gene-names" class="nav-link" data-scroll-target="#accessing-cell-barcodes-and-gene-names">Accessing cell barcodes and gene names</a>
+  <ul class="collapse">
+  <li><a href="#cell-barcodes" id="toc-cell-barcodes" class="nav-link" data-scroll-target="#cell-barcodes">Cell barcodes</a></li>
+  <li><a href="#featuresgenes" id="toc-featuresgenes" class="nav-link" data-scroll-target="#featuresgenes">Features/genes</a></li>
+  <li><a href="#number-of-cells-and-features" id="toc-number-of-cells-and-features" class="nav-link" data-scroll-target="#number-of-cells-and-features">Number of cells and features</a></li>
+  </ul></li>
+  <li><a href="#idents" id="toc-idents" class="nav-link" data-scroll-target="#idents">Idents</a>
+  <ul class="collapse">
+  <li><a href="#rename-idents" id="toc-rename-idents" class="nav-link" data-scroll-target="#rename-idents">Rename Idents</a></li>
+  </ul></li>
+  <li><a href="#highly-variable-features" id="toc-highly-variable-features" class="nav-link" data-scroll-target="#highly-variable-features">Highly variable features</a>
+  <ul class="collapse">
+  <li><a href="#accessing-variable-features" id="toc-accessing-variable-features" class="nav-link" data-scroll-target="#accessing-variable-features">Accessing variable features</a></li>
+  <li><a href="#setting-variable-features" id="toc-setting-variable-features" class="nav-link" data-scroll-target="#setting-variable-features">Setting variable features</a></li>
+  </ul></li>
+  <li><a href="#assays-and-layers" id="toc-assays-and-layers" class="nav-link" data-scroll-target="#assays-and-layers">Assays and layers</a>
+  <ul class="collapse">
+  <li><a href="#assays" id="toc-assays" class="nav-link" data-scroll-target="#assays">Assays</a></li>
+  <li><a href="#layers" id="toc-layers" class="nav-link" data-scroll-target="#layers">Layers</a></li>
+  <li><a href="#accessing-full-count-matrix" id="toc-accessing-full-count-matrix" class="nav-link" data-scroll-target="#accessing-full-count-matrix">Accessing full count matrix</a></li>
+  <li><a href="#accessing-specific-features-and-metadata" id="toc-accessing-specific-features-and-metadata" class="nav-link" data-scroll-target="#accessing-specific-features-and-metadata">Accessing specific features and metadata</a></li>
+  </ul></li>
+  <li><a href="#accessing-dimensional-reductions" id="toc-accessing-dimensional-reductions" class="nav-link" data-scroll-target="#accessing-dimensional-reductions">Accessing dimensional reductions</a>
+  <ul class="collapse">
+  <li><a href="#pca" id="toc-pca" class="nav-link" data-scroll-target="#pca">PCA</a></li>
+  <li><a href="#umaptsne" id="toc-umaptsne" class="nav-link" data-scroll-target="#umaptsne">UMAP/tSNE</a></li>
+  </ul></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">Data visualization</a>
+  <ul class="collapse">
+  <li><a href="#dimplot" id="toc-dimplot" class="nav-link" data-scroll-target="#dimplot">DimPlot</a></li>
+  <li><a href="#featureplot" id="toc-featureplot" class="nav-link" data-scroll-target="#featureplot">FeaturePlot</a></li>
+  <li><a href="#featurescatter" id="toc-featurescatter" class="nav-link" data-scroll-target="#featurescatter">FeatureScatter</a></li>
+  <li><a href="#cellscatter" id="toc-cellscatter" class="nav-link" data-scroll-target="#cellscatter">CellScatter</a></li>
+  <li><a href="#vlnplot" id="toc-vlnplot" class="nav-link" data-scroll-target="#vlnplot">VlnPlot</a></li>
+  <li><a href="#ridgeplot" id="toc-ridgeplot" class="nav-link" data-scroll-target="#ridgeplot">RidgePlot</a></li>
+  <li><a href="#dimheatmap" id="toc-dimheatmap" class="nav-link" data-scroll-target="#dimheatmap">DimHeatmap</a></li>
+  <li><a href="#doheatmap" id="toc-doheatmap" class="nav-link" data-scroll-target="#doheatmap">DoHeatmap</a></li>
+  <li><a href="#dotplot" id="toc-dotplot" class="nav-link" data-scroll-target="#dotplot">DotPlot</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/09_integration_code_harmony.html">Day 2 Self-learning</a></li><li class="breadcrumb-item"><a href="../lessons/12_seurat_cheatsheet.html">Seurat Cheatsheet</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Seurat Cheatsheet</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Noor Sohail </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Invalid Date</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="seurat-cheatsheet" class="level2">
+<h2 class="anchored" data-anchor-id="seurat-cheatsheet">Seurat Cheatsheet</h2>
+<p>This cheatsheet is meant to provide examples of the various functions available in Seurat. This includes how to access certain information, handy tips, and visualization functions built into the package. We have pulled together all of this information with examples using the dataset used throughout this workshop so that there are clear visuals on what the output of each function is.</p>
+<p>These materials were developed by referencing the following pages from the Seurat website:</p>
+<ul>
+<li>https://satijalab.org/seurat/articles/essential_commands.html</li>
+<li>https://satijalab.org/seurat/articles/visualization_vignette.html</li>
+</ul>
+</section>
+<section id="dataset" class="level1">
+<h1>Dataset</h1>
+<p>Load in the <code>integrated_seurat</code> object that is available in the <code>data</code> folder of the project. The link to download the project was provided on <a href="../lessons/schedule.html">the schedule page</a> but can also be <a href="https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1">found here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">"data/additional_data/seurat_integrated.RData.bz2"</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>seurat_integrated</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class Seurat 
+31130 features across 29629 samples within 3 assays 
+Active assay: integrated (3000 features, 3000 variable features)
+ 2 layers present: data, scale.data
+ 2 other assays present: RNA, SCT
+ 2 dimensional reductions calculated: pca, umap</code></pre>
+</div>
+</div>
+</section>
+<section id="accessing-cell-barcodes-and-gene-names" class="level1">
+<h1>Accessing cell barcodes and gene names</h1>
+<section id="cell-barcodes" class="level2">
+<h2 class="anchored" data-anchor-id="cell-barcodes">Cell barcodes</h2>
+<p>Within Seurat, there are multiple ways to access the cell barcode IDs.</p>
+<p>We can use <code>colnames()</code> to get a vector of cell barcodes in the same order as they appear in the Seurat object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ctrl_AAACATACAATGCC-1" "ctrl_AAACATACATTTCC-1" "ctrl_AAACATACCAGAAA-1"
+[4] "ctrl_AAACATACCAGCTA-1" "ctrl_AAACATACCATGCA-1" "ctrl_AAACATACCTCGCT-1"</code></pre>
+</div>
+</div>
+<p>Similarly we can use the <code>Cells()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Cells</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ctrl_AAACATACAATGCC-1" "ctrl_AAACATACATTTCC-1" "ctrl_AAACATACCAGAAA-1"
+[4] "ctrl_AAACATACCAGCTA-1" "ctrl_AAACATACCATGCA-1" "ctrl_AAACATACCTCGCT-1"</code></pre>
+</div>
+</div>
+<p>It is <strong>very important</strong> that the values stored in <code>Cells()</code> are the same as the rownames in <code>meta.data</code>. Otherwise Seurat will start throwing errors at you!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rownames</span>(seurat_integrated<span class="sc">@</span>meta.data) <span class="sc">==</span> <span class="fu">Cells</span>(seurat_integrated))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="featuresgenes" class="level2">
+<h2 class="anchored" data-anchor-id="featuresgenes">Features/genes</h2>
+<p>Now we want to be able to access the rows, or genes, in our Seurat object. Rather than calling these values “genes”, many tools will call them “features” as different assays (CITE-seq, ATAC-seq) provide alternative information than genes as output.</p>
+<p>The <code>Features()</code> function returns a vector of all features/genes in our dataset in the same order as it appears in the count matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Features</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "FTL"   "IGKC"  "CCL2"  "GNLY"  "IGLC2" "CCL3" </code></pre>
+</div>
+</div>
+<p>The <code>rownames()</code> function provides the same output:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "FTL"   "IGKC"  "CCL2"  "GNLY"  "IGLC2" "CCL3" </code></pre>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-1"><strong>Exercise 1</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>What are the last 5 cells barcodes and the last 5 genes in the integrated seurat object.</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="number-of-cells-and-features" class="level2">
+<h2 class="anchored" data-anchor-id="number-of-cells-and-features">Number of cells and features</h2>
+<p>If you recall, Seurat stores your count matrix as cells (columns) x genes (rows).</p>
+<p>Therefore, we can access the number of cells by using the <code>ncol()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 29629</code></pre>
+</div>
+</div>
+<p>The number of features is returned with the <code>nrow()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3000</code></pre>
+</div>
+</div>
+<p>The <code>dim()</code> function provides both the number of cells and genes for the <strong>default assay</strong>. Here we see the number of features followed by the number of cells:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  3000 29629</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="idents" class="level1">
+<h1>Idents</h1>
+<p>In Seurat, each cell has a label which can be accessed using <code>Idents()</code>. These are the default labels used for each cell and are used internally by Seurat plotting functions.</p>
+<p>Common information set as the identity for cells include: clusters (as in our example dataset), celltype, sample, etc. You’ll notice that identities are automatically stored as factors, which means we can re-organize the levels at any point to change their order for plotting purposes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ctrl_AAACATACAATGCC-1 ctrl_AAACATACATTTCC-1 ctrl_AAACATACCAGAAA-1 
+                    2                     1                     3 
+ctrl_AAACATACCAGCTA-1 ctrl_AAACATACCATGCA-1 ctrl_AAACATACCTCGCT-1 
+                    3                     4                     1 
+Levels: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</code></pre>
+</div>
+</div>
+<section id="rename-idents" class="level2">
+<h2 class="anchored" data-anchor-id="rename-idents">Rename Idents</h2>
+<p>To quickly make modifications to identities, you can use the <code>RenameIdents()</code> function where new values are mapped to the identities. This is particularly helpful when annotating your cells from clusters to celltypes as showcased here. Bear in mind that these new identities are not stored in the <code>meta.data</code> automatically. We recommend adding these identities as a new column in the Seurat object to keep track of it for future use.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename all identities</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(<span class="at">object =</span> seurat_integrated, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"CD14+ monocytes"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"3"</span> <span class="ot">=</span> <span class="st">"CD14+ monocytes"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"2"</span> <span class="ot">=</span> <span class="st">"Activated T cells"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># These new celltype values are only stored in the idents</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Good practice is to store these changes in a column</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">$</span>celltype <span class="ot">&lt;-</span> <span class="fu">Idents</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-2"><strong>Exercise 2</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol start="2" type="1">
+<li>What are the last 5 identities for the cells in the integrated seurat object?</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="highly-variable-features" class="level1">
+<h1>Highly variable features</h1>
+<section id="accessing-variable-features" class="level2">
+<h2 class="anchored" data-anchor-id="accessing-variable-features">Accessing variable features</h2>
+<p>To obtain a vector of all highly variable genes that were selected after running <code>FindVariableFeatures()</code>, we can use the <code>VariableFeatures()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "FTL"   "IGKC"  "CCL2"  "GNLY"  "IGLC2" "CCL3" </code></pre>
+</div>
+</div>
+</section>
+<section id="setting-variable-features" class="level2">
+<h2 class="anchored" data-anchor-id="setting-variable-features">Setting variable features</h2>
+<p>Using the same <code>VariableFeatures()</code> function, we can set our own custom set of genes as our highly variable genes.</p>
+<p>As an example, here we are omitting mitochondrial genes from the original list of variable genes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get list of all variable genes</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove variable genes that start with MT-</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> <span class="fu">VariableFeatures</span>(seurat_integrated)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> var_genes[<span class="sc">!</span><span class="fu">startsWith</span>(var_genes, <span class="st">"MT-"</span>)]</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set our vector of gene names back to VariableFeatures()</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="ot">&lt;-</span> var_genes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-3"><strong>Exercise 3</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol start="3" type="1">
+<li>What are the the 5 least variable genes in the integrated seurat object?</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="assays-and-layers" class="level1">
+<h1>Assays and layers</h1>
+<section id="assays" class="level2">
+<h2 class="anchored" data-anchor-id="assays">Assays</h2>
+<p>Within a Seurat object you can have multiple “assays”. Each assay contains its own count matrix that is separate from the other assays in the object. This structure was created with multimodal datasets in mind so we can store, for example, ATAC peaks within the same Seurat object as your RNA counts.</p>
+<p>SCTransform also makes use of these assays to store the SCT normalized matrix in a separate assay called “SCT”.</p>
+<p>To access the list of assays in your Seurat object, you can call <code>@assays</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">@</span>assays</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$RNA
+Assay data with 14065 features for 29629 cells
+First 10 features:
+ AL627309.1, AL669831.5, LINC00115, FAM41C, NOC2L, KLHL17, PLEKHN1,
+HES4, ISG15, AGRN 
+
+$SCT
+SCTAssay data with 14065 features for 29629 cells, and 2 SCTModel(s) 
+First 10 features:
+ AL627309.1, AL669831.5, LINC00115, FAM41C, NOC2L, KLHL17, PLEKHN1,
+HES4, ISG15, AGRN 
+
+$integrated
+SCTAssay data with 3000 features for 29629 cells, and 1 SCTModel(s) 
+Top 10 variable features:
+ FTL, IGKC, CCL2, GNLY, IGLC2, CCL3, CCL4, CXCL10, CCL7, TIMP1 </code></pre>
+</div>
+</div>
+<p>We can additionally see which of the assays in our dataset is set as the default with the <code>DefaultAssays()</code> function. This default assay is automatically used as by Seurat functions, unless you specify otherise in the parameters of your function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "integrated"</code></pre>
+</div>
+</div>
+<p>Here we can see that the default assay is set to “integrated”. If we instead wanted to use the RNA counts, we can set a new default by once again calling the <code>DefaultAssay()</code> function and storing the name of a different assay.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set new default assay</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"RNA"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the new default to see if it changed</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "RNA"</code></pre>
+</div>
+</div>
+<p>We can access each assay as if the Seurat object was a named list with double brackets:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>seurat_integrated[[<span class="st">"SCT"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SCTAssay data with 14065 features for 29629 cells, and 2 SCTModel(s) 
+First 10 features:
+ AL627309.1, AL669831.5, LINC00115, FAM41C, NOC2L, KLHL17, PLEKHN1,
+HES4, ISG15, AGRN </code></pre>
+</div>
+</div>
+<p>And similarly run any function on it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">"integrated"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  3000 29629</code></pre>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-4"><strong>Exercise 4</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol start="4" type="1">
+<li>What are the dimensions for each assay in the integrated seurat object?</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="layers" class="level2">
+<h2 class="anchored" data-anchor-id="layers">Layers</h2>
+<p>Layers are the different counts matrices that you can access within each assay (prior to Seurat version 5, this feature was known as “slots”).</p>
+<p>Following the standard Seurat workflow, you would have the following matrices:</p>
+<ul>
+<li>counts (raw counts matrix)</li>
+<li>data (normalized count matrix (generated after <code>SCTransform()</code> or <code>NormalizeData()</code>)</li>
+<li>scale.data (output from the <code>ScaleData()</code>)</li>
+</ul>
+<p>We can see which layers are accessible with the <code>Layers()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Layers</span>(seurat_integrated[[<span class="st">"RNA"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "counts" "data"  </code></pre>
+</div>
+</div>
+<p>In this object we can see that we do not have the scale.data layer currently. So if we run <code>ScaleData()</code> we will be able to access this layer/matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">ScaleData</span>(seurat_integrated)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Layers</span>(seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "counts"     "data"       "scale.data"</code></pre>
+</div>
+</div>
+</section>
+<section id="accessing-full-count-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="accessing-full-count-matrix">Accessing full count matrix</h2>
+<p>You can grab the entire counts matrix by making use of the <code>LayerData()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsetting to the first 5 genes and cells for easy viewing</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">LayerData</span>(seurat_integrated, <span class="at">assay=</span><span class="st">"RNA"</span>, <span class="at">layer=</span><span class="st">"counts"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>5 x 5 sparse Matrix of class "dgCMatrix"
+           ctrl_AAACATACAATGCC-1 ctrl_AAACATACATTTCC-1 ctrl_AAACATACCAGAAA-1
+AL627309.1                     .                     .                     .
+AL669831.5                     .                     .                     .
+LINC00115                      .                     .                     .
+FAM41C                         .                     .                     .
+NOC2L                          .                     .                     .
+           ctrl_AAACATACCAGCTA-1 ctrl_AAACATACCATGCA-1
+AL627309.1                     .                     .
+AL669831.5                     .                     .
+LINC00115                      .                     .
+FAM41C                         .                     .
+NOC2L                          .                     .</code></pre>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-5"><strong>Exercise 5</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol start="5" type="1">
+<li>Show the code to get the entire SCT normalized (data) count matrix.</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="accessing-specific-features-and-metadata" class="level2">
+<h2 class="anchored" data-anchor-id="accessing-specific-features-and-metadata">Accessing specific features and metadata</h2>
+<p>The <code>FetchData()</code> function is useful to directly access the counts of a feature for each cell. You can also specify the layer and assay to specify which piece of information you want.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalized counts for the gene PTPRC in the assay SCT</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">"PTPRC"</span>, <span class="st">"sample"</span>), </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">assay=</span><span class="st">"SCT"</span>, <span class="at">layer=</span><span class="st">"data"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         PTPRC sample
+ctrl_AAACATACAATGCC-1 2.254699   ctrl
+ctrl_AAACATACATTTCC-1 1.435328   ctrl
+ctrl_AAACATACCAGAAA-1 1.584935   ctrl
+ctrl_AAACATACCAGCTA-1 1.403025   ctrl
+ctrl_AAACATACCATGCA-1 2.667563   ctrl
+ctrl_AAACATACCTCGCT-1 0.000000   ctrl</code></pre>
+</div>
+</div>
+<p>Conveniently, you can also get information from multiple assays at the same time. To do so, you prepend the assay name (in lowercase format) for the feature you supply to the <code>FetchData()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grab the normalized counts in the integrated and RNA assays</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">"rna_PTPRC"</span>, <span class="st">"integrated_PTPRC"</span>), </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">layer=</span><span class="st">"data"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      rna_PTPRC integrated_PTPRC
+ctrl_AAACATACAATGCC-1  2.254699        0.4585611
+ctrl_AAACATACATTTCC-1  1.435328       -0.3528445
+ctrl_AAACATACCAGAAA-1  1.584935       -0.1980966
+ctrl_AAACATACCAGCTA-1  1.403025       -0.3175056
+ctrl_AAACATACCATGCA-1  2.667563        0.7853486
+ctrl_AAACATACCTCGCT-1  0.000000       -0.8399404</code></pre>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<a href="../lessons/12_seurat_cheatsheet-Answer_key.html#exercise-6"><strong>Exercise 6</strong></a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol start="6" type="1">
+<li>Show how you would use the <code>FetchData()</code> function to generate a dataframe of UMAP_1, UMAP_2, and sample values for each cell.</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="accessing-dimensional-reductions" class="level1">
+<h1>Accessing dimensional reductions</h1>
+<section id="pca" class="level2">
+<h2 class="anchored" data-anchor-id="pca">PCA</h2>
+<p>The scores for each PC is stored within the embeddings slot of the Seurat object. These can be accessed by using the <code>Embeddings()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative method of accessing PCA values</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_integrated[['pca']]@cell.embeddings</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"pca"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             PC_1      PC_2      PC_3       PC_4        PC_5
+ctrl_AAACATACAATGCC-1 -14.9778236 -2.879193 -5.059351  -1.602766   0.8728779
+ctrl_AAACATACATTTCC-1  22.3923271 -5.296913  4.951958   3.112632   0.3379874
+ctrl_AAACATACCAGAAA-1  28.9847264  1.203408 -5.947993  -1.042701  -7.5690434
+ctrl_AAACATACCAGCTA-1  20.1284164  2.826128 -5.265061  -3.620790 -11.3740400
+ctrl_AAACATACCATGCA-1  -0.4713399  1.122713  5.195209 -23.884004  -2.2996247</code></pre>
+</div>
+</div>
+<p>The weight (loadings) for each feature is also stored and can be accessed with <code>Loadings()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pbmc[['pca]]@feature.loadings</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Loadings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"pca"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              PC_1         PC_2        PC_3        PC_4        PC_5
+FTL    0.424580221 -0.029245940 -0.07877921 -0.01084091 -0.17392237
+IGKC  -0.022397858 -0.113342789  0.24606406  0.09924655 -0.08598287
+CCL2   0.138755172  0.002935082 -0.07471508 -0.02671091 -0.25223145
+GNLY  -0.017962104  0.357256939  0.07523939  0.10126832 -0.05577892
+IGLC2 -0.007534059 -0.037760970  0.07610433  0.03463625 -0.02070632</code></pre>
+</div>
+</div>
+<p>We can also view more information about the top PCs, like the genes that are most strongly correlated with the first few PCs with the <code>ProjectDim()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ProjectDim</span>(seurat_integrated, <span class="at">reduction =</span> <span class="st">"pca"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PC_ 1 
+Positive:  FTL, TIMP1, FTH1, C15orf48, CXCL8, CCL2, S100A8, FCER1G, TYROBP, S100A4 
+       CD63, LGALS3, LYZ, S100A9, ACTB, LGALS1, ANXA5, HLA-DRA, SOD2, S100A11 
+Negative:  RPL3, RPL13, RPS6, RPS18, RPL10, RPL21, RPL13A, RPS2, RPS4X, RPS3 
+       RPS14, RPL32, RPL7, PABPC1, RPS19, RPL34, TRAC, RPS3A, RPS27A, TRBC1 
+PC_ 2 
+Positive:  GNLY, CCL5, NKG7, GZMB, FGFBP2, CST7, APOBEC3G, GZMH, KLRD1, CLIC3 
+       PRF1, GZMA, CTSW, CHST12, HOPX, HLA-A, CCL4, RARRES3, HLA-B, AOAH 
+Negative:  CD74, IGHM, IGKC, HLA-DRA, CD79A, CCR7, RPL13, HLA-DRB1, EEF1A1, RPS18 
+       RPS6, RPL10, RPL32, PABPC1, RPL18A, RPS2, LTB, HLA-DQA1, HLA-DQB1, RPL13A 
+PC_ 3 
+Positive:  CD74, IGKC, HLA-DRA, IGHM, HLA-DRB1, HLA-DQA1, HLA-DPA1, CD79A, HLA-DPB1, HLA-DQB1 
+       CD83, HERPUD1, MS4A1, ID3, HLA-DMA, IGLC2, GNLY, HSP90AB1, CD79B, GZMB 
+Negative:  TRAC, FTL, CCL2, PABPC1, S100A8, TRBC1, CD3D, GIMAP7, RPS18, RPS14 
+       RPL3, RPL13, S100A9, FTH1, RPL34, RPL10, RPS4X, LTB, SARAF, RPL21 
+PC_ 4 
+Positive:  CD74, IGHM, CCL5, GNLY, IGKC, NKG7, HLA-DRA, GZMB, RPL3, CD79A 
+       HLA-DPB1, RPL10, RPS2, HLA-DPA1, HLA-DRB1, RPS4X, RPL13, EEF1A1, RPS18, RPS19 
+Negative:  HSPB1, CACYBP, HSPH1, HSP90AB1, HSPA8, SRSF7, SRSF2, UBC, HSPA1A, UBB 
+       YPEL5, H3F3B, DNAJB6, GADD45B, HSPE1, EIF1, DDIT4, RSRC2, ZFAND2A, DNAJB1 
+PC_ 5 
+Positive:  VMO1, FCGR3A, MS4A7, TIMP1, TNFSF10, CXCL10, CALHM6, CXCL16, MS4A4A, LST1 
+       JPT1, AIF1, IFITM3, GBP1, SAT1, ATP1B3, GBP5, TNFSF13B, FGL2, PLAC8 
+Negative:  CCL2, FTL, CXCL8, S100A8, S100A9, CCL7, CXCL3, IGKC, IGHM, CTSL 
+       CD63, CXCL2, LGALS3, PLA2G7, CSTB, IL1B, CXCL1, SERPINB2, CTSB, GNLY </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class Seurat 
+31130 features across 29629 samples within 3 assays 
+Active assay: RNA (14065 features, 0 variable features)
+ 3 layers present: counts, data, scale.data
+ 2 other assays present: SCT, integrated
+ 2 dimensional reductions calculated: pca, umap</code></pre>
+</div>
+</div>
+</section>
+<section id="umaptsne" class="level2">
+<h2 class="anchored" data-anchor-id="umaptsne">UMAP/tSNE</h2>
+<p>To access the coordinates used for UMAP/tSNE plots, we specify the reduction of interest in the <code>Embeddings()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_integrated[['umap']]@cell.embeddings</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"umap"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          UMAP_1     UMAP_2
+ctrl_AAACATACAATGCC-1   7.270473  0.9072988
+ctrl_AAACATACATTTCC-1  -8.742020  1.5622634
+ctrl_AAACATACCAGAAA-1 -10.032904  4.7139827
+ctrl_AAACATACCAGCTA-1  -8.363044  5.0377137
+ctrl_AAACATACCATGCA-1   6.875784 -4.6442526
+ctrl_AAACATACCTCGCT-1  -9.338899  2.2808882</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="data-visualization" class="level1">
+<h1>Data visualization</h1>
+<p>Underneath the hood, all of Seurat’s plotting functions make use of ggplot which means that we can add more details to our plots using ggplot functions.</p>
+<section id="dimplot" class="level2">
+<h2 class="anchored" data-anchor-id="dimplot">DimPlot</h2>
+<p>The <code>DimPlot()</code> function allows us to visualize metadata that is categorical on different reductions (PCA, UMAP).</p>
+<p>By default <code>DimPlot()</code> will color cells by the <code>Idents()</code> and use UMAP as the default reduction.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(seurat_integrated) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Seurat clusters"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/dimplot_ggtitle-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can specify a different metadata column using the <code>group.by</code> argument</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(seurat_integrated, <span class="at">group.by =</span> <span class="st">"sample"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/dimplot_groupby-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also use the <code>split.by</code> argument to create multiple plots that only show cells that have the same value for the metadata column specified.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(seurat_integrated, <span class="at">split.by =</span> <span class="st">"sample"</span>, <span class="at">group.by=</span><span class="st">"Phase"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/dimplot_splitby-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="featureplot" class="level2">
+<h2 class="anchored" data-anchor-id="featureplot">FeaturePlot</h2>
+<p>The <code>FeaturePlot()</code> function allows us to visualize both metadata and features that are continuous on different reductions (PCA, UMAP).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"FCGR3A"</span>, <span class="st">"MS4A7"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/featureplot-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can additionally <code>order</code> the values in a way that cells with higher values are shown in front (to avoid other cells drowning out them).</p>
+<p>To identify cells that show the highest expression of a feature, we can set a <code>min.cutoff</code> based upon quantiles, where cells below the the threshold will show no expression.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">"umap"</span>, </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"FCGR3A"</span>, <span class="st">"MS4A7"</span>), </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">'q10'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/featureplot_cutoff-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also add labels onto our UMAP to easily identify which groups of cells we are seeing the expression using the <code>LabelClusters()</code> function. The parameters shown here put a white background behind the text to make it easier to see the labels.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"integrated_snn_res.0.8"</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">"umap"</span>, </span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="st">"FCGR3A"</span>, </span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">'q10'</span>)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="fu">LabelClusters</span>(p, <span class="at">id =</span> <span class="st">"ident"</span>,  <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">3</span>, </span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">bg.colour =</span> <span class="st">"white"</span>, <span class="at">bg.r =</span> .<span class="dv">2</span>, <span class="at">force =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/featureplot_labelcluster-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="featurescatter" class="level2">
+<h2 class="anchored" data-anchor-id="featurescatter">FeatureScatter</h2>
+<p><code>FeatureScatter()</code> creates a scatterplot of expression values for two features with each cell being colored by the ident. Bear in mind that you can also specify a continuous metadata column and not just 2 genes/features.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"integrated_snn_res.0.8"</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FeatureScatter</span>(seurat_integrated, <span class="at">feature1 =</span> <span class="st">"MT-ND5"</span>, <span class="at">feature2 =</span> <span class="st">"mitoRatio"</span>) <span class="sc">+</span> </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"MitoRatio vs MT-ND5 expression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/featurescatter-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="cellscatter" class="level2">
+<h2 class="anchored" data-anchor-id="cellscatter">CellScatter</h2>
+<p>To visualize the differences between two specific cells, you can use the <code>CellScatter()</code> function to get a scatterplot of values for each feature in both cells.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>cell1 <span class="ot">&lt;-</span> <span class="fu">Cells</span>(seurat_integrated)[<span class="dv">1</span>] </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>cell2 <span class="ot">&lt;-</span> <span class="fu">Cells</span>(seurat_integrated)[<span class="dv">2</span>]</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we can see the metadata for the first two cells in the dataset</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="co"># We are comparing "Activated T cell" vs "CD14+ monocytes" (so they should be very different)</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">subset</span>(cells <span class="sc">%in%</span> <span class="fu">c</span>(cell1, cell2)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample, celltype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      sample          celltype
+ctrl_AAACATACAATGCC-1   ctrl Activated T cells
+ctrl_AAACATACATTTCC-1   ctrl   CD14+ monocytes</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">CellScatter</span>(seurat_integrated, <span class="at">cell1=</span>cell1, <span class="at">cell2=</span>cell2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/cellscatter-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="vlnplot" class="level2">
+<h2 class="anchored" data-anchor-id="vlnplot">VlnPlot</h2>
+<p>We can create a violin plot to compare the distribution of gene expression across different populations using the <code>VlnPlot()</code> function.</p>
+<p>This is a very customizable function, with many parameters to customize the look of the plots.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(seurat_integrated, <span class="fu">c</span>(<span class="st">"CD14"</span>, <span class="st">"CD79A"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/vlnplot-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this example, we are grouping expression by sample and showing 2 plots per column. We are also removing the points (cells) by setting their size to 0.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(seurat_integrated, <span class="fu">c</span>(<span class="st">"IFIT1"</span>, <span class="st">"CD53"</span>, <span class="st">"CD52"</span>, <span class="st">"CXCL8"</span>), </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">group.by=</span><span class="st">"sample"</span>, <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">pt.size=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/vlnplot_customization-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ridgeplot" class="level2">
+<h2 class="anchored" data-anchor-id="ridgeplot">RidgePlot</h2>
+<p>Ridge plots are most commonly used with CITE-seq or hashtagged dataset as they provide an easy way to identify cells that express a protein/antibody.</p>
+<p>For our scRNA dataset, when we call <code>RidgePlot()</code>, on the y-axis we see the unique identities assigned for each cell. The x-axis shows us the expression level for whichever feature we chose. This is a great visualization to use when justifying annotation decisions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">RidgePlot</span>(seurat_integrated, <span class="st">"CD3D"</span>, <span class="at">assay=</span><span class="st">"RNA"</span>) <span class="sc">+</span> <span class="fu">NoLegend</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/ridgeplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dimheatmap" class="level2">
+<h2 class="anchored" data-anchor-id="dimheatmap">DimHeatmap</h2>
+<p>To see the effect of genes on the principal component, we can see the top and bottom features in PC1 using the <code>DimHeatmap()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimHeatmap</span>(seurat_integrated, <span class="at">nfeatures =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/dimheatmap-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="doheatmap" class="level2">
+<h2 class="anchored" data-anchor-id="doheatmap">DoHeatmap</h2>
+<p>To plot the expression values for genes across all cells (grouped by their identity), you can call Seurat’s <code>DoHeatmap()</code> function to identify which populations certain genes are lowly or hihgly expressed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"integrated_snn_res.0.8"</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DoHeatmap</span>(seurat_integrated, <span class="at">features=</span><span class="fu">c</span>(<span class="st">"CD14"</span>, <span class="st">"FCGR3A"</span>, <span class="st">"FCER1A"</span>, </span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"IL3RA"</span>, <span class="st">"CD79A"</span>, <span class="st">"CD3D"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/doheatmap-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dotplot" class="level2">
+<h2 class="anchored" data-anchor-id="dotplot">DotPlot</h2>
+<p>Seurat also has a built in visualization tool which allows us to view the average expression of genes groups clusters called <code>DotPlot()</code>. The size of the circle represents the number of cells that express the gene within a group and the hue reprents the average expression of the feature.</p>
+<p>If you supply a named list with labels annotating genes, those labels will appear at the top of the plot for easier visualization.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List of known celltype markers</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>markers <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>markers[[<span class="st">"CD14+ monocytes"</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"CD14"</span>, <span class="st">"LYZ"</span>)</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>markers[[<span class="st">"FCGR3A+ monocyte"</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FCGR3A"</span>, <span class="st">"MS4A7"</span>)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>markers[[<span class="st">"Macrophages"</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MARCO"</span>, <span class="st">"ITGAM"</span>, <span class="st">"ADGRE1"</span>)</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>markers[[<span class="st">"Conventional dendritic"</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FCER1A"</span>, <span class="st">"CST3"</span>)</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>markers[[<span class="st">"Plasmacytoid dendritic"</span>]] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"IL3RA"</span>, <span class="st">"GZMB"</span>, <span class="st">"SERPINF1"</span>, <span class="st">"ITM2C"</span>)</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dotplot based on RNA expression</span></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a><span class="fu">DotPlot</span>(seurat_integrated, markers, <span class="at">assay=</span><span class="st">"RNA"</span>, <span class="at">group.by =</span> <span class="st">"integrated_snn_res.0.8"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_seurat_cheatsheet_files/figure-html/dotplot-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb70" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Seurat Cheatsheet"</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Noor Sohail"</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> Thursday, June 25th 2024</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seurat Cheatsheet</span></span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>This cheatsheet is meant to provide examples of the various functions available in Seurat. This includes how to access certain information, handy tips, and visualization functions built into the package. We have pulled together all of this information with examples using the dataset used throughout this workshop so that there are clear visuals on what the output of each function is.</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>These materials were developed by referencing the following pages from the Seurat website:</span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>https://satijalab.org/seurat/articles/essential_commands.html</span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>https://satijalab.org/seurat/articles/visualization_vignette.html</span>
+<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a><span class="fu"># Dataset</span></span>
+<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>Load in the <span class="in">`integrated_seurat`</span> object that is available in the <span class="in">`data`</span> folder of the project. The link to download the project was provided on <span class="co">[</span><span class="ot">the schedule page</span><span class="co">](schedule.qmd)</span> but can also be <span class="co">[</span><span class="ot">found here</span><span class="co">](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1)</span>.</span>
+<span id="cb70-21"><a href="#cb70-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-24"><a href="#cb70-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-25"><a href="#cb70-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_data</span></span>
+<span id="cb70-26"><a href="#cb70-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-27"><a href="#cb70-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb70-28"><a href="#cb70-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb70-29"><a href="#cb70-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-30"><a href="#cb70-30" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">"data/additional_data/seurat_integrated.RData.bz2"</span>))</span>
+<span id="cb70-31"><a href="#cb70-31" aria-hidden="true" tabindex="-1"></a>seurat_integrated</span>
+<span id="cb70-32"><a href="#cb70-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-33"><a href="#cb70-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-34"><a href="#cb70-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Accessing cell barcodes and gene names</span></span>
+<span id="cb70-35"><a href="#cb70-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-36"><a href="#cb70-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cell barcodes</span></span>
+<span id="cb70-37"><a href="#cb70-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-38"><a href="#cb70-38" aria-hidden="true" tabindex="-1"></a>Within Seurat, there are multiple ways to access the cell barcode IDs.</span>
+<span id="cb70-39"><a href="#cb70-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-40"><a href="#cb70-40" aria-hidden="true" tabindex="-1"></a>We can use <span class="in">`colnames()`</span> to get a vector of cell barcodes in the same order as they appear in the Seurat object.</span>
+<span id="cb70-41"><a href="#cb70-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-44"><a href="#cb70-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-45"><a href="#cb70-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_colnames</span></span>
+<span id="cb70-46"><a href="#cb70-46" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-47"><a href="#cb70-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-48"><a href="#cb70-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-49"><a href="#cb70-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-50"><a href="#cb70-50" aria-hidden="true" tabindex="-1"></a>Similarly we can use the <span class="in">`Cells()`</span> function:</span>
+<span id="cb70-51"><a href="#cb70-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-54"><a href="#cb70-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-55"><a href="#cb70-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_cells</span></span>
+<span id="cb70-56"><a href="#cb70-56" aria-hidden="true" tabindex="-1"></a><span class="fu">Cells</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-57"><a href="#cb70-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-58"><a href="#cb70-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-59"><a href="#cb70-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-60"><a href="#cb70-60" aria-hidden="true" tabindex="-1"></a>It is **very important** that the values stored in <span class="in">`Cells()`</span> are the same as the rownames in <span class="in">`meta.data`</span>. Otherwise Seurat will start throwing errors at you!</span>
+<span id="cb70-61"><a href="#cb70-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-64"><a href="#cb70-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-65"><a href="#cb70-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: check_rowname_cells_equal</span></span>
+<span id="cb70-66"><a href="#cb70-66" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rownames</span>(seurat_integrated<span class="sc">@</span>meta.data) <span class="sc">==</span> <span class="fu">Cells</span>(seurat_integrated))</span>
+<span id="cb70-67"><a href="#cb70-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-68"><a href="#cb70-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-69"><a href="#cb70-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-70"><a href="#cb70-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## Features/genes</span></span>
+<span id="cb70-71"><a href="#cb70-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-72"><a href="#cb70-72" aria-hidden="true" tabindex="-1"></a>Now we want to be able to access the rows, or genes, in our Seurat object. Rather than calling these values "genes", many tools will call them "features" as different assays (CITE-seq, ATAC-seq) provide alternative information than genes as output.</span>
+<span id="cb70-73"><a href="#cb70-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-74"><a href="#cb70-74" aria-hidden="true" tabindex="-1"></a>The <span class="in">`Features()`</span> function returns a vector of all features/genes in our dataset in the same order as it appears in the count matrix.</span>
+<span id="cb70-75"><a href="#cb70-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-78"><a href="#cb70-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-79"><a href="#cb70-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_features</span></span>
+<span id="cb70-80"><a href="#cb70-80" aria-hidden="true" tabindex="-1"></a><span class="fu">Features</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-81"><a href="#cb70-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-82"><a href="#cb70-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-83"><a href="#cb70-83" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rownames()`</span> function provides the same output:</span>
+<span id="cb70-84"><a href="#cb70-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-87"><a href="#cb70-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-88"><a href="#cb70-88" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_rownames</span></span>
+<span id="cb70-89"><a href="#cb70-89" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-90"><a href="#cb70-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-91"><a href="#cb70-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-92"><a href="#cb70-92" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-93"><a href="#cb70-93" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-94"><a href="#cb70-94" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 1**](12_seurat_cheatsheet-Answer_key.qmd#exercise-1)</span></span>
+<span id="cb70-95"><a href="#cb70-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-96"><a href="#cb70-96" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>What are the last 5 cells barcodes and the last 5 genes in the integrated seurat object.</span>
+<span id="cb70-97"><a href="#cb70-97" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-98"><a href="#cb70-98" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-99"><a href="#cb70-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-100"><a href="#cb70-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## Number of cells and features</span></span>
+<span id="cb70-101"><a href="#cb70-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-102"><a href="#cb70-102" aria-hidden="true" tabindex="-1"></a>If you recall, Seurat stores your count matrix as cells (columns) x genes (rows). </span>
+<span id="cb70-103"><a href="#cb70-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-104"><a href="#cb70-104" aria-hidden="true" tabindex="-1"></a>Therefore, we can access the number of cells by using the <span class="in">`ncol()`</span> function.</span>
+<span id="cb70-105"><a href="#cb70-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-108"><a href="#cb70-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-109"><a href="#cb70-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_ncol</span></span>
+<span id="cb70-110"><a href="#cb70-110" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(seurat_integrated)</span>
+<span id="cb70-111"><a href="#cb70-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-112"><a href="#cb70-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-113"><a href="#cb70-113" aria-hidden="true" tabindex="-1"></a>The number of features is returned with the <span class="in">`nrow()`</span> function:</span>
+<span id="cb70-114"><a href="#cb70-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-117"><a href="#cb70-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-118"><a href="#cb70-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_nrow</span></span>
+<span id="cb70-119"><a href="#cb70-119" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(seurat_integrated)</span>
+<span id="cb70-120"><a href="#cb70-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-121"><a href="#cb70-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-122"><a href="#cb70-122" aria-hidden="true" tabindex="-1"></a>The <span class="in">`dim()`</span> function provides both the number of cells and genes for the **default assay**. Here we see the number of features followed by the number of cells:</span>
+<span id="cb70-123"><a href="#cb70-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-126"><a href="#cb70-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-127"><a href="#cb70-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_dim</span></span>
+<span id="cb70-128"><a href="#cb70-128" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated)</span>
+<span id="cb70-129"><a href="#cb70-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-130"><a href="#cb70-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-131"><a href="#cb70-131" aria-hidden="true" tabindex="-1"></a><span class="fu"># Idents</span></span>
+<span id="cb70-132"><a href="#cb70-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-133"><a href="#cb70-133" aria-hidden="true" tabindex="-1"></a>In Seurat, each cell has a label which can be accessed using <span class="in">`Idents()`</span>. These are the default labels used for each cell and are used internally by Seurat plotting functions.</span>
+<span id="cb70-134"><a href="#cb70-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-135"><a href="#cb70-135" aria-hidden="true" tabindex="-1"></a>Common information set as the identity for cells include: clusters (as in our example dataset), celltype, sample, etc. You'll notice that identities are automatically stored as factors, which means we can re-organize the levels at any point to change their order for plotting purposes.</span>
+<span id="cb70-136"><a href="#cb70-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-139"><a href="#cb70-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-140"><a href="#cb70-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_idents</span></span>
+<span id="cb70-141"><a href="#cb70-141" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-142"><a href="#cb70-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-143"><a href="#cb70-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-144"><a href="#cb70-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rename Idents</span></span>
+<span id="cb70-145"><a href="#cb70-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-146"><a href="#cb70-146" aria-hidden="true" tabindex="-1"></a>To quickly make modifications to identities, you can use the <span class="in">`RenameIdents()`</span> function where new values are mapped to the identities. This is particularly helpful when annotating your cells from clusters to celltypes as showcased here. Bear in mind that these new identities are not stored in the <span class="in">`meta.data`</span> automatically. We recommend adding these identities as a new column in the Seurat object to keep track of it for future use.</span>
+<span id="cb70-147"><a href="#cb70-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-150"><a href="#cb70-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-151"><a href="#cb70-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: rename_idents</span></span>
+<span id="cb70-152"><a href="#cb70-152" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename all identities</span></span>
+<span id="cb70-153"><a href="#cb70-153" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(<span class="at">object =</span> seurat_integrated, </span>
+<span id="cb70-154"><a href="#cb70-154" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"CD14+ monocytes"</span>,</span>
+<span id="cb70-155"><a href="#cb70-155" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"3"</span> <span class="ot">=</span> <span class="st">"CD14+ monocytes"</span>,</span>
+<span id="cb70-156"><a href="#cb70-156" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"2"</span> <span class="ot">=</span> <span class="st">"Activated T cells"</span>)</span>
+<span id="cb70-157"><a href="#cb70-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-158"><a href="#cb70-158" aria-hidden="true" tabindex="-1"></a><span class="co"># These new celltype values are only stored in the idents</span></span>
+<span id="cb70-159"><a href="#cb70-159" aria-hidden="true" tabindex="-1"></a><span class="co"># Good practice is to store these changes in a column</span></span>
+<span id="cb70-160"><a href="#cb70-160" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">$</span>celltype <span class="ot">&lt;-</span> <span class="fu">Idents</span>(seurat_integrated)</span>
+<span id="cb70-161"><a href="#cb70-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-162"><a href="#cb70-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-163"><a href="#cb70-163" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-164"><a href="#cb70-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-165"><a href="#cb70-165" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-166"><a href="#cb70-166" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 2**](12_seurat_cheatsheet-Answer_key.qmd#exercise-2)</span></span>
+<span id="cb70-167"><a href="#cb70-167" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What are the last 5 identities for the cells in the integrated seurat object?</span>
+<span id="cb70-168"><a href="#cb70-168" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-169"><a href="#cb70-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-170"><a href="#cb70-170" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-171"><a href="#cb70-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-172"><a href="#cb70-172" aria-hidden="true" tabindex="-1"></a><span class="fu"># Highly variable features</span></span>
+<span id="cb70-173"><a href="#cb70-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-174"><a href="#cb70-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Accessing variable features</span></span>
+<span id="cb70-175"><a href="#cb70-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-176"><a href="#cb70-176" aria-hidden="true" tabindex="-1"></a>To obtain a vector of all highly variable genes that were selected after running <span class="in">`FindVariableFeatures()`</span>, we can use the <span class="in">`VariableFeatures()`</span> function.</span>
+<span id="cb70-177"><a href="#cb70-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-180"><a href="#cb70-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-181"><a href="#cb70-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_var_features</span></span>
+<span id="cb70-182"><a href="#cb70-182" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-183"><a href="#cb70-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-184"><a href="#cb70-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-185"><a href="#cb70-185" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setting variable features</span></span>
+<span id="cb70-186"><a href="#cb70-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-187"><a href="#cb70-187" aria-hidden="true" tabindex="-1"></a>Using the same <span class="in">`VariableFeatures()`</span> function, we can set our own custom set of genes as our highly variable genes.</span>
+<span id="cb70-188"><a href="#cb70-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-189"><a href="#cb70-189" aria-hidden="true" tabindex="-1"></a>As an example, here we are omitting mitochondrial genes from the original list of variable genes:</span>
+<span id="cb70-190"><a href="#cb70-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-193"><a href="#cb70-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-194"><a href="#cb70-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: set_var_features</span></span>
+<span id="cb70-195"><a href="#cb70-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Get list of all variable genes</span></span>
+<span id="cb70-196"><a href="#cb70-196" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove variable genes that start with MT-</span></span>
+<span id="cb70-197"><a href="#cb70-197" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> <span class="fu">VariableFeatures</span>(seurat_integrated)</span>
+<span id="cb70-198"><a href="#cb70-198" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> var_genes[<span class="sc">!</span><span class="fu">startsWith</span>(var_genes, <span class="st">"MT-"</span>)]</span>
+<span id="cb70-199"><a href="#cb70-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-200"><a href="#cb70-200" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set our vector of gene names back to VariableFeatures()</span></span>
+<span id="cb70-201"><a href="#cb70-201" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="ot">&lt;-</span> var_genes</span>
+<span id="cb70-202"><a href="#cb70-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-203"><a href="#cb70-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-204"><a href="#cb70-204" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-205"><a href="#cb70-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-206"><a href="#cb70-206" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-207"><a href="#cb70-207" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 3**](12_seurat_cheatsheet-Answer_key.qmd#exercise-3)</span></span>
+<span id="cb70-208"><a href="#cb70-208" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What are the the 5 least variable genes in the integrated seurat object?</span>
+<span id="cb70-209"><a href="#cb70-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-210"><a href="#cb70-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-211"><a href="#cb70-211" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-212"><a href="#cb70-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-213"><a href="#cb70-213" aria-hidden="true" tabindex="-1"></a><span class="fu"># Assays and layers</span></span>
+<span id="cb70-214"><a href="#cb70-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-215"><a href="#cb70-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assays</span></span>
+<span id="cb70-216"><a href="#cb70-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-217"><a href="#cb70-217" aria-hidden="true" tabindex="-1"></a>Within a Seurat object you can have multiple "assays". Each assay contains its own count matrix that is separate from the other assays in the object. This structure was created with multimodal datasets in mind so we can store, for example, ATAC peaks within the same Seurat object as your RNA counts.</span>
+<span id="cb70-218"><a href="#cb70-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-219"><a href="#cb70-219" aria-hidden="true" tabindex="-1"></a>SCTransform also makes use of these assays to store the SCT normalized matrix in a separate assay called "SCT".</span>
+<span id="cb70-220"><a href="#cb70-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-221"><a href="#cb70-221" aria-hidden="true" tabindex="-1"></a>To access the list of assays in your Seurat object, you can call <span class="in">`@assays`</span>.</span>
+<span id="cb70-222"><a href="#cb70-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-225"><a href="#cb70-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-226"><a href="#cb70-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_assays</span></span>
+<span id="cb70-227"><a href="#cb70-227" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">@</span>assays</span>
+<span id="cb70-228"><a href="#cb70-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-229"><a href="#cb70-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-230"><a href="#cb70-230" aria-hidden="true" tabindex="-1"></a>We can additionally see which of the assays in our dataset is set as the default with the <span class="in">`DefaultAssays()`</span> function. This default assay is automatically used as by Seurat functions, unless you specify otherise in the parameters of your function.</span>
+<span id="cb70-231"><a href="#cb70-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-234"><a href="#cb70-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-235"><a href="#cb70-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_default_assay</span></span>
+<span id="cb70-236"><a href="#cb70-236" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated)</span>
+<span id="cb70-237"><a href="#cb70-237" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-238"><a href="#cb70-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-239"><a href="#cb70-239" aria-hidden="true" tabindex="-1"></a>Here we can see that the default assay is set to "integrated". If we instead wanted to use the RNA counts, we can set a new default by once again calling the <span class="in">`DefaultAssay()`</span> function and storing the name of a different assay.</span>
+<span id="cb70-240"><a href="#cb70-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-243"><a href="#cb70-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-244"><a href="#cb70-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: set_default_assay</span></span>
+<span id="cb70-245"><a href="#cb70-245" aria-hidden="true" tabindex="-1"></a><span class="co"># Set new default assay</span></span>
+<span id="cb70-246"><a href="#cb70-246" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"RNA"</span></span>
+<span id="cb70-247"><a href="#cb70-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-248"><a href="#cb70-248" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the new default to see if it changed</span></span>
+<span id="cb70-249"><a href="#cb70-249" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(seurat_integrated)</span>
+<span id="cb70-250"><a href="#cb70-250" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-251"><a href="#cb70-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-252"><a href="#cb70-252" aria-hidden="true" tabindex="-1"></a>We can access each assay as if the Seurat object was a named list with double brackets:</span>
+<span id="cb70-253"><a href="#cb70-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-256"><a href="#cb70-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-257"><a href="#cb70-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: access_assay</span></span>
+<span id="cb70-258"><a href="#cb70-258" aria-hidden="true" tabindex="-1"></a>seurat_integrated[[<span class="st">"SCT"</span>]]</span>
+<span id="cb70-259"><a href="#cb70-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-260"><a href="#cb70-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-261"><a href="#cb70-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-262"><a href="#cb70-262" aria-hidden="true" tabindex="-1"></a>And similarly run any function on it:</span>
+<span id="cb70-263"><a href="#cb70-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-266"><a href="#cb70-266" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-267"><a href="#cb70-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: access_assay_dim</span></span>
+<span id="cb70-268"><a href="#cb70-268" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">"integrated"</span>]])</span>
+<span id="cb70-269"><a href="#cb70-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-270"><a href="#cb70-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-271"><a href="#cb70-271" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-272"><a href="#cb70-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-273"><a href="#cb70-273" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-274"><a href="#cb70-274" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 4**](12_seurat_cheatsheet-Answer_key.qmd#exercise-4)</span></span>
+<span id="cb70-275"><a href="#cb70-275" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>What are the dimensions for each assay in the integrated seurat object?</span>
+<span id="cb70-276"><a href="#cb70-276" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-277"><a href="#cb70-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-278"><a href="#cb70-278" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-279"><a href="#cb70-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-280"><a href="#cb70-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-281"><a href="#cb70-281" aria-hidden="true" tabindex="-1"></a><span class="fu">## Layers</span></span>
+<span id="cb70-282"><a href="#cb70-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-283"><a href="#cb70-283" aria-hidden="true" tabindex="-1"></a>Layers are the different counts matrices that you can access within each assay (prior to Seurat version 5, this feature was known as "slots").</span>
+<span id="cb70-284"><a href="#cb70-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-285"><a href="#cb70-285" aria-hidden="true" tabindex="-1"></a>Following the standard Seurat workflow, you would have the following matrices:</span>
+<span id="cb70-286"><a href="#cb70-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-287"><a href="#cb70-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>counts (raw counts matrix)</span>
+<span id="cb70-288"><a href="#cb70-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>data (normalized count matrix (generated after <span class="in">`SCTransform()`</span> or <span class="in">`NormalizeData()`</span>)</span>
+<span id="cb70-289"><a href="#cb70-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>scale.data (output from the <span class="in">`ScaleData()`</span>)</span>
+<span id="cb70-290"><a href="#cb70-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-291"><a href="#cb70-291" aria-hidden="true" tabindex="-1"></a>We can see which layers are accessible with the <span class="in">`Layers()`</span> function.</span>
+<span id="cb70-292"><a href="#cb70-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-295"><a href="#cb70-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-296"><a href="#cb70-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_layers</span></span>
+<span id="cb70-297"><a href="#cb70-297" aria-hidden="true" tabindex="-1"></a><span class="fu">Layers</span>(seurat_integrated[[<span class="st">"RNA"</span>]])</span>
+<span id="cb70-298"><a href="#cb70-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-299"><a href="#cb70-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-300"><a href="#cb70-300" aria-hidden="true" tabindex="-1"></a>In this object we can see that we do not have the scale.data layer currently. So if we run <span class="in">`ScaleData()`</span> we will be able to access this layer/matrix.</span>
+<span id="cb70-301"><a href="#cb70-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-304"><a href="#cb70-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-305"><a href="#cb70-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_layers_ScaleData</span></span>
+<span id="cb70-306"><a href="#cb70-306" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">ScaleData</span>(seurat_integrated)</span>
+<span id="cb70-307"><a href="#cb70-307" aria-hidden="true" tabindex="-1"></a><span class="fu">Layers</span>(seurat_integrated)</span>
+<span id="cb70-308"><a href="#cb70-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-309"><a href="#cb70-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-310"><a href="#cb70-310" aria-hidden="true" tabindex="-1"></a><span class="fu">## Accessing full count matrix</span></span>
+<span id="cb70-311"><a href="#cb70-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-312"><a href="#cb70-312" aria-hidden="true" tabindex="-1"></a>You can grab the entire counts matrix by making use of the <span class="in">`LayerData()`</span> function.</span>
+<span id="cb70-313"><a href="#cb70-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-316"><a href="#cb70-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-317"><a href="#cb70-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_counts_mtx</span></span>
+<span id="cb70-318"><a href="#cb70-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsetting to the first 5 genes and cells for easy viewing</span></span>
+<span id="cb70-319"><a href="#cb70-319" aria-hidden="true" tabindex="-1"></a><span class="fu">LayerData</span>(seurat_integrated, <span class="at">assay=</span><span class="st">"RNA"</span>, <span class="at">layer=</span><span class="st">"counts"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb70-320"><a href="#cb70-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-321"><a href="#cb70-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-322"><a href="#cb70-322" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-323"><a href="#cb70-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-324"><a href="#cb70-324" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-325"><a href="#cb70-325" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 5**](12_seurat_cheatsheet-Answer_key.qmd#exercise-5)</span></span>
+<span id="cb70-326"><a href="#cb70-326" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Show the code to get the entire SCT normalized (data) count matrix.</span>
+<span id="cb70-327"><a href="#cb70-327" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-328"><a href="#cb70-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-329"><a href="#cb70-329" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-330"><a href="#cb70-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-331"><a href="#cb70-331" aria-hidden="true" tabindex="-1"></a><span class="fu">## Accessing specific features and metadata</span></span>
+<span id="cb70-332"><a href="#cb70-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-333"><a href="#cb70-333" aria-hidden="true" tabindex="-1"></a>The <span class="in">`FetchData()`</span> function is useful to directly access the counts of a feature for each cell. You can also specify the layer and assay to specify which piece of information you want.</span>
+<span id="cb70-334"><a href="#cb70-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-337"><a href="#cb70-337" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-338"><a href="#cb70-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fetchdata</span></span>
+<span id="cb70-339"><a href="#cb70-339" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalized counts for the gene PTPRC in the assay SCT</span></span>
+<span id="cb70-340"><a href="#cb70-340" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">"PTPRC"</span>, <span class="st">"sample"</span>), </span>
+<span id="cb70-341"><a href="#cb70-341" aria-hidden="true" tabindex="-1"></a>          <span class="at">assay=</span><span class="st">"SCT"</span>, <span class="at">layer=</span><span class="st">"data"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-342"><a href="#cb70-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-343"><a href="#cb70-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-344"><a href="#cb70-344" aria-hidden="true" tabindex="-1"></a>Conveniently, you can also get information from multiple assays at the same time. To do so, you prepend the assay name (in lowercase format) for the feature you supply to the <span class="in">`FetchData()`</span> function.</span>
+<span id="cb70-345"><a href="#cb70-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-348"><a href="#cb70-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-349"><a href="#cb70-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fetchdata_assays</span></span>
+<span id="cb70-350"><a href="#cb70-350" aria-hidden="true" tabindex="-1"></a><span class="co"># Grab the normalized counts in the integrated and RNA assays</span></span>
+<span id="cb70-351"><a href="#cb70-351" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">"rna_PTPRC"</span>, <span class="st">"integrated_PTPRC"</span>), </span>
+<span id="cb70-352"><a href="#cb70-352" aria-hidden="true" tabindex="-1"></a>          <span class="at">layer=</span><span class="st">"data"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-353"><a href="#cb70-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-354"><a href="#cb70-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-355"><a href="#cb70-355" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-356"><a href="#cb70-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-357"><a href="#cb70-357" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb70-358"><a href="#cb70-358" aria-hidden="true" tabindex="-1"></a><span class="fu"># [**Exercise 6**](12_seurat_cheatsheet-Answer_key.qmd#exercise-6)</span></span>
+<span id="cb70-359"><a href="#cb70-359" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Show how you would use the <span class="in">`FetchData()`</span> function to generate a dataframe of UMAP_1, UMAP_2, and sample values for each cell.</span>
+<span id="cb70-360"><a href="#cb70-360" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb70-361"><a href="#cb70-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-362"><a href="#cb70-362" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb70-363"><a href="#cb70-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-364"><a href="#cb70-364" aria-hidden="true" tabindex="-1"></a><span class="fu"># Accessing dimensional reductions</span></span>
+<span id="cb70-365"><a href="#cb70-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-366"><a href="#cb70-366" aria-hidden="true" tabindex="-1"></a><span class="fu">## PCA</span></span>
+<span id="cb70-367"><a href="#cb70-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-368"><a href="#cb70-368" aria-hidden="true" tabindex="-1"></a>The scores for each PC is stored within the embeddings slot of the Seurat object. These can be accessed by using the <span class="in">`Embeddings()`</span> function.</span>
+<span id="cb70-369"><a href="#cb70-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-372"><a href="#cb70-372" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-373"><a href="#cb70-373" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_embeddings_pca</span></span>
+<span id="cb70-374"><a href="#cb70-374" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative method of accessing PCA values</span></span>
+<span id="cb70-375"><a href="#cb70-375" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_integrated[['pca']]@cell.embeddings</span></span>
+<span id="cb70-376"><a href="#cb70-376" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"pca"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb70-377"><a href="#cb70-377" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-378"><a href="#cb70-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-379"><a href="#cb70-379" aria-hidden="true" tabindex="-1"></a>The weight (loadings) for each feature is also stored and can be accessed with <span class="in">`Loadings()`</span> function.</span>
+<span id="cb70-380"><a href="#cb70-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-383"><a href="#cb70-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-384"><a href="#cb70-384" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_loadings</span></span>
+<span id="cb70-385"><a href="#cb70-385" aria-hidden="true" tabindex="-1"></a><span class="co"># pbmc[['pca]]@feature.loadings</span></span>
+<span id="cb70-386"><a href="#cb70-386" aria-hidden="true" tabindex="-1"></a><span class="fu">Loadings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"pca"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb70-387"><a href="#cb70-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-388"><a href="#cb70-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-389"><a href="#cb70-389" aria-hidden="true" tabindex="-1"></a>We can also view more information about the top PCs, like the genes that are most strongly correlated with the first few PCs with the <span class="in">`ProjectDim()`</span> function.</span>
+<span id="cb70-390"><a href="#cb70-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-393"><a href="#cb70-393" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-394"><a href="#cb70-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_projectdim</span></span>
+<span id="cb70-395"><a href="#cb70-395" aria-hidden="true" tabindex="-1"></a><span class="fu">ProjectDim</span>(seurat_integrated, <span class="at">reduction =</span> <span class="st">"pca"</span>)</span>
+<span id="cb70-396"><a href="#cb70-396" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-397"><a href="#cb70-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-398"><a href="#cb70-398" aria-hidden="true" tabindex="-1"></a><span class="fu">## UMAP/tSNE</span></span>
+<span id="cb70-399"><a href="#cb70-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-400"><a href="#cb70-400" aria-hidden="true" tabindex="-1"></a>To access the coordinates used for UMAP/tSNE plots, we specify the reduction of interest in the <span class="in">`Embeddings()`</span> function. </span>
+<span id="cb70-401"><a href="#cb70-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-404"><a href="#cb70-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-405"><a href="#cb70-405" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_embeddings_umap</span></span>
+<span id="cb70-406"><a href="#cb70-406" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_integrated[['umap']]@cell.embeddings</span></span>
+<span id="cb70-407"><a href="#cb70-407" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(seurat_integrated, <span class="at">reduction=</span><span class="st">"umap"</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb70-408"><a href="#cb70-408" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-409"><a href="#cb70-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-410"><a href="#cb70-410" aria-hidden="true" tabindex="-1"></a><span class="fu"># Data visualization</span></span>
+<span id="cb70-411"><a href="#cb70-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-412"><a href="#cb70-412" aria-hidden="true" tabindex="-1"></a>Underneath the hood, all of Seurat's plotting functions make use of ggplot which means that we can add more details to our plots using ggplot functions.</span>
+<span id="cb70-413"><a href="#cb70-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-414"><a href="#cb70-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## DimPlot</span></span>
+<span id="cb70-415"><a href="#cb70-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-416"><a href="#cb70-416" aria-hidden="true" tabindex="-1"></a>The <span class="in">`DimPlot()`</span> function allows us to visualize metadata that is categorical on different reductions (PCA, UMAP). </span>
+<span id="cb70-417"><a href="#cb70-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-418"><a href="#cb70-418" aria-hidden="true" tabindex="-1"></a>By default <span class="in">`DimPlot()`</span> will color cells by the <span class="in">`Idents()`</span> and use UMAP as the default reduction.</span>
+<span id="cb70-419"><a href="#cb70-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-422"><a href="#cb70-422" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-423"><a href="#cb70-423" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dimplot_ggtitle</span></span>
+<span id="cb70-424"><a href="#cb70-424" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(seurat_integrated) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Seurat clusters"</span>)</span>
+<span id="cb70-425"><a href="#cb70-425" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-426"><a href="#cb70-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-427"><a href="#cb70-427" aria-hidden="true" tabindex="-1"></a>We can specify a different metadata column using the <span class="in">`group.by`</span> argument</span>
+<span id="cb70-428"><a href="#cb70-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-431"><a href="#cb70-431" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-432"><a href="#cb70-432" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dimplot_groupby</span></span>
+<span id="cb70-433"><a href="#cb70-433" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(seurat_integrated, <span class="at">group.by =</span> <span class="st">"sample"</span>)</span>
+<span id="cb70-434"><a href="#cb70-434" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-435"><a href="#cb70-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-436"><a href="#cb70-436" aria-hidden="true" tabindex="-1"></a>We can also use the <span class="in">`split.by`</span> argument to create multiple plots that only show cells that have the same value for the metadata column specified.</span>
+<span id="cb70-437"><a href="#cb70-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-438"><a href="#cb70-438" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=8}</span></span>
+<span id="cb70-439"><a href="#cb70-439" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: dimplot_splitby</span></span>
+<span id="cb70-440"><a href="#cb70-440" aria-hidden="true" tabindex="-1"></a><span class="in">DimPlot(seurat_integrated, split.by = "sample", group.by="Phase")</span></span>
+<span id="cb70-441"><a href="#cb70-441" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-442"><a href="#cb70-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-443"><a href="#cb70-443" aria-hidden="true" tabindex="-1"></a><span class="fu">## FeaturePlot</span></span>
+<span id="cb70-444"><a href="#cb70-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-445"><a href="#cb70-445" aria-hidden="true" tabindex="-1"></a>The <span class="in">`FeaturePlot()`</span> function allows us to visualize both metadata and features that are continuous on different reductions (PCA, UMAP). </span>
+<span id="cb70-446"><a href="#cb70-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-447"><a href="#cb70-447" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=8}</span></span>
+<span id="cb70-448"><a href="#cb70-448" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: featureplot</span></span>
+<span id="cb70-449"><a href="#cb70-449" aria-hidden="true" tabindex="-1"></a><span class="in">FeaturePlot(seurat_integrated, features = c("FCGR3A", "MS4A7"))</span></span>
+<span id="cb70-450"><a href="#cb70-450" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-451"><a href="#cb70-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-452"><a href="#cb70-452" aria-hidden="true" tabindex="-1"></a>We can additionally <span class="in">`order`</span> the values in a way that cells with higher values are shown in front (to avoid other cells drowning out them).</span>
+<span id="cb70-453"><a href="#cb70-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-454"><a href="#cb70-454" aria-hidden="true" tabindex="-1"></a>To identify cells that show the highest expression of a feature, we can set a <span class="in">`min.cutoff`</span> based upon quantiles, where cells below the the threshold will show no expression. </span>
+<span id="cb70-455"><a href="#cb70-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-456"><a href="#cb70-456" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=8}</span></span>
+<span id="cb70-457"><a href="#cb70-457" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: featureplot_cutoff</span></span>
+<span id="cb70-458"><a href="#cb70-458" aria-hidden="true" tabindex="-1"></a><span class="in">FeaturePlot(seurat_integrated, </span></span>
+<span id="cb70-459"><a href="#cb70-459" aria-hidden="true" tabindex="-1"></a><span class="in">            reduction = "umap", </span></span>
+<span id="cb70-460"><a href="#cb70-460" aria-hidden="true" tabindex="-1"></a><span class="in">            features = c("FCGR3A", "MS4A7"), </span></span>
+<span id="cb70-461"><a href="#cb70-461" aria-hidden="true" tabindex="-1"></a><span class="in">            order = TRUE,</span></span>
+<span id="cb70-462"><a href="#cb70-462" aria-hidden="true" tabindex="-1"></a><span class="in">            min.cutoff = 'q10')</span></span>
+<span id="cb70-463"><a href="#cb70-463" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-464"><a href="#cb70-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-465"><a href="#cb70-465" aria-hidden="true" tabindex="-1"></a>We can also add labels onto our UMAP to easily identify which groups of cells we are seeing the expression using the <span class="in">`LabelClusters()`</span> function. The parameters shown here put a white background behind the text to make it easier to see the labels.</span>
+<span id="cb70-466"><a href="#cb70-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-469"><a href="#cb70-469" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-470"><a href="#cb70-470" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: featureplot_labelcluster</span></span>
+<span id="cb70-471"><a href="#cb70-471" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"integrated_snn_res.0.8"</span></span>
+<span id="cb70-472"><a href="#cb70-472" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb70-473"><a href="#cb70-473" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">"umap"</span>, </span>
+<span id="cb70-474"><a href="#cb70-474" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="st">"FCGR3A"</span>, </span>
+<span id="cb70-475"><a href="#cb70-475" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb70-476"><a href="#cb70-476" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">'q10'</span>)</span>
+<span id="cb70-477"><a href="#cb70-477" aria-hidden="true" tabindex="-1"></a><span class="fu">LabelClusters</span>(p, <span class="at">id =</span> <span class="st">"ident"</span>,  <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">3</span>, </span>
+<span id="cb70-478"><a href="#cb70-478" aria-hidden="true" tabindex="-1"></a>              <span class="at">bg.colour =</span> <span class="st">"white"</span>, <span class="at">bg.r =</span> .<span class="dv">2</span>, <span class="at">force =</span> <span class="dv">0</span>)</span>
+<span id="cb70-479"><a href="#cb70-479" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-480"><a href="#cb70-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-481"><a href="#cb70-481" aria-hidden="true" tabindex="-1"></a><span class="fu">## FeatureScatter</span></span>
+<span id="cb70-482"><a href="#cb70-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-483"><a href="#cb70-483" aria-hidden="true" tabindex="-1"></a><span class="in">`FeatureScatter()`</span> creates a scatterplot of expression values for two features with each cell being colored by the ident. Bear in mind that you can also specify a continuous metadata column and not just 2 genes/features. </span>
+<span id="cb70-484"><a href="#cb70-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-487"><a href="#cb70-487" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-488"><a href="#cb70-488" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: featurescatter</span></span>
+<span id="cb70-489"><a href="#cb70-489" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="ot">&lt;-</span> <span class="st">"integrated_snn_res.0.8"</span></span>
+<span id="cb70-490"><a href="#cb70-490" aria-hidden="true" tabindex="-1"></a><span class="fu">FeatureScatter</span>(seurat_integrated, <span class="at">feature1 =</span> <span class="st">"MT-ND5"</span>, <span class="at">feature2 =</span> <span class="st">"mitoRatio"</span>) <span class="sc">+</span> </span>
+<span id="cb70-491"><a href="#cb70-491" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"MitoRatio vs MT-ND5 expression"</span>)</span>
+<span id="cb70-492"><a href="#cb70-492" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-493"><a href="#cb70-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-494"><a href="#cb70-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-495"><a href="#cb70-495" aria-hidden="true" tabindex="-1"></a><span class="fu">## CellScatter</span></span>
+<span id="cb70-496"><a href="#cb70-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-497"><a href="#cb70-497" aria-hidden="true" tabindex="-1"></a>To visualize the differences between two specific cells, you can use the <span class="in">`CellScatter()`</span> function to get a scatterplot of values for each feature in both cells.</span>
+<span id="cb70-498"><a href="#cb70-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-501"><a href="#cb70-501" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-502"><a href="#cb70-502" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: cellscatter_select_cells</span></span>
+<span id="cb70-503"><a href="#cb70-503" aria-hidden="true" tabindex="-1"></a>cell1 <span class="ot">&lt;-</span> <span class="fu">Cells</span>(seurat_integrated)[<span class="dv">1</span>] </span>
+<span id="cb70-504"><a href="#cb70-504" aria-hidden="true" tabindex="-1"></a>cell2 <span class="ot">&lt;-</span> <span class="fu">Cells</span>(seurat_integrated)[<span class="dv">2</span>]</span>
+<span id="cb70-505"><a href="#cb70-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-506"><a href="#cb70-506" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we can see the metadata for the first two cells in the dataset</span></span>
+<span id="cb70-507"><a href="#cb70-507" aria-hidden="true" tabindex="-1"></a><span class="co"># We are comparing "Activated T cell" vs "CD14+ monocytes" (so they should be very different)</span></span>
+<span id="cb70-508"><a href="#cb70-508" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">subset</span>(cells <span class="sc">%in%</span> <span class="fu">c</span>(cell1, cell2)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample, celltype)</span>
+<span id="cb70-509"><a href="#cb70-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-510"><a href="#cb70-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-513"><a href="#cb70-513" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-514"><a href="#cb70-514" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: cellscatter</span></span>
+<span id="cb70-515"><a href="#cb70-515" aria-hidden="true" tabindex="-1"></a><span class="fu">CellScatter</span>(seurat_integrated, <span class="at">cell1=</span>cell1, <span class="at">cell2=</span>cell2)</span>
+<span id="cb70-516"><a href="#cb70-516" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-517"><a href="#cb70-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-518"><a href="#cb70-518" aria-hidden="true" tabindex="-1"></a><span class="fu">## VlnPlot</span></span>
+<span id="cb70-519"><a href="#cb70-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-520"><a href="#cb70-520" aria-hidden="true" tabindex="-1"></a>We can create a violin plot to compare the distribution of gene expression across different populations using the <span class="in">`VlnPlot()`</span> function.</span>
+<span id="cb70-521"><a href="#cb70-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-522"><a href="#cb70-522" aria-hidden="true" tabindex="-1"></a>This is a very customizable function, with many parameters to customize the look of the plots.</span>
+<span id="cb70-523"><a href="#cb70-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-524"><a href="#cb70-524" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=9}</span></span>
+<span id="cb70-525"><a href="#cb70-525" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: vlnplot</span></span>
+<span id="cb70-526"><a href="#cb70-526" aria-hidden="true" tabindex="-1"></a><span class="in">VlnPlot(seurat_integrated, c("CD14", "CD79A"))</span></span>
+<span id="cb70-527"><a href="#cb70-527" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-528"><a href="#cb70-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-529"><a href="#cb70-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-530"><a href="#cb70-530" aria-hidden="true" tabindex="-1"></a>In this example, we are grouping expression by sample and showing 2 plots per column. We are also removing the points (cells) by setting their size to 0.</span>
+<span id="cb70-531"><a href="#cb70-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-534"><a href="#cb70-534" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-535"><a href="#cb70-535" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: vlnplot_customization</span></span>
+<span id="cb70-536"><a href="#cb70-536" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(seurat_integrated, <span class="fu">c</span>(<span class="st">"IFIT1"</span>, <span class="st">"CD53"</span>, <span class="st">"CD52"</span>, <span class="st">"CXCL8"</span>), </span>
+<span id="cb70-537"><a href="#cb70-537" aria-hidden="true" tabindex="-1"></a>        <span class="at">group.by=</span><span class="st">"sample"</span>, <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">pt.size=</span><span class="dv">0</span>)</span>
+<span id="cb70-538"><a href="#cb70-538" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-539"><a href="#cb70-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-540"><a href="#cb70-540" aria-hidden="true" tabindex="-1"></a><span class="fu">## RidgePlot</span></span>
+<span id="cb70-541"><a href="#cb70-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-542"><a href="#cb70-542" aria-hidden="true" tabindex="-1"></a>Ridge plots are most commonly used with CITE-seq or hashtagged dataset as they provide an easy way to identify cells that express a protein/antibody. </span>
+<span id="cb70-543"><a href="#cb70-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-544"><a href="#cb70-544" aria-hidden="true" tabindex="-1"></a>For our scRNA dataset, when we call <span class="in">`RidgePlot()`</span>, on the y-axis we see the unique identities assigned for each cell. The x-axis shows us the expression level for whichever feature we chose. This is a great visualization to use when justifying annotation decisions.</span>
+<span id="cb70-545"><a href="#cb70-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-548"><a href="#cb70-548" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-549"><a href="#cb70-549" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: ridgeplot</span></span>
+<span id="cb70-550"><a href="#cb70-550" aria-hidden="true" tabindex="-1"></a><span class="fu">RidgePlot</span>(seurat_integrated, <span class="st">"CD3D"</span>, <span class="at">assay=</span><span class="st">"RNA"</span>) <span class="sc">+</span> <span class="fu">NoLegend</span>()</span>
+<span id="cb70-551"><a href="#cb70-551" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-552"><a href="#cb70-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-553"><a href="#cb70-553" aria-hidden="true" tabindex="-1"></a><span class="fu">## DimHeatmap</span></span>
+<span id="cb70-554"><a href="#cb70-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-555"><a href="#cb70-555" aria-hidden="true" tabindex="-1"></a>To see the effect of genes on the principal component, we can see the top and bottom features in PC1 using the <span class="in">`DimHeatmap()`</span> function.</span>
+<span id="cb70-556"><a href="#cb70-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-559"><a href="#cb70-559" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb70-560"><a href="#cb70-560" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dimheatmap</span></span>
+<span id="cb70-561"><a href="#cb70-561" aria-hidden="true" tabindex="-1"></a><span class="fu">DimHeatmap</span>(seurat_integrated, <span class="at">nfeatures =</span> <span class="dv">10</span>)</span>
+<span id="cb70-562"><a href="#cb70-562" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-563"><a href="#cb70-563" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-564"><a href="#cb70-564" aria-hidden="true" tabindex="-1"></a><span class="fu">## DoHeatmap</span></span>
+<span id="cb70-565"><a href="#cb70-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-566"><a href="#cb70-566" aria-hidden="true" tabindex="-1"></a>To plot the expression values for genes across all cells (grouped by their identity), you can call Seurat's <span class="in">`DoHeatmap()`</span> function to identify which populations certain genes are lowly or hihgly expressed.</span>
+<span id="cb70-567"><a href="#cb70-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-568"><a href="#cb70-568" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=8}</span></span>
+<span id="cb70-569"><a href="#cb70-569" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: doheatmap</span></span>
+<span id="cb70-570"><a href="#cb70-570" aria-hidden="true" tabindex="-1"></a><span class="in">Idents(seurat_integrated) &lt;- "integrated_snn_res.0.8"</span></span>
+<span id="cb70-571"><a href="#cb70-571" aria-hidden="true" tabindex="-1"></a><span class="in">DoHeatmap(seurat_integrated, features=c("CD14", "FCGR3A", "FCER1A", </span></span>
+<span id="cb70-572"><a href="#cb70-572" aria-hidden="true" tabindex="-1"></a><span class="in">                                        "IL3RA", "CD79A", "CD3D"))</span></span>
+<span id="cb70-573"><a href="#cb70-573" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb70-574"><a href="#cb70-574" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-575"><a href="#cb70-575" aria-hidden="true" tabindex="-1"></a><span class="fu">## DotPlot</span></span>
+<span id="cb70-576"><a href="#cb70-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-577"><a href="#cb70-577" aria-hidden="true" tabindex="-1"></a>Seurat also has a built in visualization tool which allows us to view the average expression of genes groups clusters called <span class="in">`DotPlot()`</span>. The size of the circle represents the number of cells that express the gene within a group and the hue reprents the average expression of the feature.</span>
+<span id="cb70-578"><a href="#cb70-578" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-579"><a href="#cb70-579" aria-hidden="true" tabindex="-1"></a>If you supply a named list with labels annotating genes, those labels will appear at the top of the plot for easier visualization.</span>
+<span id="cb70-580"><a href="#cb70-580" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-581"><a href="#cb70-581" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig.width=15}</span></span>
+<span id="cb70-582"><a href="#cb70-582" aria-hidden="true" tabindex="-1"></a><span class="in">#| label: dotplot</span></span>
+<span id="cb70-583"><a href="#cb70-583" aria-hidden="true" tabindex="-1"></a><span class="in"># List of known celltype markers</span></span>
+<span id="cb70-584"><a href="#cb70-584" aria-hidden="true" tabindex="-1"></a><span class="in">markers &lt;- list()</span></span>
+<span id="cb70-585"><a href="#cb70-585" aria-hidden="true" tabindex="-1"></a><span class="in">markers[["CD14+ monocytes"]] &lt;- c("CD14", "LYZ")</span></span>
+<span id="cb70-586"><a href="#cb70-586" aria-hidden="true" tabindex="-1"></a><span class="in">markers[["FCGR3A+ monocyte"]] &lt;- c("FCGR3A", "MS4A7")</span></span>
+<span id="cb70-587"><a href="#cb70-587" aria-hidden="true" tabindex="-1"></a><span class="in">markers[["Macrophages"]] &lt;- c("MARCO", "ITGAM", "ADGRE1")</span></span>
+<span id="cb70-588"><a href="#cb70-588" aria-hidden="true" tabindex="-1"></a><span class="in">markers[["Conventional dendritic"]] &lt;- c("FCER1A", "CST3")</span></span>
+<span id="cb70-589"><a href="#cb70-589" aria-hidden="true" tabindex="-1"></a><span class="in">markers[["Plasmacytoid dendritic"]] &lt;- c("IL3RA", "GZMB", "SERPINF1", "ITM2C")</span></span>
+<span id="cb70-590"><a href="#cb70-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-591"><a href="#cb70-591" aria-hidden="true" tabindex="-1"></a><span class="in"># Create dotplot based on RNA expression</span></span>
+<span id="cb70-592"><a href="#cb70-592" aria-hidden="true" tabindex="-1"></a><span class="in">DotPlot(seurat_integrated, markers, assay="RNA", group.by = "integrated_snn_res.0.8")</span></span>
+<span id="cb70-593"><a href="#cb70-593" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>This lesson has been developed by members of the teaching team at the <a href="http://bioinformatics.sph.harvard.edu/">Harvard Chan Bioinformatics Core (HBC)</a>. <br> These are open access materials distributed under the terms of the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution license</a> (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. <br> A portion of these materials and hands-on activities were adapted from the <a href="https://satijalab.org/">Satija Lab’s</a> <a href="https://satijalab.org/seurat/pbmc3k_tutorial.html">Seurat - Guided Clustering Tutorial</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

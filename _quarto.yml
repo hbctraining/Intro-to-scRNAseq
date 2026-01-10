@@ -1,0 +1,89 @@
+project:
+  type: website
+  output-dir: docs
+  resources:
+    - img/
+    - css/
+    - slides/
+
+
+website:
+  title: "Introduction to single-cell RNA-seq"
+  page-footer: >
+      This lesson has been developed by members of the teaching team at the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). <br>
+      These are open access materials distributed under the terms of the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. <br>
+      A portion of these materials and hands-on activities were adapted from the [Satija Lab's](https://satijalab.org/) [Seurat - Guided Clustering Tutorial](https://satijalab.org/seurat/pbmc3k_tutorial.html)
+
+  
+  navbar:
+    left:
+      - text: "Schedule"
+        href: lessons/schedule.qmd
+    right:
+      - text: "HBC"
+        href: https://bioinformatics.sph.harvard.edu/
+      - text: "GitHub"
+        href: https://github.com/hbctraining/Intro-to-scRNAseq
+      - text: "Contact us"
+        href: mailto:hbctraining@hsph.harvard.edu
+  
+  
+  sidebar:
+    title: "Lessons"      # Optional title above the sidebar
+    style: "docked"       # Sidebar is docked to the left
+    collapse-level: 1     # At what header level to start collapsing
+    # contents: auto      # Creates automatic TOC from page headers (no sections)
+    contents:
+      - section: "Pre-reading:"
+        contents:
+        - lessons/01_intro_to_scRNA-seq.qmd
+        - lessons/02_generation_of_count_matrix.qmd
+
+      - section: "Day 1:"
+        contents:
+          - lessons/03_quality_control-setup.qmd
+      - section: "Day 1 Self-learning:"
+        contents:
+          - lessons/04_cellranger_QC.qmd
+          - lessons/05_quality_control.qmd
+          - lessons/06_theory_of_PCA.qmd
+          
+      - section: "Day 2:"
+        contents:
+          - lessons/07_SCT_normalization.qmd
+          - lessons/08_integration_cca_theory.qmd
+      - section: "Day 2 Self-learning"
+        contents:
+          - lessons/09_integration_code_harmony.qmd
+          - lessons/10_clustering_cells_SCT.qmd
+          - lessons/11_clustering_quality_control.qmd
+          - lessons/12_seurat_cheatsheet.qmd
+          
+      - section: "Day 3:"
+        contents:
+          - lessons/13_marker_identification.qmd
+          - lessons/14_scRNAseq_workflow.qmd
+          
+
+format:
+  html:
+    theme: simplex
+    css: css/styles.css
+    fig-align: "center"
+    toc: true
+    number-sections: false
+    code-block-bg: true
+    code-copy: true      # enables copy button (default in most themes)
+    code-tools: true     # enables the copy button!
+    code-line-wrap: wrap
+    google-analytics: UA-150953419-1
+    prompt: true         
+
+# Global Execution Defaults
+execute:
+  echo: true               # show code
+  eval: true               # run code
+  warning: false           # show warnings
+  error: false             # show errors
+  message: false           # show messages
+  prompt: true

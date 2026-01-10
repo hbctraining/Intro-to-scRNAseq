@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu">
+
+<title>Quality Control Setup – Introduction to single-cell RNA-seq</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-e5cb4ee4193d6a2f28a249434e39fb42.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Introduction to single-cell RNA-seq</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lessons/schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://bioinformatics.sph.harvard.edu/"> 
+<span class="menu-text">HBC</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/hbctraining/Intro-to-scRNAseq-Quarto"> 
+<span class="menu-text">GitHub</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="mailto:hbctraining@hsph.harvard.edu"> 
+<span class="menu-text">Contact us</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/03_quality_control-setup.html">Day 1:</a></li><li class="breadcrumb-item"><a href="../lessons/03_quality_control-setup.html">Quality Control Setup</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Pre-reading:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/01_intro_to_scRNA-seq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction to single-cell RNA-seq</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/02_generation_of_count_matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generation of count matrix</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Day 1:</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/03_quality_control-setup.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Quality Control Setup</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 1 Self-learning:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/04_cellranger_QC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quality Control of Cellranger Output</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/05_quality_control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quality Control Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/06_theory_of_PCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Theory of PCA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 2:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/07_SCT_normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Normalization, identification of most variable genes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/08_integration_cca_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Integration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 2 Self-learning</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/09_integration_code_harmony.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performing Integration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/10_clustering_cells_SCT.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clustering Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/11_clustering_quality_control.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clustering QC</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/12_seurat_cheatsheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Seurat Cheatsheet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Day 3:</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/13_marker_identification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Marker identification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lessons/14_scRNAseq_workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Workflow Overview</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives:</a></li>
+  <li><a href="#single-cell-rna-seq-quality-control-set-up" id="toc-single-cell-rna-seq-quality-control-set-up" class="nav-link" data-scroll-target="#single-cell-rna-seq-quality-control-set-up">Single-cell RNA-seq: Quality control set-up</a>
+  <ul class="collapse">
+  <li><a href="#exploring-the-example-dataset" id="toc-exploring-the-example-dataset" class="nav-link" data-scroll-target="#exploring-the-example-dataset">Exploring the example dataset</a>
+  <ul class="collapse">
+  <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data">Raw data</a></li>
+  <li><a href="#metadata" id="toc-metadata" class="nav-link" data-scroll-target="#metadata">Metadata</a></li>
+  </ul></li>
+  <li><a href="#set-up" id="toc-set-up" class="nav-link" data-scroll-target="#set-up">Set up</a></li>
+  <li><a href="#project-organization" id="toc-project-organization" class="nav-link" data-scroll-target="#project-organization">Project organization</a>
+  <ul class="collapse">
+  <li><a href="#new-script" id="toc-new-script" class="nav-link" data-scroll-target="#new-script">New script</a></li>
+  <li><a href="#loading-libraries" id="toc-loading-libraries" class="nav-link" data-scroll-target="#loading-libraries">Loading libraries</a></li>
+  </ul></li>
+  <li><a href="#loading-single-cell-rna-seq-count-data" id="toc-loading-single-cell-rna-seq-count-data" class="nav-link" data-scroll-target="#loading-single-cell-rna-seq-count-data">Loading single-cell RNA-seq count data</a>
+  <ul class="collapse">
+  <li><a href="#barcodes.tsv" id="toc-barcodes.tsv" class="nav-link" data-scroll-target="#barcodes.tsv">1. <code>barcodes.tsv</code></a></li>
+  <li><a href="#features.tsv" id="toc-features.tsv" class="nav-link" data-scroll-target="#features.tsv">2. <code>features.tsv</code></a></li>
+  <li><a href="#matrix.mtx" id="toc-matrix.mtx" class="nav-link" data-scroll-target="#matrix.mtx">3. <code>matrix.mtx</code></a></li>
+  <li><a href="#reading-in-a-single-sample" id="toc-reading-in-a-single-sample" class="nav-link" data-scroll-target="#reading-in-a-single-sample">Reading in a single sample</a></li>
+  <li><a href="#reading-in-multiple-samples-with-a-for-loop" id="toc-reading-in-multiple-samples-with-a-for-loop" class="nav-link" data-scroll-target="#reading-in-multiple-samples-with-a-for-loop">Reading in multiple samples with a <code>for loop</code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/03_quality_control-setup.html">Day 1:</a></li><li class="breadcrumb-item"><a href="../lessons/03_quality_control-setup.html">Quality Control Setup</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Quality Control Setup</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Invalid Date</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Approximate time: 90 minutes</p>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives:</h2>
+<ul>
+<li>Demonstrate how to import data and set up project for upcoming quality control analysis.</li>
+</ul>
+</section>
+<section id="single-cell-rna-seq-quality-control-set-up" class="level1">
+<h1>Single-cell RNA-seq: Quality control set-up</h1>
+<p><img src="../img/sc_workflow_2022.jpg" width="630"></p>
+<p>After quantifying gene expression we need to bring this data into R to generate metrics for performing QC. In this lesson we will talk about the format(s) count data can be expected in, and how to read it into R so we can move on to the QC step in the workflow. We will also discuss the dataset we will be using and the associated metadata.</p>
+<hr>
+<section id="exploring-the-example-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-example-dataset">Exploring the example dataset</h2>
+<p>For this workshop we will be working with a single-cell RNA-seq dataset which is part of a larger study from <a href="https://www.nature.com/articles/nbt.4042">Kang et al, 2017</a>. In this paper, the authors present a computational algorithm that harnesses genetic variation (eQTL) to determine the genetic identity of each droplet containing a single cell (singlet) and identify droplets containing two cells from different individuals (doublets).</p>
+<p>The data used to test their algorithm is comprised of pooled Peripheral Blood Mononuclear Cells (PBMCs) taken from eight lupus patients, split into control and interferon beta-treated (stimulated) conditions.</p>
+<p><img src="../img/kangetal_image.png" width="700"></p>
+<p><em>Image credit: <a href="https://www.nature.com/articles/nbt.4042">Kang et al, 2017</a></em></p>
+<section id="raw-data" class="level3">
+<h3 class="anchored" data-anchor-id="raw-data">Raw data</h3>
+<p>This dataset is available on GEO (<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96583">GSE96583</a>), however the available counts matrix lacked mitochondrial reads, so we downloaded the BAM files from the SRA (<a href="https://www-ncbi-nlm-nih-gov.ezp-prod1.hul.harvard.edu/sra?term=SRP102802">SRP102802</a>). These BAM files were converted back to FASTQ files, then run through <a href="https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger">Cell Ranger</a> to obtain the count data that we will be using.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The count data for this dataset is also freely available from 10X Genomics and is used in the <a href="https://satijalab.org/seurat/v3.0/immune_alignment.html">Seurat tutorial</a>.</p>
+</div>
+</div>
+</section>
+<section id="metadata" class="level3">
+<h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
+<p>In addition to the raw data, we also need to collect <strong>information about the data</strong>; this is known as <strong>metadata</strong>. There is often a temptation to just start exploring the data, but it is not very meaningful if we know nothing about the samples that this data originated from.</p>
+<p>Some relevant metadata for our dataset is provided below:</p>
+<ul>
+<li><p>The libraries were prepared using 10X Genomics version 2 chemistry</p></li>
+<li><p>The samples were sequenced on the Illumina NextSeq 500</p></li>
+<li><p>PBMC samples from eight individual lupus patients were separated into two aliquots each.</p>
+<ul>
+<li>One aliquot of PBMCs was activated by 100 U/mL of recombinant IFN-β for 6 hours.</li>
+<li>The second aliquot was left untreated.</li>
+<li>After 6 hours, the eight samples for each condition were pooled together in two final pools (stimulated cells and control cells). We will be working with these two, pooled samples. (<em>We did not demultiplex the samples because SNP genotype information was used to demultiplex in the paper and the barcodes/sample IDs were not readily available for this data. Generally, you would demultiplex and perform QC on each individual sample rather than pooling the samples.</em>)</li>
+</ul></li>
+<li><p>12,138 and 12,167 cells were identified (after removing doublets) for control and stimulated pooled samples, respectively.</p></li>
+<li><p>Since the samples are PBMCs, we will expect immune cells, such as:</p>
+<ul>
+<li>B cells</li>
+<li>T cells</li>
+<li>NK cells</li>
+<li>monocytes</li>
+<li>macrophages</li>
+<li>possibly megakaryocytes</li>
+</ul></li>
+</ul>
+<p><strong>It is recommended that you have some expectation regarding the cell types you expect to see in a dataset prior to performing the QC.</strong> This will inform you if you have any cell types with low complexity (lots of transcripts from a few genes) or cells with higher levels of mitochondrial expression. This will enable us to account for these biological factors during the analysis workflow.</p>
+<p>None of the above cell types are expected to be low complexity or anticipated to have high mitochondrial content.</p>
+</section>
+</section>
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set up</h2>
+<p>For this workshop, we will be working within an RStudio project. In order to follow along you should have <strong>downloaded the R project</strong>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you haven’t done this already, the project can be accessed using <a href="https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1">this link</a>.</p>
+</div>
+</div>
+<p>Once downloaded, you should see a file called <code>single_cell_rnaseq.zip</code> on your computer (likely, in your <code>Downloads</code> folder).</p>
+<ol type="1">
+<li>Unzip this file. It will result in a folder of the same name.</li>
+<li><strong>Move the folder to the location on your computer where you would like to perform the analysis.</strong></li>
+<li>Open up the folder. The contents will look like the screenshot below.</li>
+<li><strong>Locate the <code>.Rproj file</code> and double-click on it.</strong> This will open up RStudio with the “single_cell_rnaseq” project loaded.</li>
+</ol>
+<p><img src="../img/proj_screenshot.png" width="500"></p>
+</section>
+<section id="project-organization" class="level2">
+<h2 class="anchored" data-anchor-id="project-organization">Project organization</h2>
+<p>One of the most important parts of research that involves large amounts of data, is how best to manage it. We tend to prioritize the analysis, but there are many other important aspects of <strong>data management that are often overlooked</strong> in the excitement to get a first look at new data. The <a href="https://datamanagement.hms.harvard.edu/">HMS Data Management Working Group</a>, discusses in-depth some things to consider beyond the data creation and analysis.</p>
+<p>One important aspect of data management is organization. For each experiment you work on and analyze data for, it is considered best practice to get organized by creating <strong>a planned storage space (directory structure)</strong>. We will do that for our single-cell analysis.</p>
+<p>Look inside your project space and you will find that a directory structure has been setup for you:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>single_cell_rnaseq<span class="sc">/</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>├── data</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>├── results</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>└── figures</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+NOTE FOR WINDOWS OS users
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When you open the project folder after unzipping, please check if you have a <code>data</code> folder with a sub folder also called <code>data</code>. If this is the case, please move all the files from the subfolder into the parent <code>data</code> folder.</p>
+</div>
+</div>
+<section id="new-script" class="level3">
+<h3 class="anchored" data-anchor-id="new-script">New script</h3>
+<p>Next, open a new Rscript file, and start with some comments to indicate what this file is going to contain:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># HBC single-cell RNA-seq workshop</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Written by &lt;Your_name&gt; on September 2025</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Single-cell RNA-seq analysis - QC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Save the Rscript as <code>quality_control.R</code>. Your working directory should look something like this:</p>
+<p><img src="../img/Rstudio_singlecell.png" width="400"></p>
+</section>
+<section id="loading-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="loading-libraries">Loading libraries</h3>
+<p>Now, we can load the necessary libraries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RCurl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="loading-single-cell-rna-seq-count-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-single-cell-rna-seq-count-data">Loading single-cell RNA-seq count data</h2>
+<p>Regardless of the technology or pipeline used to process your raw single-cell RNA-seq sequence data, the output with quantified expression will generally be the same. That is, for each individual sample you will have the following <strong>three files</strong>:</p>
+<ol type="1">
+<li>A file with the <strong>cell IDs</strong>, representing all cells quantified</li>
+<li>A file with the <strong>gene IDs</strong>, representing all genes quantified</li>
+<li>A <strong>matrix of counts</strong> per gene for every cell</li>
+</ol>
+<p>We can explore these files by clicking the <code>data/ctrl_raw_feature_bc_matrix</code> folder:</p>
+<section id="barcodes.tsv" class="level3">
+<h3 class="anchored" data-anchor-id="barcodes.tsv">1. <code>barcodes.tsv</code></h3>
+<p>This is a text file which contains all cellular barcodes present for that sample. Barcodes are listed in the order of data presented in the matrix file (i.e.&nbsp;these are the column names).</p>
+<p><img src="../img/cell_ids_new.png" width="130"></p>
+</section>
+<section id="features.tsv" class="level3">
+<h3 class="anchored" data-anchor-id="features.tsv">2. <code>features.tsv</code></h3>
+<p>This is a text file which contains the identifiers of the quantified genes. The source of the identifier can vary depending on what reference (i.e.&nbsp;Ensembl, NCBI, UCSC) you use in the quantification methods, but most often these are official gene symbols. The order of these genes corresponds to the order of the rows in the matrix file (i.e.&nbsp;these are the row names).</p>
+<p><img src="../img/genes.png" width="200"></p>
+</section>
+<section id="matrix.mtx" class="level3">
+<h3 class="anchored" data-anchor-id="matrix.mtx">3. <code>matrix.mtx</code></h3>
+<p>This is a text file which contains a matrix of count values. The rows are associated with the gene IDs above and columns correspond to the cellular barcodes. Note that there are <strong>many zero values</strong> in this matrix.</p>
+<p><img src="../img/sparse_matrix.png" width="600"></p>
+<p>Loading this data into R requires us to <strong>use functions that allow us to efficiently combine these three files into a single count matrix.</strong> However, instead of creating a regular matrix data structure, the functions we will use create a <strong>sparse matrix</strong> to reduce the amount of memory (RAM), processing capacity (CPU) and storage required to work with our huge count matrix.</p>
+<p>Different methods for reading in data include:</p>
+<ol type="1">
+<li><strong><code>readMM()</code></strong>: This function is from the <strong>Matrix</strong> package and will convert our standard matrix into a sparse matrix. The <code>features.tsv</code> file and <code>barcodes.tsv</code> must first be individually loaded into R and then they can be combined. For specific code and instructions on how to do this please see <a href="../lessons/Aside_readMM_loadData.html">these additional material</a>.</li>
+<li><strong><code>Read10X()</code></strong>: This function is from the <strong>Seurat</strong> package and will use the Cell Ranger output directory as input, directly. With this method individual files do not need to be loaded in, instead the function will load and combine them into a sparse matrix. <strong><em>We will be using this function to load in our data!</em></strong></li>
+</ol>
+</section>
+<section id="reading-in-a-single-sample" class="level3">
+<h3 class="anchored" data-anchor-id="reading-in-a-single-sample">Reading in a single sample</h3>
+<p>After processing 10X data using its proprietary software Cell Ranger, you will have an <code>outs</code> directory (always). Within this directory you will find a number of different files including the files listed below:</p>
+<ul>
+<li><strong><code>web_summary.html</code>:</strong> report that explores different QC metrics, including the mapping metrics, filtering thresholds, estimated number of cells after filtering, and information on the number of reads and genes per cell after filtering.</li>
+<li><strong>BAM alignment files:</strong> files used for visualization of the mapped reads and for re-creation of FASTQ files, if needed</li>
+<li><strong><code>filtered_feature_bc_matrix</code>:</strong> folder containing all files needed to construct the count matrix using data filtered by Cell Ranger</li>
+<li><strong><code>raw_feature_bc_matrix</code>:</strong> folder containing all files needed to construct the count matrix using the raw unfiltered data</li>
+</ul>
+<p>While Cell Ranger performs filtering on the expression counts (see note below), we wish to perform our own QC and filtering because we want to account for the biology of our experiment/biological system. Given this <strong>we are only interested in the <code>raw_feature_bc_matrix</code> folder</strong> in the Cell Ranger output.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Why do we not use the <code>filtered_feature_bc_matrix</code> folder?** The <code>filtered_feature_bc_matrix</code> uses <a href="https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/algorithms/overview">internal filtering criteria by Cell Ranger</a>, and we do not have control of what cells to keep or abandon._</p>
+<p><em>The filtering performed by Cell Ranger when generating the <code>filtered_feature_bc_matrix</code> is often good; however, sometimes data can be of very high quality and the Cell Ranger filtering process can remove high quality cells. In addition, it is generally preferable to explore your own data while taking into account the biology of the experiment for applying thresholds during filtering. For example, if you expect a particular cell type in your dataset to be smaller and/or not as transcriptionally active as other cell types in your dataset, these cells have the potential to be filtered out. However, with Cell Ranger v3 they have tried to account for cells of different sizes (for example, tumor vs infiltrating lymphocytes), and now may not filter as many low quality cells as needed.</em></p>
+</div>
+</div>
+<p>If we had a single sample, we could generate the count matrix and then subsequently create a Seurat object:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The seurat object
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Seurat object is a custom list-like object that has well-defined spaces to store specific information/data. You can find more information about the slots in the Seurat object <a href="https://github.com/satijalab/seurat/wiki/Seurat">at this link</a>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How to read in 10X data for a single sample (output is a sparse matrix)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ctrl_counts <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> <span class="st">"data/ctrl_raw_feature_bc_matrix"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Turn count matrix into a Seurat object (output is a Seurat object)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ctrl <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> ctrl_counts,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min.features =</span> <span class="dv">100</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ctrl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class Seurat 
+33538 features across 15688 samples within 1 assay 
+Active assay: RNA (33538 features, 0 variable features)
+ 1 layer present: counts</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>min.features</code> argument specifies the minimum number of genes that need to be detected per cell. This argument will filter out poor quality cells that likely just have random barcodes encapsulated without any cell present. Usually, cells with less than 100 genes detected are not considered for analysis.</p>
+</div>
+</div>
+<p><strong>Seurat automatically creates some metadata</strong> for each of the cells when you use the <code>Read10X()</code> function to read in data. This information is stored in the <code>meta.data</code> slot within the Seurat object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the metadata</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ctrl<span class="sc">@</span>meta.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    orig.ident nCount_RNA nFeature_RNA
+AAACATACAATGCC-1 SeuratProject       2344          874
+AAACATACATTTCC-1 SeuratProject       3125          896
+AAACATACCAGAAA-1 SeuratProject       2578          725
+AAACATACCAGCTA-1 SeuratProject       3261          979
+AAACATACCATGCA-1 SeuratProject        746          362
+AAACATACCTCGCT-1 SeuratProject       3519          866</code></pre>
+</div>
+</div>
+<p>What do the columns of metadata mean?</p>
+<ul>
+<li><code>orig.ident</code>: this often contains the sample identity if known, but will default to “SeuratProject”</li>
+<li><code>nCount_RNA</code>: number of UMIs per cell</li>
+<li><code>nFeature_RNA</code>: number of genes detected per cell</li>
+</ul>
+</section>
+<section id="reading-in-multiple-samples-with-a-for-loop" class="level3">
+<h3 class="anchored" data-anchor-id="reading-in-multiple-samples-with-a-for-loop">Reading in multiple samples with a <code>for loop</code></h3>
+<p>In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into R more efficient we can use a <code>for</code> loop, which will iterate over a series of commands for each of the inputs given and create seurat objects for each of our samples.</p>
+<p>In R, the <code>for</code> loop has the following structure/syntax:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> input){</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    command1</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    command2</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    command3</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Today we will use it to <strong>iterate over the two sample folders</strong> and execute two commands for each sample as we did above for a single sample -</p>
+<ol type="1">
+<li>Read in the count data (<code>Read10X()</code>) and</li>
+<li>Create the Seurat objects from the read in data (<code>CreateSeuratObject()</code>)</li>
+</ol>
+<p>Go ahead and copy and paste the code below into your script and then run it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sample_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty list to populate seurat object for each sample</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>list_seurat <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sample <span class="cf">in</span> sample_names) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Path to data directory</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    data_dir <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/"</span>, sample, <span class="st">"_raw_feature_bc_matrix"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a Seurat object for each sample</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    seurat_data <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> data_dir)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    seurat_obj <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> seurat_data,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">min.features =</span> <span class="dv">100</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">project =</span> sample)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save seurat object to list</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    list_seurat[[sample]] <span class="ot">&lt;-</span> seurat_obj</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s break down the <code>for loop</code> and go over the different lines of code:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Breaking down the for loop
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="step-1-specify-inputs" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-specify-inputs">Step 1: Specify inputs</h4>
+<p>For this dataset, we have two samples and two associated folders that we would like to use as input to create the two Seurat objects:</p>
+<ul>
+<li><code>ctrl_raw_feature_bc_matrix</code></li>
+<li><code>stim_raw_feature_bc_matrix</code></li>
+</ul>
+<p>We can specify these sample names in the <em>input</em> part for our <code>for loop</code> as elements of a vector using <code>c()</code>. We are assigning these to a <em>variable</em> and we can call that variable anything we would like (try to give it a name that makes sense). In this example, we called the <em>variable</em> <code>sample</code>.</p>
+<p>During the execution of the above loop, <code>sample</code> will first contain the value <em>“ctrl”</em>, run through the commands all the way through to storing the seurat object as a list. Next, it will contain the value <em>“stim”</em> and once again run through all the commands. If you had 15 folders as input, instead of 2, the above code will run through 15 times, for each of your data folders.</p>
+<p>To start, let us test out what happens if we print out what <code>sample</code> looks like and the associated <code>data_dir</code> path we specify.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sample_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty list to populate seurat object for each sample</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>list_seurat <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create each individual Seurat object</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sample <span class="cf">in</span> sample_names) {</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(sample)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Path to data directory</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    data_dir <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/"</span>, sample, <span class="st">"_raw_feature_bc_matrix"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(data_dir)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-read-in-data-for-the-input" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-read-in-data-for-the-input">Step 2: Read in data for the input</h4>
+<p>We can continue our <code>for loop</code> by adding a line to read in data with <code>Read10X()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>        seurat_data <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> data_dir)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-create-seurat-object-from-the-10x-count-data" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-create-seurat-object-from-the-10x-count-data">Step 3: Create Seurat object from the 10X count data</h4>
+<p>Now, we can create the Seurat object by using the <code>CreateSeuratObject()</code> nction, adding in the argument <code>project</code>, where we can add the sample name.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>        seurat_obj <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> seurat_data, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">min.features =</span> <span class="dv">100</span>, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">project =</span> sample)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-4-assign-seurat-object-to-a-new-variable-based-on-sample" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-assign-seurat-object-to-a-new-variable-based-on-sample">Step 4: Assign Seurat object to a new variable based on sample</h4>
+<p>The last command assignts the Seurat object created (<code>seurat_obj</code>) to the empty list that was initialized before the for loop. In this way, when we iterate and move on to the next sample in our <code>input</code> we will not overwrite the Seurat object created in the previous iteration:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>        list_seurat[[sample]] <span class="ot">&lt;-</span> seurat_obj</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</div>
+</div>
+<p>Now that we have created both of these objects, let’s take a quick look at the list we just created. We should see that there are two Seurat objects in our list that correspond to each sample.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>list_seurat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ctrl
+An object of class Seurat 
+33538 features across 15688 samples within 1 assay 
+Active assay: RNA (33538 features, 0 variable features)
+ 1 layer present: counts
+
+$stim
+An object of class Seurat 
+33538 features across 15756 samples within 1 assay 
+Active assay: RNA (33538 features, 0 variable features)
+ 1 layer present: counts</code></pre>
+</div>
+</div>
+<p>Next, we need to merge these objects together into a single Seurat object. This will make it easier to run the QC steps for both sample groups together and enable us to easily compare the data quality for all the samples.</p>
+<p>We can use the <code>merge()</code> and <code>JoinLayers()</code> functions from the Seurat package to do this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a merged Seurat object</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> list_seurat[[<span class="st">"ctrl"</span>]], </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> list_seurat[[<span class="st">"stim"</span>]], </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">add.cell.id =</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the count matrices of both samples together</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">JoinLayers</span>(merged_seurat)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>merged_seurat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class Seurat 
+33538 features across 31444 samples within 1 assay 
+Active assay: RNA (33538 features, 0 variable features)
+ 1 layer present: counts</code></pre>
+</div>
+</div>
+<p>Because the same cell IDs can be used for different samples, we add a <strong>sample-specific prefix</strong> to each of our cell IDs using the <code>add.cell.id</code> argument.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What if I am merging more than two samples?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Seurat now has functionality to merge many samples together. You can do this quite easily by adding all sample objects to the <code>y</code> argument in a vector format. An example is provided below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a> merged_seurat <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> seurat_list[[<span class="dv">1</span>]], </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">y =</span> seurat_list[[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(seurat_list)]],</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">add.cell.id =</span> <span class="fu">names</span>(seurat_list))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>If we look at the metadata of the merged object we should be able to see the prefixes in the rownames:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(merged_seurat<span class="sc">@</span>meta.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      orig.ident nCount_RNA nFeature_RNA
+ctrl_AAACATACAATGCC-1       ctrl       2344          874
+ctrl_AAACATACATTTCC-1       ctrl       3125          896
+ctrl_AAACATACCAGAAA-1       ctrl       2578          725
+ctrl_AAACATACCAGCTA-1       ctrl       3261          979
+ctrl_AAACATACCATGCA-1       ctrl        746          362
+ctrl_AAACATACCTCGCT-1       ctrl       3519          866</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(merged_seurat<span class="sc">@</span>meta.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      orig.ident nCount_RNA nFeature_RNA
+stim_TTTGCATGCGACAT-1       stim        620          295
+stim_TTTGCATGCTAAGC-1       stim       1641          545
+stim_TTTGCATGGGACGA-1       stim       1233          518
+stim_TTTGCATGGTGAGG-1       stim       1084          469
+stim_TTTGCATGGTTTGG-1       stim        818          432
+stim_TTTGCATGTCTTAC-1       stim       1104          438</code></pre>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb23" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Quality Control Setup"</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> Thursday, January 30th, 2020</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>Approximate time: 90 minutes</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning Objectives:</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Demonstrate how to import data and set up project for upcoming quality control analysis.</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single-cell RNA-seq: Quality control set-up</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/sc_workflow_2022.jpg" width="630"&gt;</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>After quantifying gene expression we need to bring this data into R to generate metrics for performing QC. In this lesson we will talk about the format(s) count data can be expected in, and how to read it into R so we can move on to the QC step in the workflow. We will also discuss the dataset we will be using and the associated metadata.</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exploring the example dataset</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>For this workshop we will be working with a single-cell RNA-seq dataset which is part of a larger study from <span class="co">[</span><span class="ot">Kang et al, 2017</span><span class="co">](https://www.nature.com/articles/nbt.4042)</span>. In this paper, the authors present a computational algorithm that harnesses genetic variation (eQTL) to determine the genetic identity of each droplet containing a single cell (singlet) and identify droplets containing two cells from different individuals (doublets).</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>The data used to test their algorithm is comprised of pooled Peripheral Blood Mononuclear Cells (PBMCs) taken from eight lupus patients, split into control and interferon beta-treated (stimulated) conditions. </span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/kangetal_image.png" width="700"&gt;</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>*Image credit: [Kang et al, 2017](https://www.nature.com/articles/nbt.4042)*</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Raw data</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>This dataset is available on GEO (<span class="co">[</span><span class="ot">GSE96583</span><span class="co">](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96583)</span>), however the available counts matrix lacked mitochondrial reads, so we downloaded the BAM files from the SRA (<span class="co">[</span><span class="ot">SRP102802</span><span class="co">](https://www-ncbi-nlm-nih-gov.ezp-prod1.hul.harvard.edu/sra?term=SRP102802)</span>). These BAM files were converted back to FASTQ files, then run through <span class="co">[</span><span class="ot">Cell Ranger</span><span class="co">](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger)</span> to obtain the count data that we will be using.</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>The count data for this dataset is also freely available from 10X Genomics and is used in the <span class="co">[</span><span class="ot">Seurat tutorial</span><span class="co">](https://satijalab.org/seurat/v3.0/immune_alignment.html)</span>. </span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### Metadata</span></span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>In addition to the raw data, we also need to collect **information about the data**; this is known as **metadata**. There is often a temptation to just start exploring the data, but it is not very meaningful if we know nothing about the samples that this data originated from.</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>Some relevant metadata for our dataset is provided below:</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>The libraries were prepared using 10X Genomics version 2 chemistry</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>The samples were sequenced on the Illumina NextSeq 500</span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>PBMC samples from eight individual lupus patients were separated into two aliquots each. </span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>One aliquot of PBMCs was activated by 100 U/mL of recombinant IFN-β for 6 hours. </span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>The second aliquot was left untreated. </span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>After 6 hours, the eight samples for each condition were pooled together in two final pools (stimulated cells and control cells). We will be working with these two, pooled samples. (*We did not demultiplex the samples because SNP genotype information was used to demultiplex in the paper and the barcodes/sample IDs were not readily available for this data. Generally, you would demultiplex and perform QC on each individual sample rather than pooling the samples.*)</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>12,138 and 12,167 cells were identified (after removing doublets) for control and stimulated pooled samples, respectively.</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Since the samples are PBMCs, we will expect immune cells, such as:</span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>B cells</span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>T cells</span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>NK cells</span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>monocytes</span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>macrophages</span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>possibly megakaryocytes</span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>**It is recommended that you have some expectation regarding the cell types you expect to see in a dataset prior to performing the QC.** This will inform you if you have any cell types with low complexity (lots of transcripts from a few genes) or cells with higher levels of mitochondrial expression. This will enable us to account for these biological factors during the analysis workflow.</span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>None of the above cell types are expected to be low complexity or anticipated to have high mitochondrial content.</span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## Set up</span></span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>For this workshop, we will be working within an RStudio project. In order to follow along you should have **downloaded the R project**.</span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>If you haven't done this already, the project can be accessed using <span class="co">[</span><span class="ot">this link</span><span class="co">](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1)</span>.</span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a>Once downloaded, you should see a file called <span class="in">`single_cell_rnaseq.zip`</span> on your computer (likely, in your <span class="in">`Downloads`</span> folder). </span>
+<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Unzip this file. It will result in a folder of the same name. </span>
+<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Move the folder to the location on your computer where you would like to perform the analysis.**</span>
+<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Open up the folder. The contents will look like the screenshot below. </span>
+<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Locate the `.Rproj file` and double-click on it.** This will open up RStudio with the "single_cell_rnaseq" project loaded. </span>
+<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/proj_screenshot.png" width="500"&gt;</span>
+<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Project organization</span></span>
+<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>One of the most important parts of research that involves large amounts of data, is how best to manage it. We tend to prioritize the analysis, but there are many other important aspects of **data management that are often overlooked** in the excitement to get a first look at new data. The <span class="co">[</span><span class="ot">HMS Data Management Working Group</span><span class="co">](https://datamanagement.hms.harvard.edu/)</span>, discusses in-depth some things to consider beyond the data creation and analysis.</span>
+<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a>One important aspect of data management is organization. For each experiment you work on and analyze data for, it is considered best practice to get organized by creating **a planned storage space (directory structure)**. We will do that for our single-cell analysis. </span>
+<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a>Look inside your project space and you will find that a directory structure has been setup for you:</span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: data_structure</span></span>
+<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a>single_cell_rnaseq<span class="sc">/</span></span>
+<span id="cb23-103"><a href="#cb23-103" aria-hidden="true" tabindex="-1"></a>├── data</span>
+<span id="cb23-104"><a href="#cb23-104" aria-hidden="true" tabindex="-1"></a>├── results</span>
+<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a>└── figures</span>
+<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-108"><a href="#cb23-108" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-109"><a href="#cb23-109" aria-hidden="true" tabindex="-1"></a><span class="fu"># NOTE FOR WINDOWS OS users</span></span>
+<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a>When you open the project folder after unzipping, please check if you have a <span class="in">`data`</span> folder with a sub folder also called <span class="in">`data`</span>. If this is the case, please move all the files from the subfolder into the parent <span class="in">`data`</span> folder.</span>
+<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-112"><a href="#cb23-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-113"><a href="#cb23-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### New script</span></span>
+<span id="cb23-114"><a href="#cb23-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a>Next, open a new Rscript file, and start with some comments to indicate what this file is going to contain:</span>
+<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-119"><a href="#cb23-119" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-120"><a href="#cb23-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: script_metadata</span></span>
+<span id="cb23-121"><a href="#cb23-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-122"><a href="#cb23-122" aria-hidden="true" tabindex="-1"></a><span class="co"># HBC single-cell RNA-seq workshop</span></span>
+<span id="cb23-123"><a href="#cb23-123" aria-hidden="true" tabindex="-1"></a><span class="co"># Written by &lt;Your_name&gt; on September 2025</span></span>
+<span id="cb23-124"><a href="#cb23-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-125"><a href="#cb23-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Single-cell RNA-seq analysis - QC</span></span>
+<span id="cb23-126"><a href="#cb23-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-127"><a href="#cb23-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-128"><a href="#cb23-128" aria-hidden="true" tabindex="-1"></a>Save the Rscript as <span class="in">`quality_control.R`</span>. Your working directory should look something like this:</span>
+<span id="cb23-129"><a href="#cb23-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-130"><a href="#cb23-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-131"><a href="#cb23-131" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/Rstudio_singlecell.png" width="400"&gt;</span>
+<span id="cb23-132"><a href="#cb23-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-133"><a href="#cb23-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-134"><a href="#cb23-134" aria-hidden="true" tabindex="-1"></a><span class="fu">### Loading libraries </span></span>
+<span id="cb23-135"><a href="#cb23-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-136"><a href="#cb23-136" aria-hidden="true" tabindex="-1"></a>Now, we can load the necessary libraries:</span>
+<span id="cb23-137"><a href="#cb23-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-140"><a href="#cb23-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-141"><a href="#cb23-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_libraries</span></span>
+<span id="cb23-142"><a href="#cb23-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb23-143"><a href="#cb23-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb23-144"><a href="#cb23-144" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment)</span>
+<span id="cb23-145"><a href="#cb23-145" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb23-146"><a href="#cb23-146" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb23-147"><a href="#cb23-147" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb23-148"><a href="#cb23-148" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb23-149"><a href="#cb23-149" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb23-150"><a href="#cb23-150" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RCurl)</span>
+<span id="cb23-151"><a href="#cb23-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-152"><a href="#cb23-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-153"><a href="#cb23-153" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading single-cell RNA-seq count data </span></span>
+<span id="cb23-154"><a href="#cb23-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-155"><a href="#cb23-155" aria-hidden="true" tabindex="-1"></a>Regardless of the technology or pipeline used to process your raw single-cell RNA-seq sequence data, the output with quantified expression will generally be the same. That is, for each individual sample you will have the following **three files**:</span>
+<span id="cb23-156"><a href="#cb23-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-157"><a href="#cb23-157" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A file with the **cell IDs**, representing all cells quantified</span>
+<span id="cb23-158"><a href="#cb23-158" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>A file with the **gene IDs**, representing all genes quantified</span>
+<span id="cb23-159"><a href="#cb23-159" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>A **matrix of counts** per gene for every cell</span>
+<span id="cb23-160"><a href="#cb23-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-161"><a href="#cb23-161" aria-hidden="true" tabindex="-1"></a>We can explore these files by clicking the <span class="in">`data/ctrl_raw_feature_bc_matrix`</span> folder:</span>
+<span id="cb23-162"><a href="#cb23-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-163"><a href="#cb23-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. `barcodes.tsv` </span></span>
+<span id="cb23-164"><a href="#cb23-164" aria-hidden="true" tabindex="-1"></a>This is a text file which contains all cellular barcodes present for that sample. Barcodes are listed in the order of data presented in the matrix file (i.e. these are the column names). </span>
+<span id="cb23-165"><a href="#cb23-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-166"><a href="#cb23-166" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-167"><a href="#cb23-167" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/cell_ids_new.png" width="130"&gt;</span>
+<span id="cb23-168"><a href="#cb23-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-169"><a href="#cb23-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-170"><a href="#cb23-170" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. `features.tsv`</span></span>
+<span id="cb23-171"><a href="#cb23-171" aria-hidden="true" tabindex="-1"></a>This is a text file which contains the identifiers of the quantified genes. The source of the identifier can vary depending on what reference (i.e. Ensembl, NCBI, UCSC) you use in the quantification methods, but most often these are official gene symbols. The order of these genes corresponds to the order of the rows in the matrix file (i.e. these are the row names).</span>
+<span id="cb23-172"><a href="#cb23-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-173"><a href="#cb23-173" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/genes.png" width="200"&gt;</span>
+<span id="cb23-174"><a href="#cb23-174" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-175"><a href="#cb23-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-176"><a href="#cb23-176" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. `matrix.mtx`</span></span>
+<span id="cb23-177"><a href="#cb23-177" aria-hidden="true" tabindex="-1"></a>This is a text file which contains a matrix of count values. The rows are associated with the gene IDs above and columns correspond to the cellular barcodes. Note that there are **many zero values** in this matrix.</span>
+<span id="cb23-178"><a href="#cb23-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-179"><a href="#cb23-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-180"><a href="#cb23-180" aria-hidden="true" tabindex="-1"></a>&lt;img src="../img/sparse_matrix.png" width="600"&gt;</span>
+<span id="cb23-181"><a href="#cb23-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-182"><a href="#cb23-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a>Loading this data into R requires us to **use functions that allow us to efficiently combine these three files into a single count matrix.** However, instead of creating a regular matrix data structure, the functions we will use create a **sparse matrix** to reduce the amount of memory (RAM), processing capacity (CPU) and storage required to work with our huge count matrix. </span>
+<span id="cb23-184"><a href="#cb23-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-185"><a href="#cb23-185" aria-hidden="true" tabindex="-1"></a>Different methods for reading in data include:</span>
+<span id="cb23-186"><a href="#cb23-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-187"><a href="#cb23-187" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**`readMM()`**: This function is from the **Matrix** package and will convert our standard matrix into a sparse matrix. The <span class="in">`features.tsv`</span> file and <span class="in">`barcodes.tsv`</span> must first be individually loaded into R and then they can be combined. For specific code and instructions on how to do this please see <span class="co">[</span><span class="ot">these additional material</span><span class="co">](Aside_readMM_loadData.qmd)</span>.</span>
+<span id="cb23-188"><a href="#cb23-188" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**`Read10X()`**: This function is from the **Seurat** package and will use the Cell Ranger output directory as input, directly. With this method individual files do not need to be loaded in, instead the function will load and combine them into a sparse matrix. ***We will be using this function to load in our data!***</span>
+<span id="cb23-189"><a href="#cb23-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-190"><a href="#cb23-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reading in a single sample</span></span>
+<span id="cb23-191"><a href="#cb23-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-192"><a href="#cb23-192" aria-hidden="true" tabindex="-1"></a>After processing 10X data using its proprietary software Cell Ranger, you will have an <span class="in">`outs`</span> directory (always). Within this directory you will find a number of different files including the files listed below:</span>
+<span id="cb23-193"><a href="#cb23-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-194"><a href="#cb23-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`web_summary.html`:** report that explores different QC metrics, including the mapping metrics, filtering thresholds, estimated number of cells after filtering, and information on the number of reads and genes per cell after filtering.</span>
+<span id="cb23-195"><a href="#cb23-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**BAM alignment files:** files used for visualization of the mapped reads and for re-creation of FASTQ files, if needed</span>
+<span id="cb23-196"><a href="#cb23-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`filtered_feature_bc_matrix`:** folder containing all files needed to construct the count matrix using data filtered by Cell Ranger</span>
+<span id="cb23-197"><a href="#cb23-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`raw_feature_bc_matrix`:** folder containing all files needed to construct the count matrix using the raw unfiltered data</span>
+<span id="cb23-198"><a href="#cb23-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-199"><a href="#cb23-199" aria-hidden="true" tabindex="-1"></a>While Cell Ranger performs filtering on the expression counts (see note below), we wish to perform our own QC and filtering because we want to account for the biology of our experiment/biological system. Given this **we are only interested in the `raw_feature_bc_matrix` folder** in the Cell Ranger output. </span>
+<span id="cb23-200"><a href="#cb23-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-201"><a href="#cb23-201" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-202"><a href="#cb23-202" aria-hidden="true" tabindex="-1"></a>Why do we not use the <span class="in">`filtered_feature_bc_matrix`</span> folder?** The <span class="in">`filtered_feature_bc_matrix`</span> uses <span class="co">[</span><span class="ot">internal filtering criteria by Cell Ranger</span><span class="co">](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/algorithms/overview)</span>, and we do not have control of what cells to keep or abandon._</span>
+<span id="cb23-203"><a href="#cb23-203" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb23-204"><a href="#cb23-204" aria-hidden="true" tabindex="-1"></a>_The filtering performed by Cell Ranger when generating the `filtered_feature_bc_matrix` is often good; however, sometimes data can be of very high quality and the Cell Ranger filtering process can remove high quality cells. In addition, it is generally preferable to explore your own data while taking into account the biology of the experiment for applying thresholds during filtering. For example, if you expect a particular cell type in your dataset to be smaller and/or not as transcriptionally active as other cell types in your dataset, these cells have the potential to be filtered out. However, with Cell Ranger v3 they have tried to account for cells of different sizes (for example, tumor vs infiltrating lymphocytes), and now may not filter as many low quality cells as needed._</span>
+<span id="cb23-205"><a href="#cb23-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-206"><a href="#cb23-206" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-207"><a href="#cb23-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-208"><a href="#cb23-208" aria-hidden="true" tabindex="-1"></a>If we had a single sample, we could generate the count matrix and then subsequently create a Seurat object:</span>
+<span id="cb23-209"><a href="#cb23-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-210"><a href="#cb23-210" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-211"><a href="#cb23-211" aria-hidden="true" tabindex="-1"></a><span class="fu"># The seurat object</span></span>
+<span id="cb23-212"><a href="#cb23-212" aria-hidden="true" tabindex="-1"></a>The Seurat object is a custom list-like object that has well-defined spaces to store specific information/data. You can find more information about the slots in the Seurat object <span class="co">[</span><span class="ot">at this link</span><span class="co">](https://github.com/satijalab/seurat/wiki/Seurat)</span>.</span>
+<span id="cb23-213"><a href="#cb23-213" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-214"><a href="#cb23-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-217"><a href="#cb23-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-218"><a href="#cb23-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read_in_single_dataset</span></span>
+<span id="cb23-219"><a href="#cb23-219" aria-hidden="true" tabindex="-1"></a><span class="co"># How to read in 10X data for a single sample (output is a sparse matrix)</span></span>
+<span id="cb23-220"><a href="#cb23-220" aria-hidden="true" tabindex="-1"></a>ctrl_counts <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> <span class="st">"data/ctrl_raw_feature_bc_matrix"</span>)</span>
+<span id="cb23-221"><a href="#cb23-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-222"><a href="#cb23-222" aria-hidden="true" tabindex="-1"></a><span class="co"># Turn count matrix into a Seurat object (output is a Seurat object)</span></span>
+<span id="cb23-223"><a href="#cb23-223" aria-hidden="true" tabindex="-1"></a>ctrl <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> ctrl_counts,</span>
+<span id="cb23-224"><a href="#cb23-224" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min.features =</span> <span class="dv">100</span>)</span>
+<span id="cb23-225"><a href="#cb23-225" aria-hidden="true" tabindex="-1"></a>ctrl</span>
+<span id="cb23-226"><a href="#cb23-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-227"><a href="#cb23-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-228"><a href="#cb23-228" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-229"><a href="#cb23-229" aria-hidden="true" tabindex="-1"></a>The <span class="in">`min.features`</span> argument specifies the minimum number of genes that need to be detected per cell. This argument will filter out poor quality cells that likely just have random barcodes encapsulated without any cell present. Usually, cells with less than 100 genes detected are not considered for analysis.</span>
+<span id="cb23-230"><a href="#cb23-230" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-231"><a href="#cb23-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-232"><a href="#cb23-232" aria-hidden="true" tabindex="-1"></a>**Seurat automatically creates some metadata** for each of the cells when you use the <span class="in">`Read10X()`</span> function to read in data. This information is stored in the <span class="in">`meta.data`</span> slot within the Seurat object. </span>
+<span id="cb23-233"><a href="#cb23-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-236"><a href="#cb23-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-237"><a href="#cb23-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: head_ctrl_dataset</span></span>
+<span id="cb23-238"><a href="#cb23-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the metadata</span></span>
+<span id="cb23-239"><a href="#cb23-239" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ctrl<span class="sc">@</span>meta.data)</span>
+<span id="cb23-240"><a href="#cb23-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-241"><a href="#cb23-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-242"><a href="#cb23-242" aria-hidden="true" tabindex="-1"></a>What do the columns of metadata mean?</span>
+<span id="cb23-243"><a href="#cb23-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-244"><a href="#cb23-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`orig.ident`</span>: this often contains the sample identity if known, but will default to "SeuratProject"</span>
+<span id="cb23-245"><a href="#cb23-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`nCount_RNA`</span>: number of UMIs per cell</span>
+<span id="cb23-246"><a href="#cb23-246" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`nFeature_RNA`</span>: number of genes detected per cell</span>
+<span id="cb23-247"><a href="#cb23-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-248"><a href="#cb23-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reading in multiple samples with a `for loop`</span></span>
+<span id="cb23-249"><a href="#cb23-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-250"><a href="#cb23-250" aria-hidden="true" tabindex="-1"></a>In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into R more efficient we can use a <span class="in">`for`</span> loop, which will iterate over a series of commands for each of the inputs given and create seurat objects for each of our samples. </span>
+<span id="cb23-251"><a href="#cb23-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-252"><a href="#cb23-252" aria-hidden="true" tabindex="-1"></a>In R, the <span class="in">`for`</span> loop has the following structure/syntax:</span>
+<span id="cb23-253"><a href="#cb23-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-256"><a href="#cb23-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-257"><a href="#cb23-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: for_loop_example</span></span>
+<span id="cb23-258"><a href="#cb23-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-259"><a href="#cb23-259" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-260"><a href="#cb23-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-261"><a href="#cb23-261" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> input){</span>
+<span id="cb23-262"><a href="#cb23-262" aria-hidden="true" tabindex="-1"></a>    command1</span>
+<span id="cb23-263"><a href="#cb23-263" aria-hidden="true" tabindex="-1"></a>    command2</span>
+<span id="cb23-264"><a href="#cb23-264" aria-hidden="true" tabindex="-1"></a>    command3</span>
+<span id="cb23-265"><a href="#cb23-265" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-266"><a href="#cb23-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-267"><a href="#cb23-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-268"><a href="#cb23-268" aria-hidden="true" tabindex="-1"></a>Today we will use it to **iterate over the two sample folders** and execute two commands for each sample as we did above for a single sample - </span>
+<span id="cb23-269"><a href="#cb23-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-270"><a href="#cb23-270" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read in the count data (<span class="in">`Read10X()`</span>) and</span>
+<span id="cb23-271"><a href="#cb23-271" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create the Seurat objects from the read in data (<span class="in">`CreateSeuratObject()`</span>)</span>
+<span id="cb23-272"><a href="#cb23-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-273"><a href="#cb23-273" aria-hidden="true" tabindex="-1"></a>Go ahead and copy and paste the code below into your script and then run it.</span>
+<span id="cb23-274"><a href="#cb23-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-277"><a href="#cb23-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-278"><a href="#cb23-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read_in_both_datasets</span></span>
+<span id="cb23-279"><a href="#cb23-279" aria-hidden="true" tabindex="-1"></a>sample_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>)</span>
+<span id="cb23-280"><a href="#cb23-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-281"><a href="#cb23-281" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty list to populate seurat object for each sample</span></span>
+<span id="cb23-282"><a href="#cb23-282" aria-hidden="true" tabindex="-1"></a>list_seurat <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb23-283"><a href="#cb23-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-284"><a href="#cb23-284" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sample <span class="cf">in</span> sample_names) {</span>
+<span id="cb23-285"><a href="#cb23-285" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Path to data directory</span></span>
+<span id="cb23-286"><a href="#cb23-286" aria-hidden="true" tabindex="-1"></a>    data_dir <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/"</span>, sample, <span class="st">"_raw_feature_bc_matrix"</span>)</span>
+<span id="cb23-287"><a href="#cb23-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-288"><a href="#cb23-288" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a Seurat object for each sample</span></span>
+<span id="cb23-289"><a href="#cb23-289" aria-hidden="true" tabindex="-1"></a>    seurat_data <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> data_dir)</span>
+<span id="cb23-290"><a href="#cb23-290" aria-hidden="true" tabindex="-1"></a>    seurat_obj <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> seurat_data,</span>
+<span id="cb23-291"><a href="#cb23-291" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">min.features =</span> <span class="dv">100</span>,</span>
+<span id="cb23-292"><a href="#cb23-292" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">project =</span> sample)</span>
+<span id="cb23-293"><a href="#cb23-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-294"><a href="#cb23-294" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save seurat object to list</span></span>
+<span id="cb23-295"><a href="#cb23-295" aria-hidden="true" tabindex="-1"></a>    list_seurat[[sample]] <span class="ot">&lt;-</span> seurat_obj</span>
+<span id="cb23-296"><a href="#cb23-296" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-297"><a href="#cb23-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-298"><a href="#cb23-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-299"><a href="#cb23-299" aria-hidden="true" tabindex="-1"></a>Let's break down the <span class="in">`for loop`</span> and go over the different lines of code:</span>
+<span id="cb23-300"><a href="#cb23-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-301"><a href="#cb23-301" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb23-302"><a href="#cb23-302" aria-hidden="true" tabindex="-1"></a><span class="fu"># Breaking down the for loop</span></span>
+<span id="cb23-303"><a href="#cb23-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-304"><a href="#cb23-304" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 1: Specify inputs</span></span>
+<span id="cb23-305"><a href="#cb23-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-306"><a href="#cb23-306" aria-hidden="true" tabindex="-1"></a>For this dataset, we have two samples and two associated folders that we would like to use as input to create the two Seurat objects:</span>
+<span id="cb23-307"><a href="#cb23-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-308"><a href="#cb23-308" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ctrl_raw_feature_bc_matrix`</span> </span>
+<span id="cb23-309"><a href="#cb23-309" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`stim_raw_feature_bc_matrix`</span></span>
+<span id="cb23-310"><a href="#cb23-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-311"><a href="#cb23-311" aria-hidden="true" tabindex="-1"></a>We can specify these sample names in the *input* part for our `for loop` as elements of a vector using `c()`. We are assigning these to a *variable* and we can call that variable anything we would like (try to give it a name that makes sense). In this example, we called the *variable* <span class="in">`sample`</span>. </span>
+<span id="cb23-312"><a href="#cb23-312" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb23-313"><a href="#cb23-313" aria-hidden="true" tabindex="-1"></a>During the execution of the above loop, <span class="in">`sample`</span> will first contain the value *"ctrl"*, run through the commands all the way through to storing the seurat object as a list. Next, it will contain the value *"stim"* and once again run through all the commands. If you had 15 folders as input, instead of 2, the above code will run through 15 times, for each of your data folders.</span>
+<span id="cb23-314"><a href="#cb23-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-315"><a href="#cb23-315" aria-hidden="true" tabindex="-1"></a>To start, let us test out what happens if we print out what <span class="in">`sample`</span> looks like and the associated <span class="in">`data_dir`</span> path we specify.</span>
+<span id="cb23-316"><a href="#cb23-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-319"><a href="#cb23-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-320"><a href="#cb23-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: create_individual_seurat_objects</span></span>
+<span id="cb23-321"><a href="#cb23-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-322"><a href="#cb23-322" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-323"><a href="#cb23-323" aria-hidden="true" tabindex="-1"></a>sample_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>)</span>
+<span id="cb23-324"><a href="#cb23-324" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty list to populate seurat object for each sample</span></span>
+<span id="cb23-325"><a href="#cb23-325" aria-hidden="true" tabindex="-1"></a>list_seurat <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb23-326"><a href="#cb23-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-327"><a href="#cb23-327" aria-hidden="true" tabindex="-1"></a><span class="co"># Create each individual Seurat object</span></span>
+<span id="cb23-328"><a href="#cb23-328" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sample <span class="cf">in</span> sample_names) {</span>
+<span id="cb23-329"><a href="#cb23-329" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(sample)</span>
+<span id="cb23-330"><a href="#cb23-330" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Path to data directory</span></span>
+<span id="cb23-331"><a href="#cb23-331" aria-hidden="true" tabindex="-1"></a>    data_dir <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/"</span>, sample, <span class="st">"_raw_feature_bc_matrix"</span>)</span>
+<span id="cb23-332"><a href="#cb23-332" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(data_dir)</span>
+<span id="cb23-333"><a href="#cb23-333" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-334"><a href="#cb23-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-335"><a href="#cb23-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-336"><a href="#cb23-336" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 2: Read in data for the input</span></span>
+<span id="cb23-337"><a href="#cb23-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-338"><a href="#cb23-338" aria-hidden="true" tabindex="-1"></a>We can continue our <span class="in">`for loop`</span> by adding a line to read in data with <span class="in">`Read10X()`</span>:</span>
+<span id="cb23-339"><a href="#cb23-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-342"><a href="#cb23-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-343"><a href="#cb23-343" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read_in_10Xdata</span></span>
+<span id="cb23-344"><a href="#cb23-344" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-345"><a href="#cb23-345" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-346"><a href="#cb23-346" aria-hidden="true" tabindex="-1"></a>        seurat_data <span class="ot">&lt;-</span> <span class="fu">Read10X</span>(<span class="at">data.dir =</span> data_dir)</span>
+<span id="cb23-347"><a href="#cb23-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-348"><a href="#cb23-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-349"><a href="#cb23-349" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 3: Create Seurat object from the 10X count data</span></span>
+<span id="cb23-350"><a href="#cb23-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-351"><a href="#cb23-351" aria-hidden="true" tabindex="-1"></a>Now, we can create the Seurat object by using the <span class="in">`CreateSeuratObject()`</span> nction, adding in the argument <span class="in">`project`</span>, where we can add the sample name.</span>
+<span id="cb23-352"><a href="#cb23-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-355"><a href="#cb23-355" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-356"><a href="#cb23-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: assign_data_to_object</span></span>
+<span id="cb23-357"><a href="#cb23-357" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-358"><a href="#cb23-358" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-359"><a href="#cb23-359" aria-hidden="true" tabindex="-1"></a>        seurat_obj <span class="ot">&lt;-</span> <span class="fu">CreateSeuratObject</span>(<span class="at">counts =</span> seurat_data, </span>
+<span id="cb23-360"><a href="#cb23-360" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">min.features =</span> <span class="dv">100</span>, </span>
+<span id="cb23-361"><a href="#cb23-361" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">project =</span> sample)        </span>
+<span id="cb23-362"><a href="#cb23-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-363"><a href="#cb23-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-364"><a href="#cb23-364" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 4: Assign Seurat object to a new variable based on sample</span></span>
+<span id="cb23-365"><a href="#cb23-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-366"><a href="#cb23-366" aria-hidden="true" tabindex="-1"></a>The last command assignts the Seurat object created (<span class="in">`seurat_obj`</span>) to the empty list that was initialized before the for loop. In this way, when we iterate and move on to the next sample in our <span class="in">`input`</span> we will not overwrite the Seurat object created in the previous iteration:</span>
+<span id="cb23-367"><a href="#cb23-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-370"><a href="#cb23-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-371"><a href="#cb23-371" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: add_seurat_object_to_list</span></span>
+<span id="cb23-372"><a href="#cb23-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-373"><a href="#cb23-373" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-374"><a href="#cb23-374" aria-hidden="true" tabindex="-1"></a>        list_seurat[[sample]] <span class="ot">&lt;-</span> seurat_obj</span>
+<span id="cb23-375"><a href="#cb23-375" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb23-376"><a href="#cb23-376" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-377"><a href="#cb23-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-378"><a href="#cb23-378" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-379"><a href="#cb23-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-380"><a href="#cb23-380" aria-hidden="true" tabindex="-1"></a>Now that we have created both of these objects, let's take a quick look at the list we just created. We should see that there are two Seurat objects in our list that correspond to each sample.</span>
+<span id="cb23-381"><a href="#cb23-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-384"><a href="#cb23-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-385"><a href="#cb23-385" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: list_seurat_objects</span></span>
+<span id="cb23-386"><a href="#cb23-386" aria-hidden="true" tabindex="-1"></a>list_seurat</span>
+<span id="cb23-387"><a href="#cb23-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-388"><a href="#cb23-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-389"><a href="#cb23-389" aria-hidden="true" tabindex="-1"></a>Next, we need to merge these objects together into a single Seurat object. This will make it easier to run the QC steps for both sample groups together and enable us to easily compare the data quality for all the samples.  </span>
+<span id="cb23-390"><a href="#cb23-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-391"><a href="#cb23-391" aria-hidden="true" tabindex="-1"></a>We can use the <span class="in">`merge()`</span> and <span class="in">`JoinLayers()`</span> functions from the Seurat package to do this:</span>
+<span id="cb23-392"><a href="#cb23-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-395"><a href="#cb23-395" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-396"><a href="#cb23-396" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: merge_seurat_objects</span></span>
+<span id="cb23-397"><a href="#cb23-397" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a merged Seurat object</span></span>
+<span id="cb23-398"><a href="#cb23-398" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> list_seurat[[<span class="st">"ctrl"</span>]], </span>
+<span id="cb23-399"><a href="#cb23-399" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> list_seurat[[<span class="st">"stim"</span>]], </span>
+<span id="cb23-400"><a href="#cb23-400" aria-hidden="true" tabindex="-1"></a>                       <span class="at">add.cell.id =</span> <span class="fu">c</span>(<span class="st">"ctrl"</span>, <span class="st">"stim"</span>))</span>
+<span id="cb23-401"><a href="#cb23-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-402"><a href="#cb23-402" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the count matrices of both samples together</span></span>
+<span id="cb23-403"><a href="#cb23-403" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">JoinLayers</span>(merged_seurat)</span>
+<span id="cb23-404"><a href="#cb23-404" aria-hidden="true" tabindex="-1"></a>merged_seurat</span>
+<span id="cb23-405"><a href="#cb23-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-406"><a href="#cb23-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-407"><a href="#cb23-407" aria-hidden="true" tabindex="-1"></a>Because the same cell IDs can be used for different samples, we add a **sample-specific prefix** to each of our cell IDs using the <span class="in">`add.cell.id`</span> argument. </span>
+<span id="cb23-408"><a href="#cb23-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-409"><a href="#cb23-409" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb23-410"><a href="#cb23-410" aria-hidden="true" tabindex="-1"></a><span class="fu"># What if I am merging more than two samples?</span></span>
+<span id="cb23-411"><a href="#cb23-411" aria-hidden="true" tabindex="-1"></a>Seurat now has functionality to merge many samples together. You can do this quite easily by adding all sample objects to the <span class="in">`y`</span> argument in a vector format. An example is provided below: </span>
+<span id="cb23-412"><a href="#cb23-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-415"><a href="#cb23-415" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-416"><a href="#cb23-416" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: merging_multiple_objects</span></span>
+<span id="cb23-417"><a href="#cb23-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb23-418"><a href="#cb23-418" aria-hidden="true" tabindex="-1"></a><span class="do">## DO NOT RUN</span></span>
+<span id="cb23-419"><a href="#cb23-419" aria-hidden="true" tabindex="-1"></a> merged_seurat <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="at">x =</span> seurat_list[[<span class="dv">1</span>]], </span>
+<span id="cb23-420"><a href="#cb23-420" aria-hidden="true" tabindex="-1"></a>                        <span class="at">y =</span> seurat_list[[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(seurat_list)]],</span>
+<span id="cb23-421"><a href="#cb23-421" aria-hidden="true" tabindex="-1"></a>                        <span class="at">add.cell.id =</span> <span class="fu">names</span>(seurat_list))</span>
+<span id="cb23-422"><a href="#cb23-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>       </span>
+<span id="cb23-423"><a href="#cb23-423" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-424"><a href="#cb23-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-425"><a href="#cb23-425" aria-hidden="true" tabindex="-1"></a>If we look at the metadata of the merged object we should be able to see the prefixes in the rownames:</span>
+<span id="cb23-426"><a href="#cb23-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-429"><a href="#cb23-429" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb23-430"><a href="#cb23-430" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inspect_seurat_object</span></span>
+<span id="cb23-431"><a href="#cb23-431" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
+<span id="cb23-432"><a href="#cb23-432" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
+<span id="cb23-433"><a href="#cb23-433" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
+<span id="cb23-434"><a href="#cb23-434" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>This lesson has been developed by members of the teaching team at the <a href="http://bioinformatics.sph.harvard.edu/">Harvard Chan Bioinformatics Core (HBC)</a>. <br> These are open access materials distributed under the terms of the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution license</a> (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. <br> A portion of these materials and hands-on activities were adapted from the <a href="https://satijalab.org/">Satija Lab’s</a> <a href="https://satijalab.org/seurat/pbmc3k_tutorial.html">Seurat - Guided Clustering Tutorial</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,115 @@
+---
+title: Seurat Cheatsheet - Answer Key
+---
+
+```{r}
+#| label: load_data
+#| echo: false
+library(Seurat)
+library(tidyverse)
+
+load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+```
+
+# Exercise 1
+
+**What are the last 5 cells barcodes and the last 5 genes in the integrated seurat object.**
+
+
+```{r}
+#| label: print_final_genes_cells
+# Barcodes
+Cells(seurat_integrated) %>% tail()
+# Barcodes
+colnames(seurat_integrated) %>% tail()
+
+# Genes
+Features(seurat_integrated) %>% tail()
+# Genes
+rownames(seurat_integrated) %>% tail()
+```
+
+
+# Exercise 2
+
+**What are the last 5 identities for the cells in the integrated seurat object?**
+
+```{r}
+#| label: rename_idents
+#| echo: false
+# Rename all identities
+seurat_integrated <- RenameIdents(object = seurat_integrated, 
+                                 "1" = "CD14+ monocytes",
+                                 "3" = "CD14+ monocytes",
+                                 "2" = "Activated T cells")
+
+# These new celltype values are only stored in the idents
+# Good practice is to store these changes in a column
+seurat_integrated$celltype <- Idents(seurat_integrated)
+```
+
+```{r}
+#| label: print_final_idents
+Idents(seurat_integrated) %>% tail()
+```
+
+
+# Exercise 3
+
+**What are the the 5 least variable genes in the integrated seurat object?**
+
+```{r}
+#| label: set_var_features
+#| echo: false
+# Get list of all variable genes
+# Remove variable genes that start with MT-
+var_genes <- VariableFeatures(seurat_integrated)
+var_genes <- var_genes[!startsWith(var_genes, "MT-")]
+
+# Now we set our vector of gene names back to VariableFeatures()
+VariableFeatures(seurat_integrated) <- var_genes
+```
+
+
+```{r}
+#| label: show_var_features
+VariableFeatures(seurat_integrated) %>% tail()
+```
+
+::: callout-note
+You may have noticed that these are the same genes from when we were looking at the last 5 genes in our Seurat object. This is due to the fact that we ran integration on the top 3,000 variable genes. As a result, the order of the genes in the integrated dataset follows the same order as the variable features!
+:::
+
+# Exercise 4
+
+**What are the dimensions for each assay in the integrated seurat object?**
+
+```{r}
+#| label: show_dim_assays
+dim(seurat_integrated[["RNA"]])
+dim(seurat_integrated[["SCT"]])
+dim(seurat_integrated[["integrated"]])
+```
+
+::: callout-note
+Notice that the number of genes is higher in the RNA assay compared to the integrated object. This goes back to previous note, where only the expression from variable genes is stored in the `integrated` assay.
+:::
+
+# Exercise 5
+
+**Show the code to get the entire SCT normalized (data) count matrix.**
+
+```{r}
+#| label: get_counts_mtx
+#| eval: false
+LayerData(seurat_integrated, assay="SCT", layer="data")
+```
+
+# Exercise 6
+
+**Show how you would use the `FetchData()` function to generate a dataframe of UMAP_1, UMAP_2, and sample values for each cell.**
+
+```{r}
+#| label: fetchdata_exercise
+FetchData(seurat_integrated, vars=c("UMAP_1", "UMAP_2", "sample")) %>% head()
+```

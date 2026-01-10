@@ -1,0 +1,39 @@
+---
+title: "Marker identification - Answer Key"
+author: "Will Gammerdinger"
+date: "Tuesday, July 1, 2025"
+---
+
+```{r}
+#| label: load_libraries
+#| echo: false
+library(Seurat)
+library(tidyverse)
+load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+annotations <- read.csv("data/annotation.csv")
+```
+
+# Exercise 1
+
+1. In the previous lesson, we identified cluster 10 as FCGR3A+ monocytes by inspecting the expression of known cell markers FCGR3A and MS4A7. Use `FindConservedMarkers()` function to find conserved markers for cluster 10. What do you observe? Do you see FCGR3A and MS4A7 as highly expressed genes in cluster 10?
+
+```{r}
+#| label: FindConservedMarkers_cluster_10
+# FindConservedMarkers for cluster 10
+cluster10_conserved_markers <- FindConservedMarkers(seurat_integrated,
+                                                    ident.1 = 10,
+                                                    grouping.var = "sample",
+                                                    only.pos = TRUE,
+                                                    logfc.threshold = 0.25)
+
+# Combine markers with gene descriptions 
+cluster10_ann_markers <- cluster10_conserved_markers %>% 
+                rownames_to_column(var="gene") %>% 
+                left_join(y = unique(annotations[, c("gene_name", "description")]),
+                          by = c("gene" = "gene_name"))
+
+# View the top 6 marker genes
+head(cluster10_ann_markers)
+```
+
+Yes, FCGR3A and MS4A7 are among the top highly expressed genes when performing `FindConservedMarkers()` for cluster 10. This observation confirms cluster 10 as FCGR3A+ monocytes.
