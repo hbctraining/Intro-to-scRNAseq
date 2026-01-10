@@ -1,0 +1,118 @@
+/* Alternative rows in tables are gray */
+.table tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+
+/* For Quarto code output blocks */
+.cell-output, 
+.cell-output-stdout, 
+.cell-output-stderr,
+.cell-output-display {
+  background-color: #f5f5f5 !important;  /* Light gray */
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  margin-bottom: 1em;
+}
+
+
+/* Stretch left footer across all columns for Quarto footers */
+footer.footer .nav-footer {
+  display: block !important;
+  max-width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  text-align: left;
+  padding: 1em 0.5em 1em 1.5em;
+  box-sizing: border-box;
+}
+footer.footer .nav-footer-center {
+  max-width: 100vw !important;
+  padding: 0.5em;
+  margin-left: 1em;
+  margin-right: 1em;
+  display: block !important;
+  float: none !important;
+  font-size: 1em;
+  text-align: left;
+}
+footer.footer .nav-footer-left,
+footer.footer .nav-footer-right {
+  display: none !important;
+}
+
+
+/* Harvard Crimson: #A51C30 */
+/* For Quarto Bootstrap dark navbars: */
+.navbar, .navbar-dark {
+  background-color: #a51c30 !important;
+}
+
+/* For navbar items and hover/focus states */
+.navbar .nav-link,
+.navbar .navbar-brand {
+  color: #fff !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #ffd700 !important;   /* gold/yellow hover, optional */
+}
+
+/* If your navbar is light/white by default, also force text to white: */
+.navbar-light .navbar-nav .nav-link,
+.navbar-light .navbar-brand {
+  color: #fff !important;
+}
+
+
+/* Center all images that are direct children of the main content (not inside tables or callouts) */
+main img,
+.quarto-figure img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* Optional: vertical space above/below */
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+/* Remove the box styling */
+.quarto-title-block {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-bottom: 1em !important;
+  text-align: left !important;
+}
+
+/* Hide only the author, affiliation, date, subtitle, etc */
+.quarto-title-author,
+.quarto-title-affiliation,
+.quarto-title-date,
+.quarto-title-subtitle,
+.quarto-title-lang,
+.quarto-title-abstract,
+.quarto-title-meta,
+#quarto-article-details
+{
+  display: none !important;
+}
+
+/* Make sure images aren't larger than window size */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* Hide breadcrumbs for both possible classnames */
+.quarto-breadcrumbs,
+.quarto-page-breadcrumbs {
+  display: none !important;
+}

@@ -1,0 +1,299 @@
+---
+title: "Number of PCs"
+author: 
+  - Will Gammerdinger
+  - Noor Sohail
+  - Zhu Zhuo
+  - James Billingsley
+  - Shannan Ho Sui
+date: "Tuesday, October 22, 2025"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load_libraries
+#| echo: false
+library(tidyverse)
+# Create a vector for Cell IDs
+cells <- c("Cell_1", "Cell_2", "Cell_3", "Cell_4")
+# Create a vector to hold expression values for Gene A across all of the cells
+Gene_A <- c(0, 12, 65, 23)
+# Create a vector to hold expression values for Gene B across all of the cells
+Gene_B <- c(4, 30, 57, 18)
+
+# Create a tibble to hold the cell names and expression values
+expression_tibble <- tibble(cells, Gene_A, Gene_B)
+```
+
+Approximate time: 45 minutes
+
+# Learning Objectives
+
+-   Derive the number of PCs for a PCA
+
+# Number of PCs
+
+When doing a Principal Components Analysis (PCA), you will be reducing the dimensionality of your data into Principal Components (PCs). The maximum number of PCs, sometimes called rank of the PCA, for scRNA-seq analysis will at most either be the the number of genes or the number of cells, whichever is fewer. In other words, **the number of PCs ≤ minimum(number_of_genes, number_of_cells)**. In the sections below we will discuss the reasons for this. For this lesson we will need to load `tidyverse`.
+
+```{r}
+#| label: load_tidyverse
+# Load tidyverse
+library(tidyverse)
+```
+
+# Creation of the Covariance Matrix
+
+Let's consider the `expression_tibble` that we created in the [Theory of
+PCA](06_theory_of_PCA.qmd#Creating-an-example-data-set) lesson.
+
+```{r}
+#| label: print_expression_tibble
+# Print the expression_tibble
+expression_tibble
+```
+
+Next, we re-centered the data using:
+
+```{r}
+#| label: center_of_data
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean <- mean(expression_tibble$Gene_A)
+# Finding the average expression of gene B
+Gene_B_mean <- mean(expression_tibble$Gene_B)
+
+# Shift the data points so that they data is centered on the origin
+recentered_expression_tibble <- expression_tibble %>%
+  mutate(
+    Gene_A = Gene_A - Gene_A_mean,
+    Gene_B = Gene_B - Gene_B_mean
+  )
+
+# Print out the re-centered data
+recentered_expression_tibble
+```
+
+We followed this up by creating a gene-wise covariance matrix:
+
+```{r}
+#| label: create_gene_covariance_matrix
+# Move the cell IDs to the rownames and convert the tibble to a matrix
+recentered_expression_matrix <- recentered_expression_tibble %>% 
+  column_to_rownames("cells") %>% 
+  as.matrix()
+
+# Create a covariance matrix
+cov_matrix <- cov(recentered_expression_matrix)
+
+# Print out the covariance matrix
+cov_matrix
+```
+
+From this we can see that it is a **2x2 gene-wise** covariance matrix. However, we could have alternatively created a **4x4 cell-wise** covariance matrix using. Unfortunately, we will need to do this using some for loops. One small note before we start, since we re-centered the data on based on gene, the mean of Gene_A and Gene_B are both 0, so those gene mean terms can drop out of the covariance equation. We can confirm that with:
+
+```{r}
+#| label: confirm_recented_means
+# Print the mean for Gene_A once it has been re-centered
+mean(recentered_expression_matrix[,"Gene_A"])
+# Print the mean for Gene_B once it has been re-centered
+mean(recentered_expression_matrix[,"Gene_B"])
+```
+
+So now our covariance formula will look like:
+
+<img src="https://latex.codecogs.com/svg.image?\mathrm{cov}(X,Y)=\frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i" width="300"/>
+
+```{r}
+#| label: create_cell_covariance_matrix
+# Obtain the number of cells
+n_cells <- nrow(recentered_expression_matrix)
+# Obtain the number of genes
+n_genes <- ncol(recentered_expression_matrix)
+
+# Create an empty n_cells x n_cells matrix to hold cell-wise covariance values
+cov_matrix_cells <- matrix(NA, nrow = n_cells, ncol = n_cells)
+# Put the names of the cells as the row names of the cell-wise covariance matrix
+rownames(cov_matrix_cells) <- rownames(recentered_expression_matrix)
+# Put the names of the cells as the column names of the cell-wise covariance matrix
+colnames(cov_matrix_cells) <- rownames(recentered_expression_matrix)
+
+# Estimate the cell-wise covariance matrix
+for (i in 1:n_cells) {
+  for (j in 1:n_cells) {
+    cov_matrix_cells[i, j] <- (1 / (n_cells - 1)) * sum(recentered_expression_matrix[i, ] * recentered_expression_matrix[j, ])
+  }
+}
+
+# Print out the cell-wise covariance matrix
+cov_matrix_cells
+```
+
+In order to avoid confusion, let's go ahead and rename our gene-wise covariance matrix:
+
+```{r}
+#| label: relabel_gene_covariance_matrix
+# Rename the gene-wise covariance matrix to avoid confusion
+cov_matrix_genes <- cov_matrix
+```
+
+# Comparing the gene-wise and cell-wise covariance matrices 
+
+Let's remind ourselves of the eigenvalues returned by our gene-wise covariance matrix:
+
+```{r}
+#| label: gene-wise_eigenvalues
+# Obtain the eigenvalues for the gene-wise covariance matrix
+round(eigen(cov_matrix_genes)$values, digits = 3)
+```
+
+And we can compare those eigenvalues to the eigenvalues returned by our cell-wise covariance matrix: 
+
+```{r}
+#| label: cell-wise_eigenvalues
+# Obtain the eigenvalues for the cell-wise covariance matrix and compare them to the eigenvalues for the gene-wise covariance matrix
+round(eigen(cov_matrix_cells)$values, digits = 3)
+```
+
+The eigenvalues are the same except the cell-wise covariance matrix returns two additonal zero value eigenvalues. We can remind ourselves that eigenvalues can be though of as influence, so eigenvalues with a value of zero have no influence and are not considered Principal Components. We can solve the `cov_matrix_cells`'s $\lambda$ values by hand and it will be a bit more clear why zero terms emerge.
+
+<img src="https://latex.codecogs.com/svg.image?\det\left(%0A\begin{bmatrix}388.52083&amp;87.02083&amp;-563.8958&amp;88.35417\\87.02083&amp;58.85417&amp;-146.0625&amp;0.18750\\-563.89583&amp;-146.06250&amp;828.3542&amp;-118.39583\\88.35417&amp;0.18750&amp;-118.3958&amp;29.85417\end{bmatrix}-%20\lambda\begin{bmatrix}1&amp;0&amp;0&amp;0\\0&amp;1&amp;0&amp;0\\0&amp;0&amp;1&amp;0\\0&amp;0&amp;0&amp;1\end{bmatrix}\right)=0" width="600"/>
+
+Simplifying this would yield:
+
+<img src="https://latex.codecogs.com/svg.image?\lambda^2(\lambda-1255.54)(\lambda-50.04)=0"/>
+
+Therefore, the values, which satisfy $\lambda$ would be `0`, `1255.54` and `50.04`. 
+
+If we go back to our number of genes, `r n_genes`, and numbers of cells, `r n_cells`, we can see that the number of PCs was equal to the whichever was fewer, `n_cells` or `n_genes`. However, we stated that the number of PCs ≤ minimum(number_of_genes, number_of_cells), not just equal to it. In the next section we will explore why this is the case.
+
+:::callout-note
+In practice, we usually use gene-wise covariance in scRNA-seq PCA, but the cell-wise perspective helps us see why zeros eigenvalues emerge and how the PCA is fundamentally about the geometry of the data rather than its orientation.
+:::
+
+# Sources of Reducing the Number of PCs for a PCA
+
+Now that we have demonstrated how number of PCs = minimum(number_of_genes, number_of_cells), let's understand sources of data that reduce the number of PCs so that the number of PCs ≤ minimum(number_of_genes, number_of_cells). Four major sources of this come from:
+
+- [Duplicated Data](#duplicated-data)
+- [Scaled Data](#scaled-data)
+- [Linear Combinations of Data](#linear-combinations-of-data)
+- [Constants](#constants)
+
+We will provide examples of each below, but first let's make the expression matrix that we will be using:
+
+```{r}
+#| label: create_expression_matrix_for_reduced_rank
+# Create an expression matrix to use
+expression_matrix <- expression_tibble %>% 
+  as.data.frame() %>% 
+  column_to_rownames("cells") %>% 
+  as.matrix()
+```
+
+## Duplicated Data
+
+In the first case we will duplicate `Gene B` and create a new column called `Gene_C`. We will use the `prcomp()` function to expedite our PCA:
+
+```{r}
+#| label: duplicated_data
+# Modify the expression matrix to have duplicated data in it
+expression_matrix_duplicate <- expression_matrix %>% 
+  cbind(Gene_C = expression_matrix[,"Gene_B"])
+
+# Run prcomp to get PCA results on the expression matrix with duplicated data
+duplicate_PCA <- prcomp(expression_matrix_duplicate)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with duplicated data
+round(duplicate_PCA$sdev ** 2, digits = 3)
+```
+
+We note that we are returned 2 non-zero eigenvalues and an eigenvalue with the value of 0. We started with 4 rows (cells) and 3 columns (genes), but we were only returned a PCA with rank 2, because the third column was a duplicate of the second column.
+
+## Scaled Data
+
+Another method of reduction is if a column of our data is scaled from data in another column. Let's go ahead and see an example of this by adding a column for Gene_C that is double the value of Gene_B.
+
+```{r}
+#| label: scaled_data
+# Modify the expression matrix to have scaled data in it
+expression_matrix_scaled <- expression_matrix %>% 
+  cbind(Gene_C = expression_matrix[,"Gene_B"] * 2)
+
+# Run prcomp to get PCA results on the expression matrix with scaled data
+scaled_PCA <- prcomp(expression_matrix_scaled)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with scaled data
+round(scaled_PCA$sdev ** 2, digits = 3)
+```
+
+Once again, we can see that we are returned 2 non-zero eigenvalues and one eigenvalue that has a value of 0. Thus, the rank of the PCA is less than the minimum(number_of_genes, number_of_cells).
+
+## Linear Combinations of Data
+
+Linear combinations of the data can also reduce the rank of a PCA. Now let's consider a case where Gene_C is the sum of Gene_A and two times Gene_B.
+
+```{r}
+#| label: linear_combinations_data
+# Modify the expression matrix to have data that is linear combinations of Gene_A and Gene_B in it
+expression_matrix_linear_combinations <- expression_matrix %>% 
+  cbind(Gene_C = expression_matrix[,"Gene_A"] + expression_matrix[,"Gene_B"] * 2)
+
+# Run prcomp to get PCA results on the expression matrix with data containing linear combinations of Gene_A and Gene_B
+linear_combinations_PCA <- prcomp(expression_matrix_linear_combinations)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with data containing linear combinations of Gene_A and Gene_B
+round(linear_combinations_PCA$sdev ** 2, digits = 3)
+```
+
+Again, we see a case where we have two non-zero eigenvalues and an eigenvalue with the value of 0.
+
+## Constants 
+
+The last case we will consider is a column of constants. Let's consider the case where `Gene_C` has the value of 16 in every cell.
+
+```{r}
+#| label: constants_data
+# Modify the expression matrix to have constant data in it
+expression_matrix_constant <- expression_matrix %>% 
+  cbind(Gene_C = c(16, 16, 16, 16))
+
+# Run prcomp to get PCA results on the expression matrix with constant data
+constant_PCA <- prcomp(expression_matrix_constant)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with constant data
+round(constant_PCA$sdev ** 2, digits = 3)
+```
+
+This result can be a quite intuitive because let's reflect on the process that got us here. First, we recentered our expression matrix:
+
+```{r}
+#| label: constant_center_of_data
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean_constant <- mean(expression_matrix_constant[, "Gene_A"])
+# Finding the average expression of gene B
+Gene_B_mean_constant <- mean(expression_matrix_constant[, "Gene_B"])
+# Finding the average expression of gene C
+Gene_C_mean_constant <- mean(expression_matrix_constant[, "Gene_C"])
+
+# Shift the data points so that they data is centered on the origin
+recentered_expression_matrix_constant <- expression_matrix_constant %>%
+  as.data.frame() %>% 
+  mutate(
+    Gene_A = Gene_A - Gene_A_mean_constant,
+    Gene_B = Gene_B - Gene_B_mean_constant,
+    Gene_C = Gene_C - Gene_C_mean_constant,
+  ) %>% 
+  as.matrix()
+
+# Print out the re-centered data
+recentered_expression_matrix_constant
+```
+
+From here, we can see that the re-centered value of `Gene_C` is just 0 for all cells and thus it offers no variance. 
+
+# Conclusion
+
+The number of PCs, or rank, of a PCA is at most the fewer of the number of cells or the number of genes.

@@ -1,0 +1,72 @@
+---
+title: "Clustering Analysis - Answer Key"
+author: "Will Gammerdinger"
+date: "Tuesday, July 1, 2025"
+---
+
+```{r}
+#| label: load_libraries
+#| echo: false
+library(Seurat)
+load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+```
+
+# Exercise 1
+
+After loading `seurat_integrated.RData.bz2`, check the object clusters with different resolution (0.4, 0.6, 0.8, 1, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe. Which resolution do you think makes sense?
+
+## Resolution 0.4 
+
+We can count the number of clusters from the `DimPlot()` (remember that it is zero-indexed).
+
+```{r}
+#| label: DimPlot_0.4_resolution
+#Assign identity of clusters
+Idents(object = seurat_integrated) <- "integrated_snn_res.0.4"
+
+# Plot the UMAP
+DimPlot(seurat_integrated,
+        reduction = "umap",
+        label = TRUE,
+        label.size = 6)
+```
+
+Alternatively, we can retrieve the number of clusters using this command:
+
+```{r}
+#| label: number_of_clusters_0.4_resolution
+# Retrieve the number of clusters in integrated_snn_res.0.4
+length(unique(seurat_integrated$integrated_snn_res.0.4))
+```
+
+## Resolution 0.6
+
+```{r}
+#| label: number_of_clusters_0.6_resolution
+# Retrieve the number of clusters in integrated_snn_res.0.6
+length(unique(seurat_integrated$integrated_snn_res.0.6))
+```
+
+## Resolution 0.8
+
+```{r}
+#| label: number_of_clusters_0.8_resolution
+# Retrieve the number of clusters in integrated_snn_res.0.8
+length(unique(seurat_integrated$integrated_snn_res.0.8))
+```
+
+## Resolution 1
+
+```{r}
+#| label: number_of_clusters_1_resolution
+# Retrieve the number of clusters in integrated_snn_res.1
+length(unique(seurat_integrated$integrated_snn_res.1))
+```
+
+## Resolution 1.4
+
+```{r}
+#| label: number_of_clusters_1.4_resolution
+# Retrieve the number of clusters in integrated_snn_res.1.4
+length(unique(seurat_integrated$integrated_snn_res.1.4))
+```
