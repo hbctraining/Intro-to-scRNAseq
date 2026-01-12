@@ -1,0 +1,77 @@
+# Introduction to single-cell RNA-seq
+
+### Learning Objectives
+
+- Understand the considerations when designing a single-cell RNA-seq experiment
+- Discuss the steps involved in taking raw single-cell RNA-sequencing data and generating a count (gene expression) matrix
+- Compute and assess QC metrics at every step in the workflow
+- Cluster cells based on expression data and derive the identity of the different cell types present
+- Perform integration of different sample conditions
+
+## Installations
+
+1. [Follow the instructions linked here](../index.qmd#installation-requirements) to download R and RStudio + Install Packages from CRAN and Bioconductor
+
+1. [Download this project](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1)
+
+## Lessons
+
+### Part 1
+1. [Introduction to scRNA-seq](../lessons/01_intro_to_scRNA-seq.qmd)
+2. [Raw data to count matrix](../lessons/02_generation_of_count_matrix.qmd)
+
+***
+
+### Part II
+1. [Quality control set-up](../lessons/03_quality_control-setup.qmd)
+2. [Quality control of CellRanger counts](../lessons/04_cellranger_QC.qmd)
+3. [Quality control with additional metrics](../lessons/05_quality_control.qmd)
+4. [Theory of PCA](../lessons/06_theory_of_PCA.qmd)
+
+***
+
+### Part III
+1. [Normalization and regressing out unwanted variation](../lessons/07_SCT_normalization.qmd)
+2. [A brief introduction to Integration](../lessons/08_integration_cca_theory.qmd)
+3. [Running CCA integration and complex integration tasks](../lessons/09_integration_code_harmony.qmd)
+4. [Clustering](../lessons/10_clustering_cells_SCT.qmd)
+5. [Clustering quality control](../lessons/11_clustering_quality_control.qmd)
+6. [Seurat Cheatsheet](../lessons/12_seurat_cheatsheet.qmd) 
+7. [Marker identification](../lessons/13_marker_identification.qmd)
+8. [Workflow summary](../lessons/14_scRNAseq_workflow.qmd)
+
+***
+
+## Building on this workshop
+
+* Downstream analysis
+  - [Differential expression between conditions](https://hbctraining.github.io/Pseudobulk-for-scRNAseq/)
+
+* Other online scRNA-seq courses:
+  - [http://bioconductor.org/books/release/OSCA/](http://bioconductor.org/books/release/OSCA/)
+  - [https://liulab-dfci.github.io/bioinfo-combio/](https://liulab-dfci.github.io/bioinfo-combio/)
+  - [https://hemberg-lab.github.io/scRNA.seq.course/](https://hemberg-lab.github.io/scRNA.seq.course/)
+  - [https://github.com/SingleCellTranscriptomics](https://github.com/SingleCellTranscriptomics)
+  - [https://broadinstitute.github.io/2020_scWorkshop/](https://broadinstitute.github.io/2020_scWorkshop/)
+
+* Resources for scRNA-seq Sample Prep:
+  - [https://www.protocols.io/](https://www.protocols.io/)
+  - [https://support.10xgenomics.com/single-cell-gene-expression/sample-prep](https://support.10xgenomics.com/single-cell-gene-expression/sample-prep)
+  - [https://community.10xgenomics.com/](https://community.10xgenomics.com/)
+
+***
+
+## Resources
+We have covered the analysis steps in quite a bit of detail for scRNA-seq exploration of cellular heterogeneity using the Seurat package. For more information on topics covered, we encourage you to take a look at the following resources:
+
+* [Seurat vignettes](https://satijalab.org/seurat/vignettes.html)
+* [Seurat cheatsheet](https://satijalab.org/seurat/essential_commands.html)
+* [Satija Lab: Single Cell Genomics Day](https://satijalab.org/scgd21/)
+* ["Principal Component Analysis (PCA) clearly explained"](https://www.youtube.com/watch?v=_UVHneBUBW0), a video from [Josh Starmer](https://twitter.com/joshuastarmer)
+* [Additional information about cell cycle scoring](../lessons/Aside_cell_cycle_scoring.qmd)
+* [Using R on the O2 cluster](https://hbctraining.github.io/Intro-to-Unix-QMB/lessons/R_on_o2.html)
+* Highlighted papers for sample processing steps (pre-sequencing):
+  - ["Sampling time-dependent artifacts in single-cell genomics studies."](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02032-0) *Massoni-Badosa et al.* 2019
+  - ["Dissociation of solid tumor tissues with cold active protease for single-cell RNA-seq minimizes conserved collagenase-associated stress responses."](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1830-0) *O'Flanagan et al.* 2020
+  - ["Systematic assessment of tissue dissociation and storage biases in single-cell and single-nucleus RNA-seq workflows."](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02048-6) *Denisenko et al.* 2020
+* [Best practices for single-cell analysis across modalities](https://www.nature.com/articles/s41576-023-00586-w)

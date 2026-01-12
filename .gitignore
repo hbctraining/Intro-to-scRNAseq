@@ -1,0 +1,6 @@
+/.quarto/
+lessons/data
+docs/data
+*.RDS
+*.RData
+*.rds

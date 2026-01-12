@@ -477,6 +477,7 @@ DimPlot(object = seurat_subset_labeled,
 Now we would want to save our final labelled Seurat object and the output of `sessionInfo()`:
 
 ```{r}      
+#| eval: false
 #| label: save_output
 # Save final R object
 write_rds(seurat_integrated,
