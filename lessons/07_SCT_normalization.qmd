@@ -149,14 +149,14 @@ After scoring the cells for cell cycle, we would like to **determine whether cel
 
 Principal Component Analysis (PCA) is a technique used to emphasize variation as well as similarity, and to bring out strong patterns in a dataset; it is one of the methods used for *"dimensionality reduction"*. 
 
-::: callout-note
-For a more **detailed explanation on PCA**, please [look over this lesson](06_theory_of_PCA.qmd) (adapted from StatQuests/Josh Starmer's YouTube video). We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding. 
+::: {.callout-note}
+For a more **detailed explanation on PCA**,  there is a [lesson in self-learning](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding.
 :::
 
 Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells* and you have quantified the expression of *20,000 genes*. The schematic below demonstrates how you would go from a cell x gene matrix to principal component (PC) scores for each inividual cell.
 
 <p align="center">
-<img src="../img/PCA_scrnaseq_1.png" width="900">
+<img src="../img/PCA_scrnaseq_1_updated.png" width="900">
 </p>
 
 After the PC scores have been calculated, you are looking at a matrix of 12,000 x 12,000 that represents the information about relative gene expression in all the cells. You can select the PC1 and PC2 columns and plot that in a 2D way.
@@ -171,7 +171,7 @@ You can also use the PC scores from the first 40 PCs for downstream analysis lik
 <img src="../img/PCA_scrnaseq_3.png" width="600">
 </p>
 
-::: callout-note
+::: {.callout-note}
 For datasets with a larger number of cells, only the PC1 and PC2 scores for each cell are usually plotted, or used for visualization. Since these PCs explain the most variation in the dataset, the expectation is that the cells that are more similar to each other will cluster together with PC1 and PC2.
 :::
 
