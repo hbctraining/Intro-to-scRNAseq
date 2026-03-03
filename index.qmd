@@ -71,10 +71,13 @@ Download the most recent versions of R and RStudio for your laptop:
 8. `metap`
 9. `reshape2`
 10. `plyr`
+11. `devtools`
 
 **Please install them one-by-one as follows:**
 
-```{r, eval=FALSE}
+```{r}
+#| label: install_cran
+#| eval: false
 install.packages("tidyverse")
 install.packages("Matrix")
 install.packages("RCurl")
@@ -85,6 +88,7 @@ install.packages("Seurat")
 install.packages("metap")
 install.packages("reshape2")
 install.packages("plyr")
+install.packages("devtools")
 ```
 
 **(2)** Install the 4 packages listed below from **Bioconductor** using the the `BiocManager::install()` function.
@@ -96,7 +100,9 @@ install.packages("plyr")
 
 **Please install them one-by-one as follows:**
 
-```{r, eval=FALSE}
+```{r}
+#| label: install_bioconductor
+#| eval: false
 library(BiocManager)
 BiocManager::install("AnnotationHub")
 BiocManager::install("ensembldb")
@@ -104,6 +110,26 @@ BiocManager::install("multtest")
 BiocManager::install("glmGamPoi")
 ```
 
+**(3)** Install Presto from GitHub using the `devtools::install_github()` function:
+
+```{r}
+#| label: instal_github
+#| eval: false
+library(devtools)
+devtools::install_github("immunogenomics/presto")
+```
+
+:::{.callout-note}
+If you are on a Mac and getting errors about `fatal error: 'cmath' file not found` - Ensure that Xcode is installed. It can be downloaded from the App Store or via the command line with:
+
+```{r}
+#| label: install_xcode
+#| eval: false
+xcode-select --install
+```
+
+If you are getting errors about `ld: library 'emutls_w' not found” or “clang++: error: linker command failed with exit code 1` - You can try installing the appropriate gfortran compiler. More information on both of these steps can be found on the [R website](https://mac.r-project.org/tools/).
+:::
 
 **(4)** Finally, please check that all the packages were installed successfully by **loading them one at a time** using the `library()` function.  
 
@@ -118,10 +144,12 @@ library(BiocManager)
 library(metap)
 library(reshape2)
 library(plyr)
+library(devtools)
 library(AnnotationHub)
 library(ensembldb)
 library(multtest)
 library(glmGamPoi)
+library(presto)
 ```
 
 **(4)** Once all packages have been loaded, run sessionInfo().  
@@ -129,6 +157,8 @@ library(glmGamPoi)
 ```{r}
 sessionInfo()
 ```
+
+You can copy and paste the output into [this app](https://hcbc.connect.hms.harvard.edu/scRNA_sessionInfo_checks/) to ensure that all of the packages were installed correctly.
 
 ---
 
