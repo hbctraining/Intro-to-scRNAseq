@@ -12,7 +12,7 @@ execute:
 
 * [Introduction to scRNA-seq](../lessons/01_intro_to_scRNA-seq.qmd)
 * [Raw data to count matrix](../lessons/02_generation_of_count_matrix.qmd)
-* [Download this project](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1)
+* [Download this project](https://www.dropbox.com/scl/fi/uoro3sbex3tj1e6m61z16/single_cell_rnaseq.zip?rlkey=cfay7tqm3ta5qlh2gph7h2wko&st=fcxgae45&dl=1)
 
 ## Day 1
 
