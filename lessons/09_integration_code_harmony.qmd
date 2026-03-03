@@ -1,7 +1,32 @@
 ---
 title: "Performing Integration"
-author: "Mary Piper, Meeta Mistry, Radhika Khetani, Jihe Liu, Amelie Jule"
-date: Monday, Novemeber 21st, 2020
+description: |
+  This lesson guides participants through performing data integration in Seurat using both canonical correlation analysis (CCA) and alternative approaches suitable for more complex integration tasks. Participants will learn how to identify integration features, prepare SCTransform-normalized data, compute integration anchors and generate integrated datasets. They will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - Integration
+  - CCA
+  - UMAP
+  - PCA
+  - Harmony
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 30 minutes
@@ -11,7 +36,7 @@ Approximate time: 30 minutes
 #| echo: false
 library(Seurat)
 library(tidyverse)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 ## Learning Objectives:

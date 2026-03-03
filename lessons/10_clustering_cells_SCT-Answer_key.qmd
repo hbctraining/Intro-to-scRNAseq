@@ -1,14 +1,16 @@
 ---
 title: "Clustering Analysis - Answer Key"
-author: "Will Gammerdinger"
-date: "Tuesday, July 1, 2025"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-07-01"
 ---
 
 ```{r}
 #| label: load_libraries
 #| echo: false
 library(Seurat)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 # Exercise 1

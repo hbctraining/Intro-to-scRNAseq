@@ -1,14 +1,38 @@
 ---
 title: "Workflow Overview"
-author: "Mary Piper, Meeta Mistry, Radhika Khetani"
-date: Wednesday July 17th, 2024
+description: |
+    This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization and variance stabilization with sctransform, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.
+author:
+  - Meeta Mistry
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Single-cell RNA-seq
+  - Workflow
+  - Quality control
+  - Normalization
+  - sctransform
+  - Unwanted variation
+  - Integration
+  - Clustering
+  - Marker identification
+  - Cell type annotation
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 20 minutes
 
 ## Learning Objectives:
 
-* Describe the workflow for single-cell RNA-seq analysis 
+- Describe the workflow for single-cell RNA-seq analysis 
 
 # Single-cell RNA-seq Workflow
 In this workshop we have walked through an end-to-end workflow for the analysis of single cell RNA-seq data. For each step, code was provided along with in-depth information on the background and theory. Here, we review each step and highlight important concepts beginning with the count matrix.

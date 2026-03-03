@@ -1,5 +1,26 @@
 ---
 title: "Cell Cycle Scoring"
+description: |
+  This lesson guides participants through the process of detecting and addressing cell cycle–related variation in single-cell RNA-seq data using Seurat. Participants learn how to obtain and annotate cell cycle marker genes, perform cell cycle scoring, visualize the impact of cell cycle on principal component analysis (PCA) and determine when regression of cell cycle effects is appropriate for downstream analyses.
+author:
+  - Meeta Mistry
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - Cell cycle scoring
+  - Gene annotation
+  - PCA
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r}

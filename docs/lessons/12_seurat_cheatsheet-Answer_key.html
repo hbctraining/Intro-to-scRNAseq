@@ -6,6 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Noor Sohail">
+<meta name="author" content="Will Gammerdinger">
+<meta name="dcterms.date" content="2025-12-07">
 
 <title>Seurat Cheatsheet - Answer Key – Introduction to single-cell RNA-seq</title>
 <style>
@@ -4089,7 +4092,20 @@ text-align: left !important;
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Noor Sohail </p>
+             <p>Will Gammerdinger </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 7, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -4675,120 +4691,124 @@ ctrl_AAACATACCTCGCT-1  -9.338899  2.2808882   ctrl</code></pre>
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
 <div class="sourceCode" id="cb22" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Seurat Cheatsheet - Answer Key</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_data</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">&quot;data/additional_data/seurat_integrated.RData.bz2&quot;</span>))</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 1</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>**What are the last 5 cells barcodes and the last 5 genes in the integrated seurat object.**</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Seurat Cheatsheet - Answer Key&quot;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - Noor Sohail</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - Will Gammerdinger</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2025-12-07&quot;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_data</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">&quot;data/seurat_integrated.RData.bz2&quot;</span>))</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: print_final_genes_cells</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Barcodes</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="fu">Cells</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Barcodes</span></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes</span></span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="fu">Features</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes</span></span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 2</span></span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>**What are the last 5 identities for the cells in the integrated seurat object?**</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 1</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>**What are the last 5 cells barcodes and the last 5 genes in the integrated seurat object.**</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: print_final_genes_cells</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Barcodes</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="fu">Cells</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Barcodes</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="fu">Features</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: rename_idents</span></span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename all identities</span></span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(<span class="at">object =</span> seurat_integrated, </span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;CD14+ monocytes&quot;</span>,</span>
-<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="st">&quot;CD14+ monocytes&quot;</span>,</span>
-<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Activated T cells&quot;</span>)</span>
-<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="co"># These new celltype values are only stored in the idents</span></span>
-<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Good practice is to store these changes in a column</span></span>
-<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">$</span>celltype <span class="ot">&lt;-</span> <span class="fu">Idents</span>(seurat_integrated)</span>
-<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: print_final_idents</span></span>
-<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 3</span></span>
-<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a>**What are the the 5 least variable genes in the integrated seurat object?**</span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 2</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>**What are the last 5 identities for the cells in the integrated seurat object?**</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: rename_idents</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename all identities</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">RenameIdents</span>(<span class="at">object =</span> seurat_integrated, </span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;1&quot;</span> <span class="ot">=</span> <span class="st">&quot;CD14+ monocytes&quot;</span>,</span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;3&quot;</span> <span class="ot">=</span> <span class="st">&quot;CD14+ monocytes&quot;</span>,</span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;2&quot;</span> <span class="ot">=</span> <span class="st">&quot;Activated T cells&quot;</span>)</span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="co"># These new celltype values are only stored in the idents</span></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Good practice is to store these changes in a column</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a>seurat_integrated<span class="sc">$</span>celltype <span class="ot">&lt;-</span> <span class="fu">Idents</span>(seurat_integrated)</span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: print_final_idents</span></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: set_var_features</span></span>
-<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Get list of all variable genes</span></span>
-<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove variable genes that start with MT-</span></span>
-<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> <span class="fu">VariableFeatures</span>(seurat_integrated)</span>
-<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> var_genes[<span class="sc">!</span><span class="fu">startsWith</span>(var_genes, <span class="st">&quot;MT-&quot;</span>)]</span>
-<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set our vector of gene names back to VariableFeatures()</span></span>
-<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="ot">&lt;-</span> var_genes</span>
-<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 3</span></span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a>**What are the the 5 least variable genes in the integrated seurat object?**</span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: set_var_features</span></span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Get list of all variable genes</span></span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove variable genes that start with MT-</span></span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> <span class="fu">VariableFeatures</span>(seurat_integrated)</span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a>var_genes <span class="ot">&lt;-</span> var_genes[<span class="sc">!</span><span class="fu">startsWith</span>(var_genes, <span class="st">&quot;MT-&quot;</span>)]</span>
 <span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_var_features</span></span>
-<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
-<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a>You may have noticed that these are the same genes from when we were looking at the last 5 genes in our Seurat object. This is due to the fact that we ran integration on the top 3,000 variable genes. As a result, the order of the genes in the integrated dataset follows the same order as the variable features!</span>
-<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we set our vector of gene names back to VariableFeatures()</span></span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="ot">&lt;-</span> var_genes</span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_var_features</span></span>
+<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a><span class="fu">VariableFeatures</span>(seurat_integrated) <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span>
+<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-94"><a href="#cb22-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 4</span></span>
-<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a>**What are the dimensions for each assay in the integrated seurat object?**</span>
+<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a>You may have noticed that these are the same genes from when we were looking at the last 5 genes in our Seurat object. This is due to the fact that we ran integration on the top 3,000 variable genes. As a result, the order of the genes in the integrated dataset follows the same order as the variable features!</span>
+<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_dim_assays</span></span>
-<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;RNA&quot;</span>]])</span>
-<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;SCT&quot;</span>]])</span>
-<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;integrated&quot;</span>]])</span>
-<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a>Notice that the number of genes is higher in the RNA assay compared to the integrated object. This goes back to previous note, where only the expression from variable genes is stored in the <span class="in">`integrated`</span> assay.</span>
-<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 4</span></span>
+<span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a>**What are the dimensions for each assay in the integrated seurat object?**</span>
+<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show_dim_assays</span></span>
+<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;RNA&quot;</span>]])</span>
+<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;SCT&quot;</span>]])</span>
+<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(seurat_integrated[[<span class="st">&quot;integrated&quot;</span>]])</span>
+<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-111"><a href="#cb22-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 5</span></span>
-<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a>**Show the code to get the entire SCT normalized (data) count matrix.**</span>
+<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a>Notice that the number of genes is higher in the RNA assay compared to the integrated object. This goes back to previous note, where only the expression from variable genes is stored in the <span class="in">`integrated`</span> assay.</span>
+<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: get_counts_mtx</span></span>
-<span id="cb22-120"><a href="#cb22-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb22-121"><a href="#cb22-121" aria-hidden="true" tabindex="-1"></a><span class="fu">LayerData</span>(seurat_integrated, <span class="at">assay=</span><span class="st">&quot;SCT&quot;</span>, <span class="at">layer=</span><span class="st">&quot;data&quot;</span>)</span>
-<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 6</span></span>
-<span id="cb22-125"><a href="#cb22-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-126"><a href="#cb22-126" aria-hidden="true" tabindex="-1"></a>**Show how you would use the `FetchData()` function to generate a dataframe of UMAP_1, UMAP_2, and sample values for each cell.**</span>
+<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 5</span></span>
+<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a>**Show the code to get the entire SCT normalized (data) count matrix.**</span>
+<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: get_counts_mtx</span></span>
+<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-125"><a href="#cb22-125" aria-hidden="true" tabindex="-1"></a><span class="fu">LayerData</span>(seurat_integrated, <span class="at">assay=</span><span class="st">&quot;SCT&quot;</span>, <span class="at">layer=</span><span class="st">&quot;data&quot;</span>)</span>
+<span id="cb22-126"><a href="#cb22-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-127"><a href="#cb22-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fetchdata_exercise</span></span>
-<span id="cb22-132"><a href="#cb22-132" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">&quot;UMAP_1&quot;</span>, <span class="st">&quot;UMAP_2&quot;</span>, <span class="st">&quot;sample&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
-<span id="cb22-133"><a href="#cb22-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-128"><a href="#cb22-128" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 6</span></span>
+<span id="cb22-129"><a href="#cb22-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a>**Show how you would use the `FetchData()` function to generate a dataframe of UMAP_1, UMAP_2, and sample values for each cell.**</span>
+<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-134"><a href="#cb22-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fetchdata_exercise</span></span>
+<span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchData</span>(seurat_integrated, <span class="at">vars=</span><span class="fu">c</span>(<span class="st">&quot;UMAP_1&quot;</span>, <span class="st">&quot;UMAP_2&quot;</span>, <span class="st">&quot;sample&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

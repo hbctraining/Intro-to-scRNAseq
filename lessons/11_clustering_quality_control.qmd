@@ -1,7 +1,30 @@
 ---
-title: "Clustering QC"
-author: "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu"
-date: Monday, July 20th, 2020
+title: "Clustering Quality Control"
+description: |
+  This lesson guides participants through evaluating the quality of clustering in single‑cell RNA‑seq data using Seurat. Participants learn to diagnose clustering artifacts, interpret PCA and UMAP visualizations and use known marker genes to hypothesize cell type identities. The lesson emphasizes an iterative approach to assessing cluster validity and determining when re‑clustering or additional quality control steps may be beneficial.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - Clustering
+  - Quality control
+  - Marker genes
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 90 minutes
@@ -15,7 +38,7 @@ library(tidyverse)
 library(ggplot2)
 library(cowplot)
 
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 ## Learning Objectives:

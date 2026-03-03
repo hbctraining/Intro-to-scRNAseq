@@ -1,7 +1,31 @@
 ---
 title: "Clustering Analysis"
-author: "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu"
-date: Thursday, November 21, 2019
+description: |
+  This lesson guides participants through the process of clustering analysis in single-cell RNA-seq data using Seurat. Participants learn how to evaluate principal components, construct K-nearest neighbor graphs, optimize clustering resolution and visualize clusters using dimensionality reduction techniques. The lesson emphasizes identifying meaningful biological clusters, recognizing technical artifacts and applying best practices for iterative refinement.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - Clustering
+  - PCA
+  - UMAP
+  - K-nearest neighbor
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 90 minutes
@@ -11,7 +35,7 @@ Approximate time: 90 minutes
 #| echo: false
 # Load libraries
 library(Seurat)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 ## Learning Objectives:

@@ -1,7 +1,34 @@
 ---
-title: "Normalization, identification of most variable genes"
-author: "Mary Piper, Meeta Mistry, Radhika Khetani, Jihe Liu"
-date: November 30, 2022
+title: "Normalization and exploring data for unwanted variation"
+description: |
+  This lesson introduces normalization strategies for single-cell RNA-seq data and how to explore and correct for unwanted sources of variation. Participants will perform simple log normalization, identify highly variable genes and apply PCA to assess technical and biological covariates such as sequencing depth, mitochondrial content and cell cycle. The lesson then demonstrates normalization and variance stabilization with SCTransform, including regressing out selected covariates and iterating over multiple samples in preparation for downstream integration and clustering.
+author:
+  - Mary Piper
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Dimensionality Reduction
+keywords:
+  - R
+  - Seurat
+  - SCTransform
+  - Normalization
+  - Unwanted variation
+  - Cell cycle
+  - Mitochondrial genes
+  - PCA
+  - Highly variable genes
+  - Single-cell RNA-seq
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 90 minutes

@@ -1,5 +1,23 @@
 ---
 title: "Fetching Annotations"
+description: |
+  This lesson introduces participants to retrieving gene-level annotations using the AnnotationHub packages. Participants will learn how to connect to AnnotationHub, query Ensembl databases, download the appropriate annotation resources and extract essential gene information for downstream analysis.
+author:
+  - Meeta Mistry
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+keywords:
+  - R
+  - AnnotationHub
+  - Ensembl
+  - Gene annotations
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r}

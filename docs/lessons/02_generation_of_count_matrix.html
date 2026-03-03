@@ -6,7 +6,16 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Rory Kirchner">
+<meta name="author" content="Mary Piper">
+<meta name="author" content="Meeta Mistry">
+<meta name="author" content="Radhika Khetani">
+<meta name="author" content="Lorena Pantano">
+<meta name="author" content="Jihe Liu">
+<meta name="author" content="Will Gammerdinger">
+<meta name="author" content="Noor Sohail">
+<meta name="dcterms.date" content="2025-05-30">
+<meta name="keywords" content="Single-cell RNA-seq, Count matrix, UMIs, Cell barcodes, Demultiplexing, Mapping, Cell Ranger">
+<meta name="description" content="This lesson explains how raw single-cell RNA-seq sequencing data are processed into a cell-by-gene count matrix, with a focus on 3’-end, droplet-based protocols such as 10x Genomics, inDrops, and Drop-seq. It reviews library types (3’/5’ end vs full-length), UMIs and their role in distinguishing biological from PCR duplicates and the read architecture needed for cell-level quantification (sample index, cell barcode, UMI, and read sequences). The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix, highlighting common tools such as alevin, umi-tools, zUMIs and Cell Ranger.">
 
 <title>Generation of count matrix – Introduction to single-cell RNA-seq</title>
 <style>
@@ -4088,7 +4097,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/01_intro_to_scRNA-seq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introduction to single-cell RNA-seq</span></a>
+ <span class="menu-text">Project set-up</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4111,7 +4120,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/03_quality_control-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Quality Control Setup</span></a>
+ <span class="menu-text">Loading single cell RNA-seq data into Seurat</span></a>
   </div>
 </li>
       </ul>
@@ -4128,7 +4137,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/04_cellranger_QC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Quality Control of Cellranger Output</span></a>
+ <span class="menu-text">Quality Control of Cell Ranger Output</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4157,7 +4166,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/07_SCT_normalization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normalization, identification of most variable genes</span></a>
+ <span class="menu-text">Normalization and exploring data for unwanted variation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4192,7 +4201,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/11_clustering_quality_control.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Clustering QC</span></a>
+ <span class="menu-text">Clustering Quality Control</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4255,23 +4264,38 @@ text-align: left !important;
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/01_intro_to_scRNA-seq.html">Pre-reading:</a></li><li class="breadcrumb-item"><a href="../lessons/02_generation_of_count_matrix.html">Generation of count matrix</a></li></ol></nav>
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title">Generation of count matrix</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">R Programming</div>
+    <div class="quarto-category">Single-cell RNA-seq</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    <p>This lesson explains how raw single-cell RNA-seq sequencing data are processed into a cell-by-gene count matrix, with a focus on 3’-end, droplet-based protocols such as 10x Genomics, inDrops, and Drop-seq. It reviews library types (3’/5’ end vs full-length), UMIs and their role in distinguishing biological from PCR duplicates and the read architecture needed for cell-level quantification (sample index, cell barcode, UMI, and read sequences). The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix, highlighting common tools such as alevin, umi-tools, zUMIs and Cell Ranger.</p>
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Authors</div>
     <div class="quarto-title-meta-contents">
-             <p>Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Rory Kirchner </p>
+             <p>Mary Piper </p>
+             <p>Meeta Mistry </p>
+             <p>Radhika Khetani </p>
+             <p>Lorena Pantano </p>
+             <p>Jihe Liu </p>
+             <p>Will Gammerdinger </p>
+             <p>Noor Sohail </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
+      <p class="date">May 30, 2025</p>
     </div>
   </div>
   
@@ -4279,6 +4303,12 @@ text-align: left !important;
   </div>
   
 
+<div>
+  <div class="keywords">
+    <div class="block-title">Keywords</div>
+    <p>Single-cell RNA-seq, Count matrix, UMIs, Cell barcodes, Demultiplexing, Mapping, Cell Ranger</p>
+  </div>
+</div>
 
 </header>
 
@@ -4417,7 +4447,7 @@ AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div>CC-BY-4.0</div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -4870,151 +4900,175 @@ AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
 <div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Generation of count matrix&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Rory Kirchner&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> Monday, February 24th, 2020</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single-cell RNA-seq data - raw data to count matrix</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Depending on the library preparation method used, the RNA sequences (also referred to as reads or tags), will be derived either from the 3&#39; ends (or 5&#39; ends) of the transcripts (10X Genomics, CEL-seq2, Drop-seq, inDrops) or from full-length transcripts (Smart-seq). </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_library_overviews.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>_**Image credit:** Papalexi E and Satija R. Single-cell RNA sequencing to explore immune cell heterogeneity, Nature Reviews Immunology 2018 (https://doi.org/10.1038/nri.2017.76)_</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>The choice of method involves the biological question of interest. The following advantages are listed below for the methods:</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**3&#39; (or 5&#39;)-end sequencing:** </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>More accurate quantification through the use of unique molecular identifiers distinguishing biological duplicates from amplification (PCR) duplicates</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Larger number of cells sequenced allows better identity of cell type populations</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Cheaper per cell cost</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Best results with &gt; 10,000 cells</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Full length sequencing:**</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Detection of isoform-level differences in expression</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Identification of allele-specific differences in expression</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Deeper sequencing of a smaller number of cells </span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Best for samples with low number of cells</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>Many of the same analysis steps need to occur for 3&#39;-end sequencing as for full-length, but 3&#39; protocols have been increasing in popularity and consist of a few more steps in the analysis. Therefore, our materials are going to detail the analysis of data from these 3&#39; protocols with a focus on the droplet-based methods (inDrops, Drop-seq, 10X Genomics).</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> |</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">    This lesson explains how raw single-cell RNA-seq sequencing data are processed into a cell-by-gene count matrix, with a focus on 3&#39;-end, droplet-based protocols such as 10x Genomics, inDrops, and Drop-seq. It reviews library types (3&#39;/5&#39; end vs full-length), UMIs and their role in distinguishing biological from PCR duplicates and the read architecture needed for cell-level quantification (sample index, cell barcode, UMI, and read sequences). The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix, highlighting common tools such as alevin, umi-tools, zUMIs and Cell Ranger.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">  - Mary Piper</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">  - Meeta Mistry</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">  - Radhika Khetani</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">  - Lorena Pantano</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Jihe Liu</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Will Gammerdinger</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">  - Noor Sohail</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2025-05-30&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">  - R Programming</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">  - Single-cell RNA-seq</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="an">keywords:</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">  - Single-cell RNA-seq</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">  - Count matrix</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">  - UMIs</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">  - Cell barcodes</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">  - Demultiplexing</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">  - Mapping</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">  - Cell Ranger</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="an">license:</span><span class="co"> &quot;CC-BY-4.0&quot;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">  markdown: </span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">    wrap: 72</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3&#39;-end reads (includes all droplet-based methods)</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>For the analysis of scRNA-seq data, it is helpful to understand **what information is present in each of the reads** and how we use it moving forward through the analysis. </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>For the 3&#39;-end sequencing methods, reads originating from different molecules of the same transcript would have originated only from the 3&#39; end of the transcripts, so would have a high likelihood of having the same sequence. However, the PCR step during library preparation could also generate read duplicates. To determine whether a read is a biological or technical duplicate, these methods use unique molecular identifiers, or UMIs. </span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reads with **different UMIs** mapping to the same transcript were derived from **different molecules** and are biological duplicates - each read should be counted.</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reads with the **same UMI** originated from the **same molecule** and are technical duplicates - the UMIs should be collapsed to be counted as a single read.</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>In image below, the reads for ACTB should be collapsed and counted as a single read, while the reads for ARL1 should each be counted.</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/umis.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>_**Image credit:** modified from Macosko EZ et al. Highly Parallel Genome-wide Expression Profiling of Individual Cells Using Nanoliter Droplets, Cell 2015 (https://doi.org/10.1016/j.cell.2015.05.002)_</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>So we know that we need to keep track of the UMIs, but what other information do we need to properly quantify the expression in each gene in each of the cells in our samples? Regardless of droplet method, **the following are required for proper quantification at the cellular level**:</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/read_architecture.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single-cell RNA-seq data - raw data to count matrix</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>Depending on the library preparation method used, the RNA sequences (also referred to as reads or tags), will be derived either from the 3&#39; ends (or 5&#39; ends) of the transcripts (10X Genomics, CEL-seq2, Drop-seq, inDrops) or from full-length transcripts (Smart-seq). </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_library_overviews.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>_**Image credit:** Papalexi E and Satija R. Single-cell RNA sequencing to explore immune cell heterogeneity, Nature Reviews Immunology 2018 (https://doi.org/10.1038/nri.2017.76)_</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>The choice of method involves the biological question of interest. The following advantages are listed below for the methods:</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**3&#39; (or 5&#39;)-end sequencing:** </span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>More accurate quantification through the use of unique molecular identifiers distinguishing biological duplicates from amplification (PCR) duplicates</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Larger number of cells sequenced allows better identity of cell type populations</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Cheaper per cell cost</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Best results with &gt; 10,000 cells</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Full length sequencing:**</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Detection of isoform-level differences in expression</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Identification of allele-specific differences in expression</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Deeper sequencing of a smaller number of cells </span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Best for samples with low number of cells</span>
 <span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sample index**: determines which sample the read originated from (red bottom arrow)</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Added during library preparation - needs to be documented</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Cellular barcode**: determines which cell the read originated from (purple top arrow)</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Each library preparation method has a stock of cellular barcodes used during the library preparation</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Unique molecular identifier (UMI)**: determines which transcript molecule the read originated from</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>The UMI will be used to collapse PCR duplicates (purple bottom arrow)</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sequencing read1**: the Read1 sequence (red top arrow)</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sequencing read2**: the Read2 sequence (purple bottom arrow)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>Many of the same analysis steps need to occur for 3&#39;-end sequencing as for full-length, but 3&#39; protocols have been increasing in popularity and consist of a few more steps in the analysis. Therefore, our materials are going to detail the analysis of data from these 3&#39; protocols with a focus on the droplet-based methods (inDrops, Drop-seq, 10X Genomics).</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3&#39;-end reads (includes all droplet-based methods)</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>For the analysis of scRNA-seq data, it is helpful to understand **what information is present in each of the reads** and how we use it moving forward through the analysis. </span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>For the 3&#39;-end sequencing methods, reads originating from different molecules of the same transcript would have originated only from the 3&#39; end of the transcripts, so would have a high likelihood of having the same sequence. However, the PCR step during library preparation could also generate read duplicates. To determine whether a read is a biological or technical duplicate, these methods use unique molecular identifiers, or UMIs. </span>
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>_**Image credit:** [Sarah Boswell](https://scholar.harvard.edu/saboswell), Director of the Single Cell Sequencing Core at HMS_</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single-cell RNA-seq workflow</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reads with **different UMIs** mapping to the same transcript were derived from **different molecules** and are biological duplicates - each read should be counted.</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reads with the **same UMI** originated from the **same molecule** and are technical duplicates - the UMIs should be collapsed to be counted as a single read.</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>In image below, the reads for ACTB should be collapsed and counted as a single read, while the reads for ARL1 should each be counted.</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>The scRNA-seq method will determine how to parse the barcodes and UMIs from the sequencing reads. So, although a few of the specific steps will slightly differ, the overall workflow will generally follow the same steps regardless of method. The general workflow is shown below:</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/umis.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="dt">&gt;</span></span>
 <span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/scRNA-seq_steps_image.jpg&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>_**Image credit:** Luecken, MD and Theis, FJ. Current best practices in single‐cell RNA‐seq analysis: a tutorial, Mol Syst Biol 2019 (doi: https://doi.org/10.15252/msb.20188746)_</span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>The steps of the workflow are:</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generation of the count matrix (method-specific steps):** formating reads, demultiplexing samples, mapping and quantification</span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Quality control of the raw counts:** filtering of poor quality cells </span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Clustering of filtered counts:** clustering cells based on similarities in transcriptional activity (cell types = different clusters)</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Marker identification and cluster annotation:** identifying gene markers for each cluster and annotating known cell type clusters</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Optional downstream steps**</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>Regardless of the analysis being done, conclusions about a population based on a single sample per condition are not trustworthy. **BIOLOGICAL REPLICATES ARE STILL NEEDED!** That is, if you want to make conclusions that correspond to the population and not just the single sample. </span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generation of count matrix</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>We are going to start by discussing the first part of this workflow, which is generating the count matrix from the raw sequencing data. We will focus on the 3&#39; end sequencing used by droplet-based methods, such as inDrops, 10X Genomics, and Drop-seq.</span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>_**Image credit:** modified from Macosko EZ et al. Highly Parallel Genome-wide Expression Profiling of Individual Cells Using Nanoliter Droplets, Cell 2015 (https://doi.org/10.1016/j.cell.2015.05.002)_</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>So we know that we need to keep track of the UMIs, but what other information do we need to properly quantify the expression in each gene in each of the cells in our samples? Regardless of droplet method, **the following are required for proper quantification at the cellular level**:</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/read_architecture.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sample index**: determines which sample the read originated from (red bottom arrow)</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Added during library preparation - needs to be documented</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Cellular barcode**: determines which cell the read originated from (purple top arrow)</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Each library preparation method has a stock of cellular barcodes used during the library preparation</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Unique molecular identifier (UMI)**: determines which transcript molecule the read originated from</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>The UMI will be used to collapse PCR duplicates (purple bottom arrow)</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sequencing read1**: the Read1 sequence (red top arrow)</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Sequencing read2**: the Read2 sequence (purple bottom arrow)</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>_**Image credit:** [Sarah Boswell](https://scholar.harvard.edu/saboswell), Director of the Single Cell Sequencing Core at HMS_</span>
 <span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_gen_matrix_workflow.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single-cell RNA-seq workflow</span></span>
 <span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>After sequencing, the sequencing facility will either output the raw sequencing data as **BCL or FASTQ format or will generate the count matrix**. If the reads are in BCL format, then we will need to convert to FASTQ format. There is a useful command-line tool called <span class="in">`bcl2fastq`</span> that can easily perform this conversion. </span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>The scRNA-seq method will determine how to parse the barcodes and UMIs from the sequencing reads. So, although a few of the specific steps will slightly differ, the overall workflow will generally follow the same steps regardless of method. The general workflow is shown below:</span>
 <span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>We do not demultiplex at this step in the workflow. You may have sequenced 6 samples, but the reads for all samples may be present all in the same BCL or FASTQ file.</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/scRNA-seq_steps_image.jpg&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>_**Image credit:** Luecken, MD and Theis, FJ. Current best practices in single‐cell RNA‐seq analysis: a tutorial, Mol Syst Biol 2019 (doi: https://doi.org/10.15252/msb.20188746)_</span>
 <span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>The generation of the count matrix from the raw sequencing data will go through similar steps for many of the scRNA-seq methods. </span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>The steps of the workflow are:</span>
 <span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_pre-QC_workflow_updated.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**alevin**</span><span class="co">](https://salmon.readthedocs.io/en/latest/alevin.html)</span> is a command-line tool that estimates expression of scRNA-seq data for which the 3&#39; ends of transcripts were sequenced. <span class="co">[</span><span class="ot">**umi-tools**</span><span class="co">]()</span> and <span class="co">[</span><span class="ot">**zUMIs**</span><span class="co">](https://github.com/sdparekh/zUMIs)</span> are additional tools that can perform these processes. These tools incorporate collapsing of UMIs to correct for amplification bias. The steps in this process include the following:</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="ss"> 1. </span>Formatting reads and filtering noisy cellular barcodes</span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a><span class="ss"> 2. </span>Demultiplexing the samples</span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="ss"> 3. </span>Mapping/pseudo-mapping to transcriptome</span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a><span class="ss"> 4. </span>Collapsing UMIs and quantification of reads</span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>If using 10X Genomics library preparation method, then the <span class="co">[</span><span class="ot">Cell Ranger pipeline</span><span class="co">](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger)</span> would be used for all of the above steps. </span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Generation of the count matrix (method-specific steps):** formating reads, demultiplexing samples, mapping and quantification</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Quality control of the raw counts:** filtering of poor quality cells </span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Clustering of filtered counts:** clustering cells based on similarities in transcriptional activity (cell types = different clusters)</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Marker identification and cluster annotation:** identifying gene markers for each cluster and annotating known cell type clusters</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Optional downstream steps**</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>Regardless of the analysis being done, conclusions about a population based on a single sample per condition are not trustworthy. **BIOLOGICAL REPLICATES ARE STILL NEEDED!** That is, if you want to make conclusions that correspond to the population and not just the single sample. </span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generation of count matrix</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>We are going to start by discussing the first part of this workflow, which is generating the count matrix from the raw sequencing data. We will focus on the 3&#39; end sequencing used by droplet-based methods, such as inDrops, 10X Genomics, and Drop-seq.</span>
 <span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Formatting reads and filtering noisy cellular barcodes</span></span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>The FASTQ files can then be used to parse out the cell barcodes, UMIs, and sample barcodes. For droplet-based methods, many of the cellular barcodes will match a low number of reads (&lt; 1000 reads) due to:</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_gen_matrix_workflow.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>encapsulation of free floating RNA from dying cells</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>simple cells (RBCs, etc.) expressing few genes</span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>cells that failed for some reason</span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>These excess barcodes need to be filtered out of the sequence data prior to read alignment. To do this filtering, the &#39;cellular barcode&#39; and the &#39;molecular barcode&#39; are extracted and saved for each cell. For example, if using <span class="in">`umi-tools`</span>, the information is added to the header line for each read, with the following format:</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>After sequencing, the sequencing facility will either output the raw sequencing data as **BCL or FASTQ format or will generate the count matrix**. If the reads are in BCL format, then we will need to convert to FASTQ format. There is a useful command-line tool called <span class="in">`bcl2fastq`</span> that can easily perform this conversion. </span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>We do not demultiplex at this step in the workflow. You may have sequenced 6 samples, but the reads for all samples may be present all in the same BCL or FASTQ file.</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="in">    @HWI-ST808:130:H0B8YADXX:1:1101:2088:2222:CELL_GGTCCA:UMI_CCCT</span></span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="in">    AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN</span></span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="in">    +</span></span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="in">    @@@DDBD&gt;=AFCF+&lt;CAFHDECII:DGGGHGIGGIIIEHGIIIGIIDHII#</span></span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>Known cellular barcodes used in the library preparation method should be known, and unknown</span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>barcodes would be dropped, while allowing for an acceptable number of mismatches to the known cellular barcodes.</span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Demultiplexing sample reads</span></span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>The next step of the process is to demultiplex the samples, if sequencing more than a single sample. This is the one step of this process not handled by the <span class="in">`umi-tools`</span>, but is accomplished by <span class="in">`zUMIs`</span>. We would need to parse the reads to determine the sample barcode associated with each cell.</span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Mapping/pseudo-mapping to cDNAs</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>The generation of the count matrix from the raw sequencing data will go through similar steps for many of the scRNA-seq methods. </span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_pre-QC_workflow_updated.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**alevin**</span><span class="co">](https://salmon.readthedocs.io/en/latest/alevin.html)</span> is a command-line tool that estimates expression of scRNA-seq data for which the 3&#39; ends of transcripts were sequenced. <span class="co">[</span><span class="ot">**umi-tools**</span><span class="co">]()</span> and <span class="co">[</span><span class="ot">**zUMIs**</span><span class="co">](https://github.com/sdparekh/zUMIs)</span> are additional tools that can perform these processes. These tools incorporate collapsing of UMIs to correct for amplification bias. The steps in this process include the following:</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a><span class="ss"> 1. </span>Formatting reads and filtering noisy cellular barcodes</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="ss"> 2. </span>Demultiplexing the samples</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="ss"> 3. </span>Mapping/pseudo-mapping to transcriptome</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a><span class="ss"> 4. </span>Collapsing UMIs and quantification of reads</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>If using 10X Genomics library preparation method, then the <span class="co">[</span><span class="ot">Cell Ranger pipeline</span><span class="co">](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger)</span> would be used for all of the above steps. </span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>To determine which gene the read originated from, the reads are aligned using traditional (STAR) or light-weight methods (Kallisto/RapMap).</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Formatting reads and filtering noisy cellular barcodes</span></span>
 <span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Collapsing UMIs and quantification of reads</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>The FASTQ files can then be used to parse out the cell barcodes, UMIs, and sample barcodes. For droplet-based methods, many of the cellular barcodes will match a low number of reads (&lt; 1000 reads) due to:</span>
 <span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>The duplicate UMIs are collapsed, and only the unique UMIs are quantified using a tool like Kallisto or featureCounts. The resulting output is a cell by gene matrix of counts:</span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/count_matrix2.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>encapsulation of free floating RNA from dying cells</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>simple cells (RBCs, etc.) expressing few genes</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>cells that failed for some reason</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>These excess barcodes need to be filtered out of the sequence data prior to read alignment. To do this filtering, the &#39;cellular barcode&#39; and the &#39;molecular barcode&#39; are extracted and saved for each cell. For example, if using <span class="in">`umi-tools`</span>, the information is added to the header line for each read, with the following format:</span>
 <span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>_**Image credit:** extracted from Lafzi et al. Tutorial: guidelines for the experimental design of single-cell RNA sequencing studies, Nature Protocols 2018 (https://doi.org/10.1038/s41596-018-0073-y)_</span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>Each value in the matrix represents the number of reads in a cell originating from the corresponding gene. Using the count matrix, we can explore and filter the data, keeping only the higher quality cells.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="in">    @HWI-ST808:130:H0B8YADXX:1:1101:2088:2222:CELL_GGTCCA:UMI_CCCT</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="in">    AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a><span class="in">    +</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a><span class="in">    @@@DDBD&gt;=AFCF+&lt;CAFHDECII:DGGGHGIGGIIIEHGIIIGIIDHII#</span></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>Known cellular barcodes used in the library preparation method should be known, and unknown</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>barcodes would be dropped, while allowing for an acceptable number of mismatches to the known cellular barcodes.</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Demultiplexing sample reads</span></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>The next step of the process is to demultiplex the samples, if sequencing more than a single sample. This is the one step of this process not handled by the <span class="in">`umi-tools`</span>, but is accomplished by <span class="in">`zUMIs`</span>. We would need to parse the reads to determine the sample barcode associated with each cell.</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Mapping/pseudo-mapping to cDNAs</span></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>To determine which gene the read originated from, the reads are aligned using traditional (STAR) or light-weight methods (Kallisto/RapMap).</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Collapsing UMIs and quantification of reads</span></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>The duplicate UMIs are collapsed, and only the unique UMIs are quantified using a tool like Kallisto or featureCounts. The resulting output is a cell by gene matrix of counts:</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/count_matrix2.png&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>_**Image credit:** extracted from Lafzi et al. Tutorial: guidelines for the experimental design of single-cell RNA sequencing studies, Nature Protocols 2018 (https://doi.org/10.1038/s41596-018-0073-y)_</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>Each value in the matrix represents the number of reads in a cell originating from the corresponding gene. Using the count matrix, we can explore and filter the data, keeping only the higher quality cells.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

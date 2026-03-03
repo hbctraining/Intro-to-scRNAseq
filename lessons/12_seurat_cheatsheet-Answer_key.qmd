@@ -1,5 +1,9 @@
 ---
-title: Seurat Cheatsheet - Answer Key
+title: "Seurat Cheatsheet - Answer Key"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-12-07"
 ---
 
 ```{r}
@@ -8,7 +12,7 @@ title: Seurat Cheatsheet - Answer Key
 library(Seurat)
 library(tidyverse)
 
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 # Exercise 1

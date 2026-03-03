@@ -1,5 +1,9 @@
 ---
-title: "Quality Control Analysis- Answer Key"
+title: "Quality Control Analysis - Answer Key"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-07-01"
 ---
 
 ```{r}

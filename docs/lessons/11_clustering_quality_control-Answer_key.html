@@ -6,10 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Noor Sohail">
 <meta name="author" content="Will Gammerdinger">
 <meta name="dcterms.date" content="2025-07-01">
 
-<title>Clustering QC - Answer Key – Introduction to single-cell RNA-seq</title>
+<title>Clustering Quality Control - Answer Key – Introduction to single-cell RNA-seq</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -4088,7 +4089,7 @@ text-align: left !important;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Clustering QC - Answer Key</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Clustering Quality Control - Answer Key</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -4096,8 +4097,9 @@ text-align: left !important;
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Authors</div>
     <div class="quarto-title-meta-contents">
+             <p>Noor Sohail </p>
              <p>Will Gammerdinger </p>
           </div>
   </div>
@@ -4832,155 +4834,157 @@ text-align: left !important;
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
 <div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Clustering QC - Answer Key&quot;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Will Gammerdinger&quot;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;Tuesday, July 1, 2025&quot;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_libraries</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">&quot;data/additional_data/seurat_integrated.RData.bz2&quot;</span>))</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 1</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Clustering Quality Control - Answer Key&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - Noor Sohail</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - Will Gammerdinger</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2025-07-01&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_libraries</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">bzfile</span>(<span class="st">&quot;data/seurat_integrated.RData.bz2&quot;</span>))</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>Hypothesize the clusters corresponding to each of the different clusters in the table:</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="fu"># Exercise 1</span></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cell Type <span class="pp">|</span> Clusters <span class="pp">|</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|:---:|</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD14+ monocytes <span class="pp">|</span> 1, 3 <span class="pp">|</span> </span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FCGR3A+ monocytes <span class="pp">|</span> 10 <span class="pp">|</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conventional dendritic cells <span class="pp">|</span> 14 <span class="pp">|</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plasmacytoid dendritic cells <span class="pp">|</span> 16 <span class="pp">|</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Marcrophages <span class="pp">|</span> - <span class="pp">|</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> B cells <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> T cells <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD4+ T cells <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD8+ T cells<span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NK cells <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Megakaryocytes <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Erythrocytes <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Unknown <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## B Cells</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>Hypothesize the clusters corresponding to each of the different clusters in the table:</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cell Type <span class="pp">|</span> Clusters <span class="pp">|</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|:---:|</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD14+ monocytes <span class="pp">|</span> 1, 3 <span class="pp">|</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FCGR3A+ monocytes <span class="pp">|</span> 10 <span class="pp">|</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conventional dendritic cells <span class="pp">|</span> 14 <span class="pp">|</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plasmacytoid dendritic cells <span class="pp">|</span> 16 <span class="pp">|</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Marcrophages <span class="pp">|</span> - <span class="pp">|</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> B cells <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> T cells <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD4+ T cells <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD8+ T cells<span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NK cells <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Megakaryocytes <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Erythrocytes <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Unknown <span class="pp">|</span> ? <span class="pp">|</span></span>
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: B_cells_plot</span></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD79A&quot;</span>, <span class="st">&quot;MS4A1&quot;</span>), </span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>B cells appear to be clusters 7, 11 and 13.</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## B Cells</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: B_cells_plot</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD79A&quot;</span>, <span class="st">&quot;MS4A1&quot;</span>), </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## T cells</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>B cells appear to be clusters 7, 11 and 13.</span>
 <span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: T_cells_plot</span></span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>), </span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>T cells appear to be clusters 0, 2, 4, 5, 6 and 9. </span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## T cells</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: T_cells_plot</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>), </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## CD4+ T cells</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>T cells appear to be clusters 0, 2, 4, 5, 6 and 9. </span>
 <span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: CD4_T_cells_plot</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>, <span class="st">&quot;IL7R&quot;</span>, <span class="st">&quot;CCR7&quot;</span>), </span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>CD4+ T cells appear to be clusters 0, 2, 4 and 6. </span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## CD4+ T cells</span></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: CD4_T_cells_plot</span></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>, <span class="st">&quot;IL7R&quot;</span>, <span class="st">&quot;CCR7&quot;</span>), </span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## CD8+ T cells</span></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>CD4+ T cells appear to be clusters 0, 2, 4 and 6. </span>
 <span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: CD8_T_cells_plot</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>, <span class="st">&quot;CD8A&quot;</span>), </span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>CD8+ T cells appear to be clusters 5 and 9. </span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## CD8+ T cells</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: CD8_T_cells_plot</span></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;CD3D&quot;</span>, <span class="st">&quot;CD8A&quot;</span>), </span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## NK cells</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>CD8+ T cells appear to be clusters 5 and 9. </span>
 <span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: NK_cells_plot</span></span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;GNLY&quot;</span>, <span class="st">&quot;NKG7&quot;</span>), </span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>NK cells appear to be clusters 8 and 12. </span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## NK cells</span></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: NK_cells_plot</span></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;GNLY&quot;</span>, <span class="st">&quot;NKG7&quot;</span>), </span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Megakaryocytes</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>NK cells appear to be clusters 8 and 12. </span>
 <span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: Megakaryocytes_plot</span></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;PPBP&quot;</span>), </span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>Megakaryocytes appear to be clusters 15. </span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Megakaryocytes</span></span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: Megakaryocytes_plot</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;PPBP&quot;</span>), </span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## Erythrocytes</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>Megakaryocytes appear to be clusters 15. </span>
 <span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: Erythrocytes_plot</span></span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;HBB&quot;</span>, <span class="st">&quot;HBA2&quot;</span>), </span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>Erythrocytes don&#39;t appear to be present.</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="fu">## Erythrocytes</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: Erythrocytes_plot</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="fu">FeaturePlot</span>(seurat_integrated, </span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>            <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>            <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&quot;HBB&quot;</span>, <span class="st">&quot;HBA2&quot;</span>), </span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>            <span class="at">min.cutoff =</span> <span class="st">&#39;q10&#39;</span>, </span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>Erythrocytes don&#39;t appear to be present.</span>
 <span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cell Type <span class="pp">|</span> Clusters <span class="pp">|</span></span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|:---:|</span></span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD14+ monocytes <span class="pp">|</span> 1, 3 <span class="pp">|</span> </span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FCGR3A+ monocytes <span class="pp">|</span> 10 <span class="pp">|</span></span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conventional dendritic cells <span class="pp">|</span> 14 <span class="pp">|</span></span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plasmacytoid dendritic cells <span class="pp">|</span> 16 <span class="pp">|</span></span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Marcrophages <span class="pp">|</span> - <span class="pp">|</span></span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> B cells <span class="pp">|</span> 7, 11, 13 <span class="pp">|</span></span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> T cells <span class="pp">|</span> 0, 2, 4, 5, 6, 9 <span class="pp">|</span></span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD4+ T cells <span class="pp">|</span> 0, 2, 4, 6 <span class="pp">|</span></span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD8+ T cells<span class="pp">|</span> 5, 9 <span class="pp">|</span></span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NK cells <span class="pp">|</span> 8, 12 <span class="pp">|</span></span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Megakaryocytes <span class="pp">|</span> 15 <span class="pp">|</span></span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Erythrocytes <span class="pp">|</span> - <span class="pp">|</span></span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cell Type <span class="pp">|</span> Clusters <span class="pp">|</span></span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|:---:|</span></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD14+ monocytes <span class="pp">|</span> 1, 3 <span class="pp">|</span> </span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FCGR3A+ monocytes <span class="pp">|</span> 10 <span class="pp">|</span></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conventional dendritic cells <span class="pp">|</span> 14 <span class="pp">|</span></span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plasmacytoid dendritic cells <span class="pp">|</span> 16 <span class="pp">|</span></span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Marcrophages <span class="pp">|</span> - <span class="pp">|</span></span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> B cells <span class="pp">|</span> 7, 11, 13 <span class="pp">|</span></span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> T cells <span class="pp">|</span> 0, 2, 4, 5, 6, 9 <span class="pp">|</span></span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD4+ T cells <span class="pp">|</span> 0, 2, 4, 6 <span class="pp">|</span></span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CD8+ T cells<span class="pp">|</span> 5, 9 <span class="pp">|</span></span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NK cells <span class="pp">|</span> 8, 12 <span class="pp">|</span></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Megakaryocytes <span class="pp">|</span> 15 <span class="pp">|</span></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Erythrocytes <span class="pp">|</span> - <span class="pp">|</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

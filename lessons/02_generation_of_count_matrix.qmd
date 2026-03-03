@@ -1,7 +1,31 @@
 ---
 title: "Generation of count matrix"
-author: "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Rory Kirchner"
-date: Monday, February 24th, 2020
+description: |
+    This lesson explains how raw single-cell RNA-seq sequencing data are processed into a cell-by-gene count matrix, with a focus on 3'-end, droplet-based protocols such as 10x Genomics, inDrops, and Drop-seq. It reviews library types (3'/5' end vs full-length), UMIs and their role in distinguishing biological from PCR duplicates and the read architecture needed for cell-level quantification (sample index, cell barcode, UMI, and read sequences). The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix, highlighting common tools such as alevin, umi-tools, zUMIs and Cell Ranger.
+author:
+  - Mary Piper
+  - Meeta Mistry
+  - Radhika Khetani
+  - Lorena Pantano
+  - Jihe Liu
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - Single-cell RNA-seq
+  - Count matrix
+  - UMIs
+  - Cell barcodes
+  - Demultiplexing
+  - Mapping
+  - Cell Ranger
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ## Single-cell RNA-seq data - raw data to count matrix

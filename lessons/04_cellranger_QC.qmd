@@ -1,16 +1,37 @@
 ---
-title: "Quality Control of Cellranger Output"
-author: "Noor Sohail, Meeta Mistry"
-date: Thursday, June 25th 2024
+title: "Quality Control of Cell Ranger Output"
+description: |
+  This lesson introduces participants to evaluating the quality of Cell Ranger output for single-cell RNA‑seq experiments. Participants will learn how Cell Ranger processes data, how to interpret the generated QC reports and how to examine key metrics to assess sample quality. The lesson also guides participants through understanding the various output files produced by Cell Ranger and how these results inform the downstream single‑cell analysis.
+author:
+  - Mary Piper
+  - Meeta Mistry
+  - Radhika Khetani
+  - Lorena Pantano
+  - Jihe Liu
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Quality Control
+keywords:
+  - R
+  - Cell Ranger
+  - 10x Genomics
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 15 minutes
 
 ## Learning Objectives:
 
-* Describe how cellranger is run and what the ouputs are
-* Review the cellranger generated QC report (web summary HTML)
-* Create plots with cellranger metrics
+- Describe how cellranger is run and what the ouputs are
+- Review the cellranger generated QC report (web summary HTML)
+- Create plots with cellranger metrics
 
 
 ## Cellranger
@@ -136,9 +157,9 @@ At the top of the "Summary" tab, under the "Alerts" header, will be a list of wa
 
 Underneath the "Summary" tab, in green text, are the estimated number of high quality cells in the sample, average reads per cells, and median genes per cell. The number of cells will vary depending on how many were loaded in sample preparation, but some general recommendations are provided below:
 
-* 500 cells is the **lower limit** for a good quality sample.
-* 10x also recommends a minimum of 20,000 reads per cell on average.
-* **The median genes per cell varies widely** across samples as it depends on sequencing depth and cell type, making it difficult to establish a good minimal value. 
+- 500 cells is the **lower limit** for a good quality sample.
+- 10x also recommends a minimum of 20,000 reads per cell on average.
+- **The median genes per cell varies widely** across samples as it depends on sequencing depth and cell type, making it difficult to establish a good minimal value. 
 
 The remaining 4 sections include various metrics that describe the overall quality of the sample. _Note that clicking on the grey question mark will show more detailed explanations._
 
@@ -146,9 +167,7 @@ The remaining 4 sections include various metrics that describe the overall quali
 
 Includes information such as the total number of reads and how many of those reads did not meet the length requirements. Additionally, since all barcodes and UMIs are known values (from the kit used to prep scRNA experiments), we can evaluate what percentage of the barcodes and UMIs belong to that whitelist and are valid. 
 
-
 <img src="../img/web_summary_sequencing.png" width="400">
-
 
 Ideally, you would like to see >75% for almost all of these values since lower values are indicative of a low quality sequencing run or bad sample quality.
 
@@ -156,9 +175,7 @@ Ideally, you would like to see >75% for almost all of these values since lower v
 
 Percentage of reads that map to different regions of the reference genome as reported by STAR.
 
-
 <img src="../img/web_summary_mapping.png" width="400">
-
 
 The percent of reads mapped to the genome should be on the higher end, around 85% or higher. Values that are very low could indicate that the reference genome supplied was incorrect or that the sample was problematic. Otherwise, the expectation for a scRNA runs is that the majority of reads will belong to exonic regions. If nuclei were used instead of whole cells, the percentage of reads mapping to intronic regions will be higher (~45%).
 
@@ -166,9 +183,7 @@ The percent of reads mapped to the genome should be on the higher end, around 85
 
 Here we can see what an ideal representation of the Barcode Rank Plot looks like. The cells are sorted by the number of UMIs found in the cell to differentiate empty droplets/low quality cells (background) from actual cells. 
 
-
 <img src="../img/barcode_rank_plot.png" width="400">
-
 
 *Image credit: [10x](https://cdn.10xgenomics.com/image/upload/v1660261286/support-documents/CG000329_TechnicalNote_InterpretingCellRangerWebSummaryFiles_RevA.pdf)*
 
@@ -185,9 +200,7 @@ This section additionally describes averages and medians for number of genes and
 
 The sample section contains important metadata used by cellranger, such as what the Sample ID and the path used for the reference. The chemistry version (which 10x kit was used) and intron flags are also stored here. This information is useful for reproducibility reasons, as the version of cellranger used is also kept.
 
-
 <img src="../img/web_summary_sample.png" width="400">
-
 
 ### Gene Expression
 
@@ -197,9 +210,7 @@ The "Gene Expression" tab contains information downstream of the basic QC, such 
 
 Dotplot showing the t-SNE projection of filtered cells colored by UMI counts and clusters. The report allows you to select various values of K for the K-means clustering, showing different groupings that can be generated from the data.
 
-
 <img src="../img/web_summary_tsne.png" width="800">
-
 
 Later in the workshop we will spend more time on the intricacies of clustering. The requirements for this QC report would be to see clear separation of cells into groups with defined clusters - representing different cell types.
 
@@ -207,9 +218,7 @@ Later in the workshop we will spend more time on the intricacies of clustering. 
 
 This table shows the log2 fold-change and p-value for each gene and cluster after a differential expression analysis is run.
 
-
 <img src="../img/web_summary_degs.png" width="800">
-
 
 These top genes per cluster can give a brief peek into the cell type distribution of the sample. If no expected cell type marker genes appear or mitochondrial/ribosomal genes show up frequently, this can be indicative of something wrong with the sample.
 
@@ -217,13 +226,9 @@ These top genes per cluster can give a brief peek into the cell type distributio
 
 The sequencing saturation plot is a measure of library complexity. In scRNA, more genes can be detected with higher sequencing depth. At a point, you reach sequencing saturation where you do not gain any more meaningful insights which is what the dotted line represents here.
 
-
 Similar to the sequencing saturation plot, looking at the median gene per cells against mean reads per cell will indicate if your have over or under-sequenced. The slope near the endpoint can be used to determine how much benefit would be gained from sequencing more deeply.
 
-
 <img src="../img/web_summary_seq_saturation.png" width="1200">
-
-
 
 ## Metrics evaluation
 
@@ -231,8 +236,8 @@ Many of the core pieces of information from the web summary are stored in the `m
 
 We have included these csv files for the control and stimulated samples in your **`data` directory**:
 
-* Control sample `metrics.csv` file (`ctrl_metrics_summary.csv`)
-* Stimulated sample `metrics.csv` file (`stim_metrics_summary.csv`)
+- Control sample `metrics.csv` file (`ctrl_metrics_summary.csv`)
+- Stimulated sample `metrics.csv` file (`stim_metrics_summary.csv`)
 
 First, to read the files in:
 

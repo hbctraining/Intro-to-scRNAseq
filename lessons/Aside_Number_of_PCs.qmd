@@ -1,12 +1,27 @@
 ---
-title: "Number of PCs"
-author: 
+title: "Number of Principal Components"
+description: |
+  This lesson guides participants through understanding why the number of principal components in a PCA is limited by the structure and dimensionality of the data. Using an example dataset, participants explore how gene-wise and cell‑wise covariance matrices relate to the rank of a PCA, why zero‑variance components emerge and how duplicated values, scaling, linear combinations and constants reduce the effective dimensionality of scRNA‑seq data. By the end, participants gain an intuitive and mathematical understanding of how PCA rank is determined and why the number of PCs is always less than or equal to the minimum of the number of genes and cells.
+author:
   - Will Gammerdinger
   - Noor Sohail
   - Zhu Zhuo
   - James Billingsley
   - Shannan Ho Sui
-date: "Tuesday, October 22, 2025"
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Statistics
+  - Data Science 
+keywords:
+  - R
+  - PCA
+  - covariance matrix
+  - eigenvalues
+  - eigenvectors
+  - dimensionality reduction
+license: "CC-BY-4.0"
 editor_options: 
   markdown: 
     wrap: 72

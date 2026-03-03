@@ -1,5 +1,25 @@
 ---
-title: "Elbow Plot Metrics "
+title: "Elbow Plot Metrics"
+description: |
+  In this lesson, participants learn how to determine the appropriate number of principal components (PCs) to use in downstream single-cell RNA-seq analyses by combining visual and quantitative approaches. After generating an elbow plot with Seurat, participants explore two complementary metrics that identify where variance contributions taper off. By comparing cumulative variance explained and percent changes between consecutive PCs, participants gain an understanding of how many PCs capture the majority of biological signal for clustering.
+author:
+  - Meeta Mistry
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - PCA
+  - Elbow plot
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 
@@ -8,7 +28,7 @@ title: "Elbow Plot Metrics "
 # Load libraries
 library(Seurat)
 library(tidyverse)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 ## Elbow plot: quantitative approach

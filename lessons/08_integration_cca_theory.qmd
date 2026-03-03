@@ -1,7 +1,30 @@
 ---
 title: "Integration"
-author: "Mary Piper, Meeta Mistry, Radhika Khetani, Jihe Liu, Amelie Jule"
-date: Monday, Novemeber 21st, 2020
+description: |
+  This lesson introduces participants to the concepts involved in integrating single-cell RNA-seq datasets using canonical correlation analysis (CCA) within the Seurat framework. Participants will learn when integration is appropriate, how it aligns shared cell types across conditions and why evaluating data before integration is essential for accurate downstream analyses.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Integration
+  - CCA
+  - Seurat
+  - Mutual nearest neighbors
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 90 minutes

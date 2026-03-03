@@ -1,5 +1,29 @@
 ---
-title: "Seurat Object from Counts File "
+title: "Seurat Object from Counts File"
+description: |
+  This lesson introduces participants to creating a Seurat object starting from raw single‑cell RNA‑seq count files. Participants learn how gene, barcode and matrix files are structured, how to load them into R and how to generate a sparse count matrix to improve efficiency when working with large datasets.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - sparse matrix
+  - readMM
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ### Creating count data object

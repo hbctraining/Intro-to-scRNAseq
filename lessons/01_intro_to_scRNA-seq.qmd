@@ -1,7 +1,28 @@
 ---
-title: "Introduction to single-cell RNA-seq"
-author: "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Rory Kirchner"
-date: Monday, February 24th, 2020
+title: "Project set-up"
+description: |
+  This lesson introduces participants to the steps of setting up a single-cell RNA‑seq project in R. Participants will learn how to organize project files, understand the structure and source of the example dataset and apply good data management practices. The lesson also provides context on scRNA‑seq concepts, metadata and expected cell types to prepare participants for quality control and subsequent analytic steps.
+author:
+  - Mary Piper
+  - Meeta Mistry
+  - Radhika Khetani
+  - Lorena Pantano
+  - Jihe Liu
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Data Management
+keywords:
+  - R
+  - project organization
+  - PBMC
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 

@@ -1,7 +1,30 @@
 ---
 title: "Quality Control Analysis"
-author: "Mary Piper, Lorena Pantano, Meeta Mistry, Radhika Khetani, Jihe Liu"
-date: Monday, February 24th, 2020
+description: |
+  This lesson guides participants through performing quality control analysis for single‑cell RNA‑seq data using Seurat. Participants learn to generate key QC metrics, visualize and interpret them and apply informed filtering thresholds to remove low‑quality cells and genes. By the end of the lesson, participants will be able to assess data complexity, mitochondrial contamination and overall cell quality to prepare a clean dataset for downstream analysis.
+author:
+  - Mary Piper
+  - Meeta Mistry
+  - Radhika Khetani
+  - Lorena Pantano
+  - Jihe Liu
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Quality Control
+keywords:
+  - R
+  - QC metrics
+  - filtering
+  - mitochondrial ratio
+  - complexity
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 Approximate time: 90 minutes
@@ -17,8 +40,8 @@ merged_seurat <- readRDS("data/merged_seurat.RDS")
 
 ## Learning Objectives:
 
-* Construct quality control metrics and visually evaluate the quality of the data
-* Apply appropriate filters to remove low quality cells
+- Construct quality control metrics and visually evaluate the quality of the data
+- Apply appropriate filters to remove low quality cells
 
 # Single-cell RNA-seq: Quality control
 

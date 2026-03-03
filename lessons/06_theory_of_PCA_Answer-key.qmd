@@ -1,10 +1,9 @@
 ---
 title: "Theory of PCA - Answer Key"
-authors: "Will Gammerdinger, Noor Sohaili"
-date: "Friday, September 5, 2025"
-editor_options: 
-  markdown: 
-    wrap: 72
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-09-05"
 ---
 
 ```{r}

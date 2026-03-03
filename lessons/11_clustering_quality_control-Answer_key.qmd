@@ -1,7 +1,9 @@
 ---
-title: "Clustering QC - Answer Key"
-author: "Will Gammerdinger"
-date: "Tuesday, July 1, 2025"
+title: "Clustering Quality Control - Answer Key"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-07-01"
 ---
 
 ```{r}
@@ -11,7 +13,7 @@ library(Seurat)
 library(tidyverse)
 library(ggplot2)
 library(cowplot)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 # Exercise 1

@@ -1,12 +1,25 @@
 ---
 title: "Theory of PCA"
-author: 
+description: |
+  This lesson introduces participants to the theory and mechanics of Principal Components Analysis (PCA). Through a step‑by‑step, hands‑on walkthrough, participants learn how to derive the covariance matrix, obtain eigenvalues and eigenvectors, compute principal component scores and compare their manual PCA results with the output of `prcomp()`. The lesson emphasizes visualization and understanding how PCA operates on high‑dimensional single‑cell RNA‑seq data.
+author:
   - Will Gammerdinger
   - Noor Sohail
-  - Zhu Zhuo
-  - James Billingsley
   - Shannan Ho Sui
-date: "Tuesday, July 22, 2025"
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Statistics
+  - Data Science 
+keywords:
+  - R
+  - PCA
+  - covariance matrix
+  - eigenvalues
+  - eigenvectors
+  - dimensionality reduction
+license: "CC-BY-4.0"
 editor_options: 
   markdown: 
     wrap: 72

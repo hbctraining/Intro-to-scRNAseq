@@ -6,7 +6,12 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Mary Piper, Meeta Mistry, Radhika Khetani">
+<meta name="author" content="Meeta Mistry">
+<meta name="author" content="Noor Sohail">
+<meta name="author" content="Will Gammerdinger">
+<meta name="dcterms.date" content="2025-05-30">
+<meta name="keywords" content="R, Single-cell RNA-seq, Workflow, Quality control, Normalization, sctransform, Unwanted variation, Integration, Clustering, Marker identification, Cell type annotation">
+<meta name="description" content="This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization and variance stabilization with sctransform, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.">
 
 <title>Workflow Overview – Introduction to single-cell RNA-seq</title>
 <style>
@@ -4088,7 +4093,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/01_intro_to_scRNA-seq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introduction to single-cell RNA-seq</span></a>
+ <span class="menu-text">Project set-up</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4111,7 +4116,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/03_quality_control-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Quality Control Setup</span></a>
+ <span class="menu-text">Loading single cell RNA-seq data into Seurat</span></a>
   </div>
 </li>
       </ul>
@@ -4128,7 +4133,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/04_cellranger_QC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Quality Control of Cellranger Output</span></a>
+ <span class="menu-text">Quality Control of Cell Ranger Output</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4157,7 +4162,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/07_SCT_normalization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normalization, identification of most variable genes</span></a>
+ <span class="menu-text">Normalization and exploring data for unwanted variation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4192,7 +4197,7 @@ text-align: left !important;
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../lessons/11_clustering_quality_control.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Clustering QC</span></a>
+ <span class="menu-text">Clustering Quality Control</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -4259,23 +4264,34 @@ text-align: left !important;
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lessons/13_marker_identification.html">Day 3:</a></li><li class="breadcrumb-item"><a href="../lessons/14_scRNAseq_workflow.html">Workflow Overview</a></li></ol></nav>
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title">Workflow Overview</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">R Programming</div>
+    <div class="quarto-category">Single-cell RNA-seq</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    <p>This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization and variance stabilization with sctransform, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.</p>
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Authors</div>
     <div class="quarto-title-meta-contents">
-             <p>Mary Piper, Meeta Mistry, Radhika Khetani </p>
+             <p>Meeta Mistry </p>
+             <p>Noor Sohail </p>
+             <p>Will Gammerdinger </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
+      <p class="date">May 30, 2025</p>
     </div>
   </div>
   
@@ -4283,6 +4299,12 @@ text-align: left !important;
   </div>
   
 
+<div>
+  <div class="keywords">
+    <div class="block-title">Keywords</div>
+    <p>R, Single-cell RNA-seq, Workflow, Quality control, Normalization, sctransform, Unwanted variation, Integration, Clustering, Marker identification, Cell type annotation</p>
+  </div>
+</div>
 
 </header>
 
@@ -4365,7 +4387,7 @@ Note
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div>CC-BY-4.0</div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -4818,70 +4840,94 @@ Note
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
 <div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Workflow Overview&quot;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Mary Piper, Meeta Mistry, Radhika Khetani&quot;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> Wednesday July 17th, 2024</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Approximate time: 20 minutes</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning Objectives:</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Describe the workflow for single-cell RNA-seq analysis </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single-cell RNA-seq Workflow</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>In this workshop we have walked through an end-to-end workflow for the analysis of single cell RNA-seq data. For each step, code was provided along with in-depth information on the background and theory. Here, we review each step and highlight important concepts beginning with the count matrix.</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; _NOTE:_ For more information on how to generate the count matrix from raw reads, please see </span><span class="co">[</span><span class="ot">this lesson</span><span class="co">](02_generation_of_count_matrix.qmd)</span><span class="at"> from the pre-reading.</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> align</span><span class="op">=</span><span class="st">&quot;center&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_workflow_2022.jpg&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Filtering data</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>The first step is to take the raw count data and use various metrics to identify true cells that are of high quality, so that when we cluster our cells it is easier to identify distinct cell type populations. **Visualizing metrics with plots** allows us to evaluate all samples within a dataset and isolate any problematic samples. Additionally, we can more easily decide on suitable thresholds for cell-level filtering. We want to be able to keep as many high quality cells as possible without removing biologically relevant cell types. Gene-level filtering is also applied at this stage.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clustering workflow</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>For something to be informative, it needs to exhibit variation, but not all variation is informative. The goal of our clustering analysis is to **keep the major sources of variation in our dataset that should define our cell types, while restricting the variation due to uninteresting sources of variation** (sequencing depth, cell cycle differences, mitochondrial expression, batch effects, etc.). Then, to determine the cell types present, we will perform a clustering analysis using the most variable genes to define the major sources of variation in the dataset. </span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>The workflow for this analysis is adapted from the following sources:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> |</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization and variance stabilization with sctransform, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  - Meeta Mistry</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  - Noor Sohail</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  - Will Gammerdinger</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;2025-05-30&quot;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - R Programming</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">  - Single-cell RNA-seq</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="an">keywords:</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">  - R</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">  - Single-cell RNA-seq</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">  - Workflow</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">  - Quality control</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">  - Normalization</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">  - sctransform</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">  - Unwanted variation</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">  - Integration</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">  - Clustering</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">  - Marker identification</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">  - Cell type annotation</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="an">license:</span><span class="co"> &quot;CC-BY-4.0&quot;</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">  markdown: </span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">    wrap: 72</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Satija Lab: <span class="co">[</span><span class="ot">Seurat v3 Guided Integration Tutorial</span><span class="co">](https://satijalab.org/seurat/v3.0/immune_alignment.html)</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Paul Hoffman: <span class="co">[</span><span class="ot">Cell-Cycle Scoring and Regression</span><span class="co">](http://satijalab.org/seurat/cell_cycle_vignette.html)</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>To identify clusters, the following steps are performed:</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>Approximate time: 20 minutes</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning Objectives:</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Describe the workflow for single-cell RNA-seq analysis </span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Explore sources of unwanted variation</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>The first step in the workflow is to see if our data contains any unwanted variability. The most common biological effect that is evaluated in single-cell RNA-seq data is the effect of cell cycle on the transcriptome. Another known biological effect is mitochondrial gene expression, which is interpreted as an indication of cell stress. This step of the workflow involves exploring our data to identify which covariates we would like to regress out. </span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Normalization and regressing out sources of unwanted variation</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a> Normalization is required to scale the raw count data to obtain correct relative gene expression abundances between cells. The <span class="in">`sctransform`</span> function implements an advanced normalization and variance stabilization of the data. The <span class="in">`sctransform`</span> function also regresses out sources of unwanted variation in our data. In the previous step, we had identified these sources of variability, and here we specify what those covariates are. </span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Integration</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets <span class="co">[</span><span class="ot">Stuart and Butler et al. (2018)</span><span class="co">]</span>. There are several steps involved in performing intergration in Seurat. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single-cell RNA-seq Workflow</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>In this workshop we have walked through an end-to-end workflow for the analysis of single cell RNA-seq data. For each step, code was provided along with in-depth information on the background and theory. Here, we review each step and highlight important concepts beginning with the count matrix.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; _NOTE:_ For more information on how to generate the count matrix from raw reads, please see </span><span class="co">[</span><span class="ot">this lesson</span><span class="co">](02_generation_of_count_matrix.qmd)</span><span class="at"> from the pre-reading.</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> align</span><span class="op">=</span><span class="st">&quot;center&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;../img/sc_workflow_2022.jpg&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Filtering data</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>The first step is to take the raw count data and use various metrics to identify true cells that are of high quality, so that when we cluster our cells it is easier to identify distinct cell type populations. **Visualizing metrics with plots** allows us to evaluate all samples within a dataset and isolate any problematic samples. Additionally, we can more easily decide on suitable thresholds for cell-level filtering. We want to be able to keep as many high quality cells as possible without removing biologically relevant cell types. Gene-level filtering is also applied at this stage.</span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>Integration is optional. We recommend going through the workflow without integration to decide whether or not it is necessary for your data. </span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clustering workflow</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>For something to be informative, it needs to exhibit variation, but not all variation is informative. The goal of our clustering analysis is to **keep the major sources of variation in our dataset that should define our cell types, while restricting the variation due to uninteresting sources of variation** (sequencing depth, cell cycle differences, mitochondrial expression, batch effects, etc.). Then, to determine the cell types present, we will perform a clustering analysis using the most variable genes to define the major sources of variation in the dataset. </span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Clustering cells</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>The workflow for this analysis is adapted from the following sources:</span>
 <span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>Clusters of cells are obtained by grouping cells based on the similarity of their gene expression profiles. Expression profile similarity is determined via distance metrics, which often take dimensionality‐reduced representations as input. Seurat assigns cells to clusters based on their PCA scores derived from the expression of the integrated most variable genes. </span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Cluster quality evaluation</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>The clusters identified in our data represent groups of cells that presumably belong to a similar cell type. Before we can confirm the celltype of a group of member cells, the following steps are taken:</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Satija Lab: <span class="co">[</span><span class="ot">Seurat v3 Guided Integration Tutorial</span><span class="co">](https://satijalab.org/seurat/v3.0/immune_alignment.html)</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Paul Hoffman: <span class="co">[</span><span class="ot">Cell-Cycle Scoring and Regression</span><span class="co">](http://satijalab.org/seurat/cell_cycle_vignette.html)</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>To identify clusters, the following steps are performed:</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**a.** Check to see that clusters are not influenced by sources of uninteresting variation.</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**b.** Check to see whether the major principal components are driving the different clusters.</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**c.** Explore the cell type identities by looking at the expression for known markers across the clusters. </span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Explore sources of unwanted variation</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>The first step in the workflow is to see if our data contains any unwanted variability. The most common biological effect that is evaluated in single-cell RNA-seq data is the effect of cell cycle on the transcriptome. Another known biological effect is mitochondrial gene expression, which is interpreted as an indication of cell stress. This step of the workflow involves exploring our data to identify which covariates we would like to regress out. </span>
 <span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Marker Identification and Celltype Assignment</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>Often the known marker expression evaluation gives us some hints as to which celltype is represented within a cluster, but sometimes it is not so obvious. In situations where there is uncertainty of the cell type assignment it is good practice to check which genes exhibit a high expression profile among cells (i.e FindMarkers). The list of genes can provide insight on celltype and/or can be the impetus for removal of a group of cells. After this step we hope to obtain a fully annotated dataset that we can move forward with for downstream analysis.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Normalization and regressing out sources of unwanted variation</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a> Normalization is required to scale the raw count data to obtain correct relative gene expression abundances between cells. The <span class="in">`sctransform`</span> function implements an advanced normalization and variance stabilization of the data. The <span class="in">`sctransform`</span> function also regresses out sources of unwanted variation in our data. In the previous step, we had identified these sources of variability, and here we specify what those covariates are. </span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Integration</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets <span class="co">[</span><span class="ot">Stuart and Butler et al. (2018)</span><span class="co">]</span>. There are several steps involved in performing intergration in Seurat. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>Integration is optional. We recommend going through the workflow without integration to decide whether or not it is necessary for your data. </span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Clustering cells</span></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>Clusters of cells are obtained by grouping cells based on the similarity of their gene expression profiles. Expression profile similarity is determined via distance metrics, which often take dimensionality‐reduced representations as input. Seurat assigns cells to clusters based on their PCA scores derived from the expression of the integrated most variable genes. </span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Cluster quality evaluation</span></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>The clusters identified in our data represent groups of cells that presumably belong to a similar cell type. Before we can confirm the celltype of a group of member cells, the following steps are taken:</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**a.** Check to see that clusters are not influenced by sources of uninteresting variation.</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**b.** Check to see whether the major principal components are driving the different clusters.</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>**c.** Explore the cell type identities by looking at the expression for known markers across the clusters. </span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Marker Identification and Celltype Assignment</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>Often the known marker expression evaluation gives us some hints as to which celltype is represented within a cluster, but sometimes it is not so obvious. In situations where there is uncertainty of the cell type assignment it is good practice to check which genes exhibit a high expression profile among cells (i.e FindMarkers). The list of genes can provide insight on celltype and/or can be the impetus for removal of a group of cells. After this step we hope to obtain a fully annotated dataset that we can move forward with for downstream analysis.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

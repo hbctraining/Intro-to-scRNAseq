@@ -1,7 +1,9 @@
 ---
 title: "Normalization and exploring data for unwanted variation - Answer Key"
-author: "Will Gammerdinger"
-date: "Tuesday, July 1, 2025"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-07-01"
 ---
 
 ```{r}
@@ -73,6 +75,7 @@ DimPlot(seurat_phase,
 # Exercise 2
 
 ```{r}
+#| label: split_object
 split_seurat <- SplitObject(seurat_phase, split.by = "sample")
 options(future.globals.maxSize = 4000 * 1024^2)
 for (i in 1:length(split_seurat)) {

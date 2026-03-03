@@ -1,7 +1,9 @@
 ---
 title: "Marker identification - Answer Key"
-author: "Will Gammerdinger"
-date: "Tuesday, July 1, 2025"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-12-07"
 ---
 
 ```{r}
@@ -9,7 +11,7 @@ date: "Tuesday, July 1, 2025"
 #| echo: false
 library(Seurat)
 library(tidyverse)
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 annotations <- read.csv("data/annotation.csv")
 ```
 

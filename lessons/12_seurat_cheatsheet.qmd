@@ -1,7 +1,25 @@
 ---
 title: "Seurat Cheatsheet"
-author: "Noor Sohail"
-date: Thursday, June 25th 2024
+description: |
+  This lesson provides participants with a Seurat cheatsheet that demonstrates commonly used functions for exploring, wrangling and visualizing single-cell RNA-seq data. Participants will learn how to access metadata, extract features and cell barcodes, work with assays and layers, retrieve dimensional reduction coordinates and generate a variety of Seurat-based plots. Each function is presented with examples using the workshop dataset so that participants can understand what each command does and how to apply it in their own analyses.
+author:
+  - Meeta Mistry
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+  - Data visualization
+keywords:
+  - R
+  - Seurat
+  - layers
+  - assays
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 
@@ -17,7 +35,7 @@ These materials were developed by referencing the following pages from the Seura
 
 # Dataset
 
-Load in the `integrated_seurat` object that is available in the `data` folder of the project. The link to download the project was provided on [the schedule page](schedule.qmd) but can also be [found here](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1).
+Load in the `integrated_seurat` object that is available in the `data` folder of the project. The link to download the project was provided on [the schedule page](../schedule/schedule.qmd) but can also be [found here](https://www.dropbox.com/s/vop78wq76h02a2f/single_cell_rnaseq.zip?dl=1).
 
 ```{r}
 #| label: load_data
@@ -25,7 +43,7 @@ Load in the `integrated_seurat` object that is available in the `data` folder of
 library(Seurat)
 library(tidyverse)
 
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 seurat_integrated
 ```
 

@@ -1,8 +1,29 @@
 ---
-title: "Low Quality Samples"
+title: "Exploring a Poor Quality Sample"
+description: |
+  This lesson guides participants through evaluating and interpreting quality control metrics for single‑cell RNA‑seq data using Seurat. Participants explore indicators of poor‑quality samples, including abnormal cell counts, low UMI and gene detection, atypical mitochondrial ratios and reduced complexity. By comparing a poor quality sample to a higher quality sample, participants learn to identify failures, understand their causes and apply filtering strategies to retain only high-quality cells.
+author:
+  - Mary Piper
+  - Lorena Pantano
+  - Meeta Mistry
+  - Radhika Khetani
+  - Jihe Liu
+  - Amélie Julé
+  - Will Gammerdinger
+  - Noor Sohail
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - Quality Control
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
-# Exploring a Poor Quality Sample
 	
 ## Cell counts
 

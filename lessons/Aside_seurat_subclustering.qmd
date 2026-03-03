@@ -1,4 +1,27 @@
-# Subclustering scRNA-seq datasets
+---
+title: "Subclustering scRNA-seq datasets"
+description: |
+  This lesson guides participants through approaches for subclustering single‑cell RNA‑seq datasets in Seurat. It outlines how to subset specific cell types, compares strategies for identifying finer cellular subtypes and highlights considerations when working with smaller datasets, including parameter selection for clustering and integration.
+author:
+  - Meeta Mistry
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-05-30"
+categories: 
+  - R Programming
+  - Single-cell RNA-seq
+keywords:
+  - R
+  - Seurat
+  - clustering
+  - subclustering
+  - clustering resolution
+  - integration parameters
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
 After we have completed the scRNA-seq workflow and identified the various cell types present in our samples, we might decide that for a particular cell type, we would like to identify subtypes. For example, if we have a large cluster of CD4+ Helper T cells, we may want to identify subsets of Th1, Th2, Th17, Th9, and Tfh cells. To identify these cell subsets, we would subset the dataset to the cell type(s) of interest (e.g. CD4+ Helper T cells). To subset the dataset, Seurat has a handy [`subset()` function](https://rdrr.io/github/satijalab/seurat/man/subset.Seurat.html); the identity of the cell type(s) can be used as input to extract the cells. 
 
