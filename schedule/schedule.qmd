@@ -1,12 +1,12 @@
 ---
-title: Introduction to Single-cell RNA-seq Schedule
+title: Schedule - Introduction to Single-cell RNA-seq
 sidebar: false
 toc: false
 execute: 
   eval: false
 ---
 
-# Introduction to single-cell RNA-seq
+# Schedule
 
 ## Pre-reading
 
@@ -74,8 +74,8 @@ II. **Submit your work**:
 |:-----------:|:----------:|:--------:|
 | 09:30 - 10:00 | Self-learning lessons discussion | All |
 | 10:00 - 10:45 | [Quality control with additional metrics](../lessons/05_quality_control.qmd) | Noor |
-| 10:45 - 10:45 | Break |
-| 10:45 - 11:40 | [Normalization and regressing out unwanted variation](../lessons/07_SCT_normalization.qmd) | Noor |
+| 10:45 - 10:50 | Break |
+| 10:50 - 11:40 | [Normalization and regressing out unwanted variation](../lessons/07_SCT_normalization.qmd) | Noor |
 | 11:40 - 12:00| [A brief introduction to Integration](../lessons/08_integration_cca_theory.qmd) | Will |
 
 
