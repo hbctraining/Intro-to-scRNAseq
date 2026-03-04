@@ -85,11 +85,23 @@ There are a couple properties of variance and co-variance that we can verify:
 
 *cov(X,X)* is equal to *var(X)*. We can observe this is mathematically below:
 
-<img src="https://latex.codecogs.com/svg.image?&space;cov(X,X)=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})(x_{i}-\bar{x})=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})^{2}=var(X)" width="500">
+$$
+\operatorname{cov}(X, X)
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(x_i - \bar{x})
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^{2}
+= \operatorname{var}(X)
+$$
 
 As a result, you will sometimes see covariance matrices written as:
 
-<img src="https://latex.codecogs.com/svg.image?\begin{bmatrix}var(X)&cov(X,Y)&...&cov(X,Z)\\cov(Y,X)&var(Y)&...&cov(Y,Z)\\...&...&...&...\\cov(Z,X)&cov(Z,Y)&...&var(Z)\\\end{bmatrix}" width="300">
+$$
+\begin{bmatrix}
+\operatorname{var}(X) & \operatorname{cov}(X, Y) & \dots & \operatorname{cov}(X, Z) \\
+\operatorname{cov}(Y, X) & \operatorname{var}(Y) & \dots & \operatorname{cov}(Y, Z) \\
+\dots & \dots & \dots & \dots \\
+\operatorname{cov}(Z, X) & \operatorname{cov}(Z, Y) & \dots & \operatorname{var}(Z)
+\end{bmatrix}
+$$
 
 1. Confirm this property by estimating the variance for Gene A.
 
@@ -114,7 +126,12 @@ cov_matrix["Gene_A", "Gene_A"]
 
 4. *cov(X,Y)* is equal to *cov(Y,X)*. We can observe this is mathematically below:
 
-<img src="https://latex.codecogs.com/svg.image?&space;cov(X,Y)=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})(y_{i}-\bar{y})=\frac{1}{n-1}\sum_{i=1}^{n}(y_{i}-\bar{y})(x_{i}-\bar{x})=cov(Y,X)" width="500">
+$$
+\operatorname{cov}(X, Y)
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+= \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \bar{y})(x_i - \bar{x})
+= \operatorname{cov}(Y, X)
+$$
 
 Estimate the covariance of Gene B and Gene A.
 

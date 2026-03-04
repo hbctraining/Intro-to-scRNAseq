@@ -39,6 +39,7 @@ Approximate time: 90 minutes
 # Load libraries
 library(Seurat)
 library(tidyverse)
+library(knitr)
 load("data/seurat_filtered.RData")
 ```
 
@@ -165,9 +166,25 @@ load("data/cycle.rda")
 seurat_phase <- CellCycleScoring(seurat_phase, 
                                  g2m.features = g2m_genes, 
                                  s.features = s_genes)
+```
 
+Let's inspect our updated metadata:
+
+```{r}
+#| label: inspect_cell_cycle_scores
+#| eval: false
 # View cell cycle scores and phases assigned to cells
-head(seurat_phase@meta.data)                                
+View(seurat_phase@meta.data)     
+```
+
+```{r}
+#| label: table_cell_cycle_scores
+#| tbl-cap: "Inspecting that the cell cycle scores and phases have been appropriately added to our metadata."
+#| echo: false
+# View cell cycle scores and phases assigned to cells
+seurat_phase@meta.data %>% 
+  head(n = 10) %>% 
+  kable()
 ```
 
 After scoring the cells for cell cycle, we would like to **determine whether cell cycle is a major source of variation in our dataset using PCA**. 

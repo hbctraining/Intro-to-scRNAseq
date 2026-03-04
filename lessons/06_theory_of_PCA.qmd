@@ -227,11 +227,23 @@ There are a couple properties of variance and covariance that we can verify:
 
 *cov(X,X)* is equal to *var(X)*. We can observe this is mathematically below:
 
-<img src="https://latex.codecogs.com/svg.image?&space;cov(X,X)=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})(x_{i}-\bar{x})=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})^{2}=var(X)" width="500">
+$$
+\operatorname{cov}(X, X)
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(x_i - \bar{x})
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^{2}
+= \operatorname{var}(X)
+$$
 
 As a result, you will sometimes see covariance matrices written as:
 
-<img src="https://latex.codecogs.com/svg.image?\begin{bmatrix}var(X)&cov(X,Y)&...&cov(X,Z)\\cov(Y,X)&var(Y)&...&cov(Y,Z)\\...&...&...&...\\cov(Z,X)&cov(Z,Y)&...&var(Z)\\\end{bmatrix}" width="300">
+$$
+\begin{bmatrix}
+\operatorname{var}(X) & \operatorname{cov}(X, Y) & \dots & \operatorname{cov}(X, Z) \\
+\operatorname{cov}(Y, X) & \operatorname{var}(Y) & \dots & \operatorname{cov}(Y, Z) \\
+\dots & \dots & \dots & \dots \\
+\operatorname{cov}(Z, X) & \operatorname{cov}(Z, Y) & \dots & \operatorname{var}(Z)
+\end{bmatrix}
+$$
 
 1. Confirm this property by estimating the variance for Gene A.
 
@@ -242,7 +254,12 @@ As a result, you will sometimes see covariance matrices written as:
 
 4. Another property of covariance is that *cov(X,Y)* is equal to *cov(Y,X)*. We can observe this is mathematically below:
 
-<img src="https://latex.codecogs.com/svg.image?&space;cov(X,Y)=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\bar{x})(y_{i}-\bar{y})=\frac{1}{n-1}\sum_{i=1}^{n}(y_{i}-\bar{y})(x_{i}-\bar{x})=cov(Y,X)" width="500">
+$$
+\operatorname{cov}(X, Y)
+= \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+= \frac{1}{n-1} \sum_{i=1}^{n} (y_i - \bar{y})(x_i - \bar{x})
+= \operatorname{cov}(Y, X)
+$$
 
 Estimate the covariance of Gene B and Gene A.
 
@@ -271,11 +288,26 @@ eig
 
 If we wanted to do this by hand then we need to set the determinant of the covariance matrix minus $\lambda$ times the identify matrix equal to 0 and solving for $\lambda$.
 
-<img src="https://latex.codecogs.com/svg.image?det(\begin{bmatrix}var(X)&cov(X,Y)\\cov(Y,X)&var(Y)\\\end{bmatrix}-\lambda\begin{bmatrix}1&0\\0&1\\\end{bmatrix})=0" width="500">
+$$
+\det\!\left(
+\begin{bmatrix}
+\operatorname{var}(X) & \operatorname{cov}(X, Y) \\
+\operatorname{cov}(Y, X) & \operatorname{var}(Y)
+\end{bmatrix}
+- \lambda
+\begin{bmatrix}
+1 & 0 \\
+0 & 1
+\end{bmatrix}
+\right) = 0
+$$
 
 In this case it can be simplified to:
 
-<img src="https://latex.codecogs.com/svg.image?(var(X)-\lambda)(var(Y)-\lambda)-(cov(X,Y))(cov(Y,X))=0" width="500">
+$$
+(\operatorname{var}(X) - \lambda)(\operatorname{var}(Y) - \lambda)
+- \operatorname{cov}(X, Y)\,\operatorname{cov}(Y, X) = 0
+$$
 
 We can now replace the variance and covariance values with the values that we have from the covariance matrix and solve for $\lambda$. This results in two lambda values: **$\lambda$~1~ = `r round(eig$values[1], digits = 3)`** and **$\lambda$~2~ = `r round(eig$values[2], digits = 3)`**.
 
@@ -290,7 +322,19 @@ eig$values
 
 In order to find the eigenvectors, we need to substitute the variance and covariance values from the covariance matrix along with one of our *$\lambda$* values, *$\lambda$~1~* to find the associated eigenvector, *v~1~*. This results in *v~1~* being equal to `r eig$vectors[,1]`.
 
-<img src="https://latex.codecogs.com/svg.image?(\begin{bmatrix}var(X)&cov(X,Y)\\cov(Y,X)&var(Y)\\\end{bmatrix}-\lambda&space;_{1}\begin{bmatrix}1&0\\0&1\\\end{bmatrix})v_{1}=0" width="500">
+$$
+\left(
+\begin{bmatrix}
+\operatorname{var}(X) & \operatorname{cov}(X, Y) \\
+\operatorname{cov}(Y, X) & \operatorname{var}(Y)
+\end{bmatrix}
+- \lambda_{1}
+\begin{bmatrix}
+1 & 0 \\
+0 & 1
+\end{bmatrix}
+\right) v_{1} = 0
+$$
 
 We can confirm this by plugging our covariance matrix, eigenvalues and eigenvectors back into the above equation and it should return 0, or near 0 (due to rounding errors).
 
@@ -410,7 +454,9 @@ They match which is a great sign that we did this correctly!
 
 Note that eigenvalues are the variance for a particular principal component and variance is the square of the standard deviation as shown below. 
 
-<img src="https://latex.codecogs.com/svg.image?var(X)=sd(X)^{2}" width="150">
+$$
+\operatorname{var}(X) = \operatorname{sd}(X)^2
+$$
 
 `prcomp()` reports the standard deviation, so we will need to square the items in the `prcomp_PCA$sdev` slot in order to recover our variance, or eigenvalues.
 

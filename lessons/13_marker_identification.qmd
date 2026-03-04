@@ -37,6 +37,8 @@ library(Seurat)
 library(tidyverse)
 library(ggplot2)
 library(cowplot)
+library(knitr)
+library(DT)
 
 load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
@@ -191,15 +193,31 @@ Let's **test it out on one cluster** to see how it works:
 
 ```{r}
 #| label: FindConservedMarkers_cluster_0
+#| eval: false
 cluster0_conserved_markers <- FindConservedMarkers(seurat_integrated,
                                                     ident.1 = 0,
                                                     grouping.var = "sample",
                                                     only.pos = TRUE,
                                                     logfc.threshold = 0.25)
+
+# Inspect the output of FindConservedMarkers
+View(cluster0_conserved_markers)
 ```
 
-<img src="../img/conserved_markers_table.png" width="800">
+```{r}
+#| label: table_FindConservedMarkers_cluster_0
+#| tbl-cap: "Output from FindConservedMarkers"
+#| echo: false
+cluster0_conserved_markers <- FindConservedMarkers(seurat_integrated,
+                                                    ident.1 = 0,
+                                                    grouping.var = "sample",
+                                                    only.pos = TRUE,
+                                                    logfc.threshold = 0.25)
 
+cluster0_conserved_markers %>% 
+  head(n = 10) %>% 
+  kable()
+```
 
 **The output from the `FindConservedMarkers()` function**, is a matrix containing a ranked list of putative markers listed by gene ID for the cluster we specified, and associated statistics. Note that the same set of statistics are computed for each group (in our case, Ctrl and Stim) and the last two columns correspond to the combined p-value across the two groups. We describe some of these columns below:
 
@@ -245,14 +263,10 @@ cluster0_ann_markers <- cluster0_conserved_markers %>%
 head(cluster0_ann_markers)
 ```
 
-***
-
 ::: callout-tip
 # Exercises
 1. In the previous lesson, we identified cluster 10 as FCGR3A+ monocytes by inspecting the expression of known cell markers FCGR3A and MS4A7. Use `FindConservedMarkers()` function to find conserved markers for cluster 10. What do you observe? Do you see FCGR3A and MS4A7 as highly expressed genes in cluster 10?
 :::
-
-***
 
 ### Running on multiple samples
 
@@ -326,9 +340,15 @@ top10 <- conserved_markers %>%
 View(top10)
 ```
 
-<p align="center">
-<img src="../img/tcell_marker_table_SCTv2.png" width="800">
-</p>
+```{r}
+#| label: table_top_markers
+#| tbl-cap: "Inspecting the top 10 genes for each cluster."
+#| echo: false
+# Visualize top 10 markers per cluster
+top10 %>%
+  head(n = 20) %>% 
+  kable()
+```
 
 When we look at the entire list, we see clusters 0 and 6 have some overlapping genes, like CCR7 and SELL which correspond to **markers of memory T cells**. It is possible that these two clusters are more similar to one another and could be merged together as naive T cells. On the other hand, with cluster 2 we observe CREM as one of our top genes; a **marker gene of activation**. This suggests that perhaps cluster 2 represents activated T cells.
 
@@ -412,10 +432,11 @@ View(cd4_tcells)
 
 ```{r}
 #| label: show_t_cell_markers_table
+#| tbl-cap: "Inspecting FindMarkers output"
 #| echo: false
-# View data
-library(DT)
-datatable(cd4_tcells)
+cd4_tcells %>% 
+  head(n = 10) %>% 
+  kable()
 ```
 
 Of these top genes the **CREM gene** stands out as a marker of activation with a positive fold change.  We also see markers of naive or memory cells include the SELL and CCR7 genes with negative fold changes, which is in line with previous results. 

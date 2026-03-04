@@ -35,6 +35,7 @@ Approximate time: 90 minutes
 # Load merged seurat object
 library(Seurat)
 library(tidyverse)
+library(knitr)
 merged_seurat <- readRDS("data/merged_seurat.RDS")
 ```
 
@@ -80,9 +81,14 @@ When data is loaded into Seurat and the initial object is created, there is some
 View(merged_seurat@meta.data)
 ```
 
-
-<img src="../img/merged_seurat_meta.png" width="600">
-
+```{r}
+#| label: table_metadata
+#| tbl-cap: "Inspecting our metadata table to get a sense for the type of information stored within it."
+#| echo: false
+merged_seurat@meta.data %>% 
+  head(n = 10) %>% 
+  kable()
+```
 
 There are three columns of information:
 
@@ -171,7 +177,14 @@ metadata <- metadata %>%
 
 Now you are **all setup with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
 
-<img src="../img/metadata_scrnaseq_new.png" width="900">
+```{r}
+#| label: table_renamed_metadata
+#| tbl-cap: "Inspecting the first ten rows of our metadata table to ensure that they look formatted correctly."
+#| echo: false
+metadata %>% 
+  head(n = 10) %>% 
+  kable()
+```
 
 ### Saving the updated metadata to our Seurat object
 
