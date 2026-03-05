@@ -82,7 +82,7 @@ format:
     code-copy: true      # enables copy button (default in most themes)
     code-tools: true     # enables the copy button!
     code-line-wrap: wrap
-    google-analytics: UA-150953419-1
+    google-analytics: G-68JBPLLNLG
     prompt: true         
     self-contained: true
 

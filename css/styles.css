@@ -212,3 +212,28 @@ table thead th {
 .quarto-float-tbl .quarto-float-caption {
   text-align: left !important;
 }
+
+/* Center Quarto figures and their contents */
+.quarto-figure,
+.figure,          /* your custom .figure block */
+figure {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Center the image inside figure blocks */
+.quarto-figure img,
+.figure img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center captions */
+.quarto-figure .figure-caption,
+.figure .figure-caption,
+figure figcaption {
+  text-align: left !important;
+}
+
