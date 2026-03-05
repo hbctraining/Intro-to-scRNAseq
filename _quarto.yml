@@ -46,21 +46,26 @@ website:
       - section: "Day 1 Self-learning:"
         contents:
           - lessons/04_cellranger_QC.qmd
-          - lessons/05_quality_control.qmd
           - lessons/06_theory_of_PCA.qmd
           
       - section: "Day 2:"
         contents:
+          - lessons/05_quality_control.qmd
           - lessons/07_SCT_normalization.qmd
           - lessons/08_integration_cca_theory.qmd
       - section: "Day 2 Self-learning"
         contents:
           - lessons/09_integration_code_harmony.qmd
-          - lessons/10_clustering_cells_SCT.qmd
-          - lessons/11_clustering_quality_control.qmd
-          - lessons/12_seurat_cheatsheet.qmd
           
       - section: "Day 3:"
+        contents:
+          - lessons/10_clustering_cells_SCT.qmd
+          - lessons/11_clustering_quality_control.qmd
+      - section: "Day 3 Self-learning"
+        contents:
+          - lessons/12_seurat_cheatsheet.qmd
+          
+      - section: "Day 4:"
         contents:
           - lessons/13_marker_identification.qmd
           - lessons/14_scRNAseq_workflow.qmd
