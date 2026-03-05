@@ -50,31 +50,34 @@ load("data/seurat_filtered.RData")
 * Evaluate the effects from any unwanted sources of variation and correct for them
 
 
-# Single-cell RNA-seq: Normalization and regressing out unwanted variation
+# Normalization and regressing out unwanted variation
 
 Now that we have our high quality cells, we can explore our data and see if we are able to identify any sources of unwanted variation. Depending on what we observe, we will utilize that information when performing variance stabilization using SCTransform but also to regress out the effects of any covariates that have an effect on our data.
 
-<p align="center">
-<img src="../img/sc_workflow_2022.jpg" width="630">
-</p>
+::: {#fig-sc-workflow .figure}
+![](../img/sc_workflow_2022.jpg){width=630}
+
+**Overview of the single-cell RNA-seq workflow.**  
+*Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
+:::
 
 ***
 
-_**Goals:**_ 
- 
- - _To accurately **normalize the gene expression values** to account for differences in sequencing depth and overdispersed count values._
- - _To **identify the most variant genes** likely to be indicative of the different cell types present._
+<!-- _**Goals:**_  -->
 
-_**Challenges:**_
- 
- - _**Checking and removing unwanted variation** so that we do not have cells clustering by artifacts downstream_
+<!--  - _To accurately **normalize the gene expression values** to account for differences in sequencing depth and overdispersed count values._ -->
+<!--  - _To **identify the most variant genes** likely to be indicative of the different cell types present._ -->
 
-_**Recommendations:**_
- 
- - _Have a good idea of your expectations for the **cell types to be present** prior to performing the clustering. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_
- - _**Regress out** number of UMIs (default using sctransform), mitochondrial content, and cell cycle, if needed and appropriate for experiment, so not to drive clustering downstream_
- 
-***
+<!-- _**Challenges:**_ -->
+
+<!--  - _**Checking and removing unwanted variation** so that we do not have cells clustering by artifacts downstream_ -->
+
+<!-- _**Recommendations:**_ -->
+
+<!--  - _Have a good idea of your expectations for the **cell types to be present** prior to performing the clustering. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_ -->
+<!--  - _**Regress out** number of UMIs (default using sctransform), mitochondrial content, and cell cycle, if needed and appropriate for experiment, so not to drive clustering downstream_ -->
+
+<!-- *** -->
 
 ## Normalization
 An essential first step in the majority of mRNA expression analyses is normalization, whereby systematic variations are adjusted for to **make expression counts comparable across genes and/or samples**. The counts of mapped reads for each gene is proportional to the expression of RNA ("interesting") in addition to many other factors ("uninteresting"). Normalization is the process of adjusting raw count values to account for the "uninteresting" factors. 
@@ -83,20 +86,28 @@ The main factors often considered during normalization are:
  
  - **Sequencing depth:** Accounting for sequencing depth is necessary for comparison of gene expression between cells. In the example below, each gene appears to have doubled in expression in cell 2, however this is a consequence of cell 2 having twice the sequencing depth.
 
-<p align="center">
-<img src="../img/sequencing_depth.png" width="400">
-</p>
+::: {#fig-sequencing-depth .figure}
+![](../img/sequencing_depth.png){width=400}
+
+**Effect of sequencing depth on observed gene expression counts between cells.**
+:::
+
 
 Each cell in scRNA-seq will have a differing number of reads associated with it. So to accurately compare expression between cells, it is necessary to normalize for sequencing depth.
  
  - **Gene length:** Accounting for gene length is necessary for comparing expression between different genes within the same cell. The number of reads mapped to a longer gene can appear to have equal count/expression as a shorter gene that is more highly expressed. 
  
-<p align="center"> 
-<img src="../img/length_of_gene.png" width="400">
-</p>
+::: {#fig-gene-length .figure}
+![](../img/length_of_gene.png){width=400}
+
+**Effect of gene length on observed read counts when comparing expression between genes.**
+:::
 
 ::: callout-note
-If using a 3' or 5' droplet-based method, the length of the gene will not affect the analysis because only the 5' or 3' end of the transcript is sequenced.* However, if using full-length sequencing, the transcript length should be accounted for.
+# Droplet vs full-length sequencing normalization
+If using a 3' or 5' droplet-based method, the length of the gene will not affect the analysis because only the 5' or 3' end of the transcript is sequenced.
+
+However, if using full-length sequencing, the transcript length should be accounted for.
 :::
 
 ### Methods for scRNA-seq normalization
@@ -178,13 +189,17 @@ View(seurat_phase@meta.data)
 ```
 
 ```{r}
-#| label: table_cell_cycle_scores
+#| label: tbl-cell_cycle_scores
 #| tbl-cap: "Inspecting that the cell cycle scores and phases have been appropriately added to our metadata."
 #| echo: false
 # View cell cycle scores and phases assigned to cells
 seurat_phase@meta.data %>% 
-  head(n = 10) %>% 
-  kable()
+  head(n = 5) %>% 
+  remove_rownames() %>%
+  relocate(cells) %>%
+  DT::datatable() %>% 
+  DT::formatStyle("cells", 
+                  "white-space" = "nowrap")
 ```
 
 After scoring the cells for cell cycle, we would like to **determine whether cell cycle is a major source of variation in our dataset using PCA**. 
@@ -194,28 +209,36 @@ After scoring the cells for cell cycle, we would like to **determine whether cel
 Principal Component Analysis (PCA) is a technique used to emphasize variation as well as similarity, and to bring out strong patterns in a dataset; it is one of the methods used for *"dimensionality reduction"*. 
 
 ::: {.callout-note}
+# PCA
 For a more **detailed explanation on PCA**,  there is a [lesson in self-learning](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding.
 :::
 
 Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells* and you have quantified the expression of *20,000 genes*. The schematic below demonstrates how you would go from a cell x gene matrix to principal component (PC) scores for each inividual cell.
 
-<p align="center">
-<img src="../img/PCA_scrnaseq_1_updated.png" width="900">
-</p>
+::: {#fig-pca-schematic .figure}
+![](../img/PCA_scrnaseq_1_updated.png){width=900}
+
+**Schematic of PCA: from a cell-by-gene count matrix to principal component scores per cell.**
+:::
 
 After the PC scores have been calculated, you are looking at a matrix of 12,000 x 12,000 that represents the information about relative gene expression in all the cells. You can select the PC1 and PC2 columns and plot that in a 2D way.
 
-<p align="center">
-<img src="../img/PCA_scrnaseq_2.png" width="600">
-</p>
+::: {#fig-pca-pc1-pc2 .figure}
+![](../img/PCA_scrnaseq_2.png){width=600}
+
+**Example of visualizing cells using the first two principal components (PC1 vs PC2).**
+:::
 
 You can also use the PC scores from the first 40 PCs for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. We will be talking a lot more about this later in this workshop.
 
-<p align="center">
-<img src="../img/PCA_scrnaseq_3.png" width="600">
-</p>
+::: {#fig-pca-many-pcs .figure}
+![](../img/PCA_scrnaseq_3.png){width=600}
+
+**Using multiple principal components for downstream analyses such as clustering and marker identification.**
+:::
 
 ::: {.callout-note}
+# PC visualizations
 For datasets with a larger number of cells, only the PC1 and PC2 scores for each cell are usually plotted, or used for visualization. Since these PCs explain the most variation in the dataset, the expectation is that the cells that are more similar to each other will cluster together with PC1 and PC2.
 :::
 
@@ -223,8 +246,8 @@ For datasets with a larger number of cells, only the PC1 and PC2 scores for each
 
 To perform PCA, we need to **first choose the most variable features, then scale the data**. Since highly expressed genes exhibit the highest amount of variation and we don't want our 'highly variable genes' only to reflect high expression, we need to scale the data to scale variation with expression level. The Seurat `ScaleData()` function will scale the data by:
 
-* Adjusting the expression of each gene to give a mean expression across cells to be 0
-* Scaling expression of each gene to give a variance across cells to be 1
+- Adjusting the expression of each gene to give a mean expression across cells to be 0
+- Scaling expression of each gene to give a variance across cells to be 1
 
 ```{r}
 #| label: find_variable_genes
@@ -239,13 +262,15 @@ seurat_phase <- ScaleData(seurat_phase)
 ```
 
 ::: callout-note
-For the `selection.method` and `nfeatures` arguments the values specified are the default settings. Therefore, you do not necessarily need to include these in your code. We have included it here for transparency and inform you what you are using._	
+# `FindVariableFeatures` arguments
+For the `selection.method` and `nfeatures` arguments the values specified are the default settings. Therefore, you do not necessarily need to include these in your code. We have included it here for transparency and inform you what you are using.
 :::
 
 Highly variable gene selection is extremely important since many downstream steps are computed only on these genes. Seurat allows us to access the ranked highly variable genes with the `VariableFeatures()` function. We can additionally visualize the dispersion of all genes using Seurat's `VariableFeaturePlot()`, which shows a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels using the `LabelPoints()` helps us understand which genes will be driving shape of our data.
 
 ```{r}
-#| label: top_15_variable_genes
+#| label: fig-top_15_variable_genes
+#| fig-cap: Average expression and variance for each gene, labelling the top most variable genes.
 # Identify the 15 most highly variable genes
 ranked_variable_genes <- VariableFeatures(seurat_phase)
 top_genes <- ranked_variable_genes[1:15]
@@ -259,7 +284,8 @@ LabelPoints(plot = p, points = top_genes, repel = TRUE)
 Now, we can perform the PCA analysis and plot the first two principal components against each other. We also split the figure by cell cycle phase, to evaluate similarities and/or differences. **We do not see large differences due to cell cycle phase. Based on this plot, we would not regress out the variation due to cell cycle.**
 
 ```{r}
-#| label: run_pca
+#| label: fig-run_pca
+#| fig-cap: Cells plotted on PC1 vs PC2 and colored by cell cycle phase.
 # Perform PCA
 seurat_phase <- RunPCA(seurat_phase)
 
@@ -271,22 +297,33 @@ DimPlot(seurat_phase,
 ```
 
 
-<details>
-	<summary><b><i>When should cell cycle phase be regressed out?</i></b></summary>
-	<br>Below are two PCA plots taken from the Seurat vignette dealing with <a href="https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html">Cell-Cycle Scoring and Regression</a>.<br>
+::: {.callout-note collapse="true"}
+# When should cell cycle phase be regressed out?
 
- 	<ul><li>This first plot is similar to what we plotted above, it is a PCA prior to regression to evaluate if the cell cycle is playing a big role in driving PC1 and PC2. Clearly, the cells are separating by cell type in this case, so the vignette suggests regressing out these effects.</li></ul>
- 	<p align="center">
- 	<img src="../img/cell_cycle_not_regressed.png" width="400">
- 	</p>
+Below are two PCA plots taken from the Seurat vignette dealing with [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html).
 
-	<ul><li>This second PCA plot is <b>post-regression</b>, and displays how effective the regression was in removing the effect we observed.</li></ul>
+This first plot is similar to what we plotted above, it is a PCA prior to regression to evaluate if the cell cycle is playing a big role in driving PC1 and PC2. Clearly, the cells are separating by cell type in this case, so the vignette suggests regressing out these effects.
 
-	<p align="center">
-	<img src="../img/cell_cycle_regressed.png" width="400">
-	</p>
-</details>
 
+::: {#fig-cell-cycle-not-regressed .figure}
+![](../img/cell_cycle_not_regressed.png){width=400}
+
+**PCA colored by cell cycle phase before regression, illustrating strong separation driven by cell cycle.**  
+*Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette.*
+:::
+
+This second PCA plot is **post-regression**, and displays how effective the regression was in removing the effect we observed.
+
+::: {#fig-cell-cycle-regressed .figure}
+![](../img/cell_cycle_regressed.png){width=400}
+
+**PCA colored by cell cycle phase after regression, showing reduced separation by cell cycle.**  
+*Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette.*
+:::
+
+
+
+:::
 
 ***
 
@@ -321,23 +358,23 @@ seurat_phase@meta.data$mitoFr <- cut(seurat_phase@meta.data$mitoRatio,
 
 ## Normalization and regressing out sources of unwanted variation using SCTransform
 
-In the [Hafemeister and Satija, 2019 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1) the authors explored the issues with simple transformations. Specifically they evaluated the standard log normalization approach and found that genes with different abundances are affected differently and that **effective normalization (using the log transform) is only observed with low/medium abundance genes (Figure 1D, below)**. Additionally, **substantial imbalances in variance were observed with the log-normalized data (Figure 1E, below)**. In particular, cells with low total UMI counts exhibited disproportionately higher variance for high-abundance genes, dampening the variance contribution from other gene abundances. 
+In the [Hafemeister and Satija, 2019 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1) the authors explored the issues with simple transformations. Specifically they evaluated the standard log normalization approach and found that genes with different abundances are affected differently and that **effective normalization (using the log transform) is only observed with low/medium abundance genes (Figure 1D, below)**. Additionally, **substantial imbalances in variance were observed with the log-normalized data (Figure 1E, below)**. In particular, cells with low total UMI counts exhibited disproportionately higher variance for high-abundance genes, dampening the variance contribution from other gene abundances.
 
-<p align="center">
-<img src="../img/SCT_Fig1.png" width="600">
-</p>
+::: {#fig-sct-fig1 .figure}
+![](../img/SCT_Fig1.png){width=600}
 
-_**Image credit:** Hafemeister C and Satija R. Normalization and variance stabilization of single-cell RNA-seq data using regularized negative binomial regression, Genom Biology 2019 (https://doi.org/10.1101/576827)_
-
+**Illustration of the limitations of simple log normalization and resulting variance imbalances in scRNA-seq data.**  
+*Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)*
+:::
 
 The conclusion is, **we cannot treat all genes the same.**
 
 The proposed solution was the use of **Pearson residuals for transformation**, as implemented in Seurat's `SCTransform` function. With this approach:
 
-* Measurements are multiplied by a gene-specific weight
-* Each gene is weighted based on how much evidence there is that it is non-uniformly expressed across cells
-* More evidence == more of a weight; Genes that are expressed in only a small fraction of cells will be favored (useful for finding rare cell populations)
-* Not just a consideration of the expression level is, but also the distribution of expression
+- Measurements are multiplied by a gene-specific weight
+- Each gene is weighted based on how much evidence there is that it is non-uniformly expressed across cells
+- More evidence == more of a weight; Genes that are expressed in only a small fraction of cells will be favored (useful for finding rare cell populations)
+- Not just a consideration of the expression level is, but also the distribution of expression
 
 ::: callout-note
 # Why don't we just run SCTransform to normalize?
@@ -348,14 +385,16 @@ Now that we have established which effects are observed in our data, we can use 
 
 As described earlier, all genes cannot be treated the same. As such, the **SCTransform method constructs a generalized linear model (GLM) for each gene** with UMI counts as the response and sequencing depth as the explanatory variable. Information is pooled across genes with similar abundances, to regularize parameter estimates and **obtain residuals which represent effectively normalized data values** which are no longer correlated with sequencing depth.
 
-<p align="center">
-<img src="../img/SCT_UMAP.png" width="400">
-</p>
+::: {#fig-sct-umap .figure}
+![](../img/SCT_UMAP.png){width=400}
 
-_**Image credit:** Hafemeister C and Satija R. Normalization and variance stabilization of single-cell RNA-seq data using regularized negative binomial regression, Genom Biology 2019 (https://doi.org/10.1101/576827)_
+**Example UMAP visualization demonstrating improved normalization and variance stabilization with SCTransform.**  
+*Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)*
+:::
 
 
 ::: callout-note
+# Regressing out covariates
 Since the UMI counts are part of the GLM, the effects are automatically regressed out. The user can include any additional covariates (`vars.to.regress`) that may have an effect on expression and will be included in the model. 
 :::
 
@@ -368,7 +407,8 @@ To run the SCTransform we have the code below as an example. **Do not run this c
 ## DO NOT RUN CODE ##
 
 # SCTransform
-seurat_phase <- SCTransform(seurat_phase, vars.to.regress = c("mitoRatio"))
+seurat_phase <- SCTransform(seurat_phase, 
+                            vars.to.regress = c("mitoRatio"))
 ```
 
 ## Iterating over samples in a dataset
@@ -383,6 +423,7 @@ split_seurat
 ```
 
 ::: callout-note
+# Subsetting samples
 If you only wanted to integrate on a subset of your samples (e.g. all Ctrl replicates only), you could select which ones you wanted from the `split_seurat` object as shown below and move forward with those.
 
 ```{r}
@@ -395,7 +436,7 @@ ctrl_reps <- split_seurat[c("ctrl_1", "ctrl_2")]
 
 Now we will **use a 'for loop'** to run the `SCTransform()` on each sample, and regress out mitochondrial expression by specifying in the `vars.to.regress` argument of the `SCTransform()` function.
 
-Before we run this `for loop`, we know that the output can generate large R objects/variables in terms of memory. If we have a large dataset, then we might need to **adjust the limit for allowable object sizes within R** (*Default is 500 * 1024 ^ 2 = 500 Mb*) using the following code:
+Before we run this `for loop`, we know that the output can generate large R objects/variables in terms of memory. If we have a large dataset, then we might need to **adjust the limit for allowable object sizes within R** (*Default is 500 x 1024 ^2 = 500 Mb*) using the following code:
 
 ```{r}
 #| label: increase_memory
@@ -415,14 +456,15 @@ for (i in 1:length(split_seurat)) {
 
 Please note that in the for loop above, we specify that `vst.flavor = "v2"` to use the updated version of SCT. "v2" was introduced in early 2022, and is now commonly used. This update improves:
 
-* Speed and memory consumption
-* The stability of parameter estimates
-* Variable feature identification in subsequent steps
+- Speed and memory consumption
+- The stability of parameter estimates
+- Variable feature identification in subsequent steps
 
 For more information, please see the [Seurat vignette's section on SCTransform, v2 regularization](https://satijalab.org/seurat/articles/sctransform_v2_vignette.html). 
 
 ::: callout-note
-By default, after normalizing, adjusting the variance, and regressing out uninteresting sources of variation, SCTransform will rank the genes by residual variance and output the 3000 most variant genes. If the dataset has larger cell numbers, then it may be beneficial to adjust this parameter higher using the `variable.features.n` argument._ 
+# SCTransform variable features
+By default, after normalizing, adjusting the variance, and regressing out uninteresting sources of variation, SCTransform will rank the genes by residual variance and output the 3000 most variant genes. If the dataset has larger cell numbers, then it may be beneficial to adjust this parameter higher using the `variable.features.n` argument.
 :::
 
 Note, the last line of output specifies **"Set default assay to SCT"**. This specifies that moving forward we would like to use the data after SCT was implemented. We can view the different assays that we have stored in our seurat object.

@@ -125,7 +125,8 @@ For our analysis, rather than using a percentage value we would prefer to work w
 ```{r}
 #| label: compute_mito_ratio
 # Compute percent mito ratio
-merged_seurat$mitoRatio <- PercentageFeatureSet(object = merged_seurat, pattern = "^MT-")
+merged_seurat$mitoRatio <- PercentageFeatureSet(object = merged_seurat, 
+                                                pattern = "^MT-")
 merged_seurat$mitoRatio <- merged_seurat@meta.data$mitoRatio / 100
 ```
 
@@ -182,8 +183,12 @@ Now you are **all setup with the metrics you need to assess the quality of your 
 #| tbl-cap: "Inspecting the first ten rows of our metadata table to ensure that they look formatted correctly."
 #| echo: false
 metadata %>% 
-  head(n = 10) %>% 
-  kable()
+  head(n = 5) %>% 
+  remove_rownames() %>%
+  relocate(cells) %>%
+  DT::datatable() %>% 
+  DT::formatStyle("cells", 
+                  "white-space" = "nowrap")
 ```
 
 ### Saving the updated metadata to our Seurat object
@@ -209,15 +214,14 @@ Now that we have generated the various metrics to assess, we can explore them wi
 - Complexity (novelty score)
 - Mitochondrial counts ratio
 
-::: callout-note
+::: {.callout-note collapse="true"}
 # What about doublets?
 
 In single-cell RNA sequencing experiments, doublets are generated from two cells. They typically arise due to errors in cell sorting or capture, especially in droplet-based protocols involving thousands of cells. Doublets are obviously undesirable when the aim is to characterize populations at the single-cell level. In particular, they can incorrectly suggest the existence of intermediate populations or transitory states that do not actually exist. Thus, it is desirable to remove doublet libraries so that they do not compromise interpretation of the results.
-:::
 
-::: callout-note
-# Why aren't we checking for doublets? 
-Many workflows use maximum thresholds for UMIs or genes, with the idea that a much higher number of reads or genes detected indicate multiple cells. While this rationale seems to be intuitive, it is not accurate. Also, many of the tools used to detect doublets tend to get rid of cells with intermediate or continuous phenotypes, although they may work well on datasets with very discrete cell types. [Scrublet](https://github.com/AllonKleinLab/scrublet) is a popular tool for doublet detection, but we haven't adequately benchmarked it yet. Currently, we recommend not including any thresholds at this point in time. When we have identified markers for each of the clusters, we suggest exploring the markers to determine whether the markers apply to more than one cell type.
+Many workflows use maximum thresholds for UMIs or genes, with the idea that a much higher number of reads or genes detected indicate multiple cells. While this rationale seems to be intuitive, it is not accurate. Also, many of the tools used to detect doublets tend to get rid of cells with intermediate or continuous phenotypes, although they may work well on datasets with very discrete cell types. [Scrublet](https://github.com/AllonKleinLab/scrublet) is a popular tool for doublet detection. 
+
+Currently, we recommend not including any thresholds at this point in time. When we have identified markers for each of the clusters, we suggest exploring the markers to determine whether the markers apply to more than one cell type.
 :::
 
 ### Cell counts
@@ -227,13 +231,15 @@ The cell counts are determined by the number of unique cellular barcodes detecte
 In an ideal world, you would expect the number of unique cellular barcodes to correpsond to the number of cells you loaded. However, this is not the case as capture rates of cells are only a proportion of what is loaded. For example, the inDrops cell **capture efficiency** is higher (70-80%) compared to 10X which is between 50-60%.
 
 ::: callout-note
-The capture efficiency could appear much lower if the cell concentration used for library preparation was not accurate. Cell concentration should NOT be determined by FACS machine or Bioanalyzer (these tools are not accurate for concentration determination), instead use a hemocytometer or automated cell counter for calculation of cell concentration._
+# Automated cell counting
+The capture efficiency could appear much lower if the cell concentration used for library preparation was not accurate. Cell concentration should NOT be determined by FACS machine or Bioanalyzer (these tools are not accurate for concentration determination), instead use a hemocytometer or automated cell counter for calculation of cell concentration.
 :::
 
 The cell numbers can also vary by protocol, **producing cell numbers that are much higher than what we loaded**. For example, during the inDrops protocol, the cellular barcodes are present in the hydrogels, which are encapsulated in the droplets with a single cell and lysis/reaction mixture. While each hydrogel should have a single cellular barcode associated with it, occasionally a hydrogel can have more than one cellular barcode. Similarly, with the 10X protocol there is a chance of obtaining only a barcoded bead in the emulsion droplet (GEM) and no actual cell.  Both of these, in addition to the presence of dying cells can lead to a higher number of cellular barcodes than cells.
 
 ```{r}
-#| label: cell_counts_per_sample
+#| label: fig-cell_counts_per_sample
+#| fig-cap: Barplot of the number of cells per sample.
 # Visualize the number of cell counts per sample
 metadata %>% 
   	ggplot(aes(x=sample, fill=sample)) + 
@@ -252,7 +258,8 @@ We see over 15,000 cells per sample, which is quite a bit more than the 12-13,00
 The UMI counts per cell should generally be above 500, that is the low end of what we expect. If UMI counts are between 500-1000 counts, it is usable but the cells probably should have been sequenced more deeply. 
 
 ```{r}
-#| label: UMIs_per_cell
+#| label: fig-UMIs_per_cell
+#| fig-cap: Density plot showing the distribution of UMI counts per cell for each sample
 # Visualize the number UMIs/transcripts per cell
 metadata %>% 
   	ggplot(aes(color=sample, x=nUMI, fill= sample)) + 
@@ -270,7 +277,8 @@ We can see that majority of our cells in both samples have 1000 UMIs or greater,
 We have similar expectations for gene detection as for UMI detection, although it may be a bit lower than UMIs. For high quality data, the proportional histogram should contain **a single large peak that represents cells that were encapsulated**. If we see a **small shoulder** to the left of the major peak (not present in our data), or a bimodal distribution of the cells, that can indicate a couple of things. It might be that there are a set of **cells that failed** for some reason. It could also be that there are **biologically different types of cells** (i.e. quiescent cell populations, less complex cells of interest), and/or one type is much smaller than the other (i.e. cells with high counts may be cells that are larger in size). Therefore, this threshold should be assessed with other metrics that we describe in this lesson.
  
 ```{r}
-#| label: genes_detected
+#| label: fig-genes_detected
+#| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
 # Visualize the distribution of genes detected per cell via histogram
 metadata %>% 
   	ggplot(aes(color=sample, x=nGene, fill= sample)) + 
@@ -285,8 +293,11 @@ metadata %>%
 We can evaluate each cell in terms of how complex the RNA species are by using a measure called the novelty score. The novelty score is computed by taking the ratio of nGenes over nUMI. If there are many captured transcripts (high nUMI) and a low number of genes detected in a cell, this likely means that you only captured a low number of genes and simply sequenced transcripts from those lower number of genes over and over again. These low complexity (low novelty) cells could represent a specific cell type (i.e. red blood cells which lack a typical transcriptome), or could be due to an artifact or contamination. Generally, we expect the novelty score to be above 0.80 for good quality cells.
 
 ```{r}
-#| label: complexity_score_plot
-# Visualize the overall complexity of the gene expression by visualizing the genes detected per UMI (novelty score)
+#| label: fig-complexity_score_plot
+#| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
+
+# Visualize the overall complexity of the gene expression by visualizing 
+# the genes detected per UMI (novelty score)
 metadata %>%
   	ggplot(aes(x=log10GenesPerUMI, color = sample, fill=sample)) +
   	geom_density(alpha = 0.2) +
@@ -300,7 +311,9 @@ metadata %>%
 This metric can identify whether there is a large amount of **mitochondrial contamination from dead or dying cells**. We define poor quality samples for mitochondrial counts as cells which surpass the 0.2 mitochondrial ratio mark, unless of course you are expecting this in your sample.
 
 ```{r}
-#| label: mito_ratio_plot
+#| label: fig-mito_ratio_plot
+#| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
+
 # Visualize the distribution of mitochondrial gene expression detected per cell
 metadata %>% 
   	ggplot(aes(color=sample, x=mitoRatio, fill=sample)) + 
@@ -324,8 +337,10 @@ Considering any of these QC metrics in isolation can lead to misinterpretation o
 Two metrics that are often evaluated together are the number of UMIs and the number of genes detected per cell. Here, we have plotted the **number of genes versus the number of UMIs coloured by the fraction of mitochondrial reads**. Jointly visualizing the count and gene thresholds and additionally overlaying the mitochondrial fraction, gives a summarized persepective of the quality per cell.
 
 ```{r}
-#| label: joint_effects_plot
-# Visualize the correlation between genes detected and number of UMIs and determine whether strong presence of cells with low numbers of genes/UMIs
+#| label: fig-joint_effects_plot
+#| fig-cap: Scatterplot contrasting nUMI and nGenes while coloring each cell by mitochondrial ratio.
+# Visualize the correlation between genes detected and number of UMIs and 
+# determine whether strong presence of cells with low numbers of genes/UMIs
 metadata %>% 
   	ggplot(aes(x=nUMI, y=nGene, color=mitoRatio)) + 
   	geom_point() + 
@@ -360,9 +375,10 @@ To filter, we wil go back to our Seurat object and use the `subset()` function:
 
 ```{r}
 #| label: filtered_seurat_object
-# Filter out low quality cells using selected thresholds - these will change with experiment
+# Filter out low quality cells using selected 
+# thresholds - these will change with experiment
 filtered_seurat <- subset(x = merged_seurat, 
-                         subset= (nUMI >= 500) & 
+                         subset = (nUMI >= 500) & 
                            (nGene >= 250) & 
                            (log10GenesPerUMI > 0.80) & 
                            (mitoRatio < 0.20))
@@ -398,7 +414,8 @@ Finally, take those filtered counts and create a new Seurat object for downstrea
 ```{r}
 #| label: reassign_filtered counts
 # Reassign to filtered Seurat object
-filtered_seurat <- CreateSeuratObject(filtered_counts, meta.data = filtered_seurat@meta.data)
+filtered_seurat <- CreateSeuratObject(filtered_counts, 
+                                      meta.data = filtered_seurat@meta.data)
 filtered_seurat
 ```
 
@@ -440,5 +457,6 @@ save(filtered_seurat, file="data/seurat_filtered.RData")
 ```
 
 ::: callout-note
-The data we are working with is pretty good quality. If you are interested in knowing what 'bad' data might look like when performing QC, we have some materials [linked here](Aside_QC_bad_data.qmd) where we explore similar QC metrics of a poor quality sample._
+# Bad data
+The data we are working with is pretty good quality. If you are interested in knowing what 'bad' data might look like when performing QC, we have some materials [linked here](Aside_QC_bad_data.qmd) where we explore similar QC metrics of a poor quality sample.
 :::
