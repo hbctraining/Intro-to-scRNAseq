@@ -29,9 +29,11 @@ Approximate time: 90 minutes
 
 ## Learning Objectives:
 
-* Demonstrate how to import data and set up project for upcoming quality control analysis.
+- Setup R environment for single-cell analysis.
+- Establish good data and metadata management.
+- Demonstrate how to import data and set up project for upcoming quality control analysis.
 
-# Single-cell RNA-seq: Quality control set-up
+# Quality control set-up
 
 
 <img src="../img/sc_workflow_2022.jpg" width="630">
@@ -70,7 +72,8 @@ Some relevant metadata for our dataset is provided below:
 - PBMC samples from eight individual lupus patients were separated into two aliquots each. 
   - One aliquot of PBMCs was activated by 100 U/mL of recombinant IFN-β for 6 hours. 
   - The second aliquot was left untreated. 
-  - After 6 hours, the eight samples for each condition were pooled together in two final pools (stimulated cells and control cells). We will be working with these two, pooled samples. (*We did not demultiplex the samples because SNP genotype information was used to demultiplex in the paper and the barcodes/sample IDs were not readily available for this data. Generally, you would demultiplex and perform QC on each individual sample rather than pooling the samples.*)
+  - After 6 hours, the eight samples for each condition were pooled together in two final pools (stimulated cells and control cells). We will be working with these two, pooled samples. 
+  - (*We did not demultiplex the samples because SNP genotype information was used to demultiplex in the paper and the barcodes/sample IDs were not readily available for this data. Generally, you would demultiplex and perform QC on each individual sample rather than pooling the samples.*)
 - 12,138 and 12,167 cells were identified (after removing doublets) for control and stimulated pooled samples, respectively.
 
 - Since the samples are PBMCs, we will expect immune cells, such as:
@@ -90,6 +93,7 @@ None of the above cell types are expected to be low complexity or anticipated to
 For this workshop, we will be working within an RStudio project. In order to follow along you should have **downloaded the R project**.
 
 ::: callout-important
+# Download data
 If you haven't done this already, the project can be accessed using [this link](https://www.dropbox.com/scl/fi/uoro3sbex3tj1e6m61z16/single_cell_rnaseq.zip?rlkey=cfay7tqm3ta5qlh2gph7h2wko&dl=1).
 :::
 
@@ -121,8 +125,8 @@ single_cell_rnaseq/
 └── figures
 ```
 
-::: callout-note
-# NOTE FOR WINDOWS OS users
+::: callout-important
+# Note for Windows OS users
 When you open the project folder after unzipping, please check if you have a `data` folder with a sub folder also called `data`. If this is the case, please move all the files from the subfolder into the parent `data` folder.
 :::
 
@@ -175,22 +179,39 @@ We can explore these files by clicking the `data/ctrl_raw_feature_bc_matrix` fol
 ### 1. `barcodes.tsv` 
 This is a text file which contains all cellular barcodes present for that sample. Barcodes are listed in the order of data presented in the matrix file (i.e. these are the column names). 
 
-  
-<img src="../img/cell_ids_new.png" width="130">
+```{r}
+#| label: tbl-barcodes
+#| tbl-cap: First several rows of a the `barcodes.tsv.gz` file
+#| echo: false
+bcs <- read_tsv("data/ctrl_raw_feature_bc_matrix/barcodes.tsv.gz",
+                col_names = FALSE)
+bcs %>% head() %>% knitr::kable()
+```
 
 
 ### 2. `features.tsv`
 This is a text file which contains the identifiers of the quantified genes. The source of the identifier can vary depending on what reference (i.e. Ensembl, NCBI, UCSC) you use in the quantification methods, but most often these are official gene symbols. The order of these genes corresponds to the order of the rows in the matrix file (i.e. these are the row names).
 
-<img src="../img/genes.png" width="200">
+```{r}
+#| label: tbl-features
+#| tbl-cap: First several rows of a the `features.tsv.gz` file
+#| echo: false
+fts <- read_tsv("data/ctrl_raw_feature_bc_matrix/features.tsv.gz",
+                col_names = FALSE)
+fts %>% head() %>% knitr::kable()
+```
   
 
 ### 3. `matrix.mtx`
 This is a text file which contains a matrix of count values. The rows are associated with the gene IDs above and columns correspond to the cellular barcodes. Note that there are **many zero values** in this matrix.
 
-
-<img src="../img/sparse_matrix.png" width="600">
-
+```{r}
+#| label: tbl-mtx
+#| tbl-cap: First 10 rows and columns of a the `matrix.mtx.gz` file
+#| echo: false
+mtx <- Matrix::readMM("data/ctrl_raw_feature_bc_matrix/matrix.mtx.gz")
+mtx[1:10, 1:10] %>% knitr::kable()
+```
 
 Loading this data into R requires us to **use functions that allow us to efficiently combine these three files into a single count matrix.** However, instead of creating a regular matrix data structure, the functions we will use create a **sparse matrix** to reduce the amount of memory (RAM), processing capacity (CPU) and storage required to work with our huge count matrix. 
 
@@ -203,26 +224,28 @@ Different methods for reading in data include:
 
 After processing 10X data using its proprietary software Cell Ranger, you will have an `outs` directory (always). Within this directory you will find a number of different files including the files listed below:
 
-- **`web_summary.html`:** report that explores different QC metrics, including the mapping metrics, filtering thresholds, estimated number of cells after filtering, and information on the number of reads and genes per cell after filtering.
-- **BAM alignment files:** files used for visualization of the mapped reads and for re-creation of FASTQ files, if needed
-- **`filtered_feature_bc_matrix`:** folder containing all files needed to construct the count matrix using data filtered by Cell Ranger
-- **`raw_feature_bc_matrix`:** folder containing all files needed to construct the count matrix using the raw unfiltered data
-
+| File / Folder                | Description                                                                                                                                                                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `web_summary.html`          | Report that explores different QC metrics, including the mapping metrics, filtering thresholds, estimated number of cells after filtering, and information on the number of reads and genes per cell after filtering.            |
+| BAM alignment files         | Files used for visualization of the mapped reads and for re-creation of FASTQ files, if needed                                                                                                                                  |
+| `filtered_feature_bc_matrix`| Folder containing all files needed to construct the count matrix using data filtered by Cell Ranger                                                                                                                             |
+| `raw_feature_bc_matrix`     | Folder containing all files needed to construct the count matrix using the raw unfiltered data                                                                                                                                  |
 While Cell Ranger performs filtering on the expression counts (see note below), we wish to perform our own QC and filtering because we want to account for the biology of our experiment/biological system. Given this **we are only interested in the `raw_feature_bc_matrix` folder** in the Cell Ranger output. 
 
-::: callout-note
-Why do we not use the `filtered_feature_bc_matrix` folder?** The `filtered_feature_bc_matrix` uses [internal filtering criteria by Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/algorithms/overview), and we do not have control of what cells to keep or abandon._
+::: {.callout-note collapse="true"}
+# Why do we not use the `filtered_feature_bc_matrix` folder?
+
+The `filtered_feature_bc_matrix` uses [internal filtering criteria by Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/algorithms/overview), and we do not have control of what cells to keep or abandon.
  
-_The filtering performed by Cell Ranger when generating the `filtered_feature_bc_matrix` is often good; however, sometimes data can be of very high quality and the Cell Ranger filtering process can remove high quality cells. In addition, it is generally preferable to explore your own data while taking into account the biology of the experiment for applying thresholds during filtering. For example, if you expect a particular cell type in your dataset to be smaller and/or not as transcriptionally active as other cell types in your dataset, these cells have the potential to be filtered out. However, with Cell Ranger v3 they have tried to account for cells of different sizes (for example, tumor vs infiltrating lymphocytes), and now may not filter as many low quality cells as needed._
+The filtering performed by Cell Ranger when generating the `filtered_feature_bc_matrix` is often good; however, sometimes data can be of very high quality and the Cell Ranger filtering process can remove high quality cells.
+
+In addition, it is generally preferable to explore your own data while taking into account the biology of the experiment for applying thresholds during filtering. For example, if you expect a particular cell type in your dataset to be smaller and/or not as transcriptionally active as other cell types in your dataset, these cells have the potential to be filtered out. However, with Cell Ranger v3 they have tried to account for cells of different sizes (for example, tumor vs infiltrating lymphocytes), and now may not filter as many low quality cells as needed.
 
 :::
 
 If we had a single sample, we could generate the count matrix and then subsequently create a Seurat object:
 
-::: callout-note
-# The seurat object
 The Seurat object is a custom list-like object that has well-defined spaces to store specific information/data. You can find more information about the slots in the Seurat object [at this link](https://github.com/satijalab/seurat/wiki/Seurat).
-:::
 
 ```{r}
 #| label: read_in_single_dataset
@@ -236,6 +259,7 @@ ctrl
 ```
 
 ::: callout-note
+# `min.features` argument
 The `min.features` argument specifies the minimum number of genes that need to be detected per cell. This argument will filter out poor quality cells that likely just have random barcodes encapsulated without any cell present. Usually, cells with less than 100 genes detected are not considered for analysis.
 :::
 
@@ -243,8 +267,16 @@ The `min.features` argument specifies the minimum number of genes that need to b
 
 ```{r}
 #| label: head_ctrl_dataset
+#| eval: false
 # Explore the metadata
 head(ctrl@meta.data)
+```
+
+```{r}
+#| label: tbl-ctrl_metadata
+#| tbl-cap: First several rows of a the `ctr@meta.data`
+#| echo: false
+ctrl@meta.data %>% head() %>% knitr::kable()
 ```
 
 What do the columns of metadata mean?
@@ -256,6 +288,9 @@ What do the columns of metadata mean?
 ### Reading in multiple samples with a `for loop`
 
 In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into R more efficient we can use a `for` loop, which will iterate over a series of commands for each of the inputs given and create seurat objects for each of our samples. 
+
+::: {.callout-note collapse="true}
+# `for` loop syntax
 
 In R, the `for` loop has the following structure/syntax:
 
@@ -270,6 +305,7 @@ for (variable in input){
 	command3
 }
 ```
+:::
 
 Today we will use it to **iterate over the two sample folders** and execute two commands for each sample as we did above for a single sample - 
 
@@ -302,7 +338,7 @@ for (sample in sample_names) {
 
 Let's break down the `for loop` and go over the different lines of code:
 
-::: callout-important
+::: callout-note
 # Breaking down the for loop
 
 #### Step 1: Specify inputs
@@ -398,7 +434,7 @@ merged_seurat
 
 Because the same cell IDs can be used for different samples, we add a **sample-specific prefix** to each of our cell IDs using the `add.cell.id` argument. 
 
-::: callout-note
+::: {.callout-note collapse="true"}
 # What if I am merging more than two samples?
 Seurat now has functionality to merge many samples together. You can do this quite easily by adding all sample objects to the `y` argument in a vector format. An example is provided below: 
 
@@ -415,8 +451,30 @@ Seurat now has functionality to merge many samples together. You can do this qui
 If we look at the metadata of the merged object we should be able to see the prefixes in the rownames:
 
 ```{r}
-#| label: inspect_seurat_object
+#| label: inspect_seurat_object_head
+#| eval: false
 # Check that the merged object has the appropriate sample-specific prefixes
 head(merged_seurat@meta.data)
+```
+
+
+```{r}
+#| label: tbl-merged_seurat_metadata_head
+#| tbl-cap: First several rows of a the `merged_seurat@meta.data`
+#| echo: false
+merged_seurat@meta.data %>% head() %>% knitr::kable()
+```
+
+```{r}
+#| label: inspect_seurat_object_tail
+#| eval: false
+# Check that the merged object has the appropriate sample-specific prefixes
 tail(merged_seurat@meta.data)
+```
+
+```{r}
+#| label: tbl-merged_seurat_metadata_tail
+#| tbl-cap: Last several rows of a the `merged_seurat@meta.data`
+#| echo: false
+merged_seurat@meta.data %>% tail() %>% knitr::kable()
 ```
