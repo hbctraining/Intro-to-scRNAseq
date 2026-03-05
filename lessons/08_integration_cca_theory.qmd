@@ -46,8 +46,8 @@ seurat_phase <- readRDS("data/seurat_phase.rds")
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
-**Overview of the single-cell RNA-seq workflow.**  
-*Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
+Overview of the single-cell RNA-seq workflow.
+_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
 :::
 
 ***
@@ -94,6 +94,17 @@ _**If cells cluster by sample, condition, batch, dataset, modality, performing i
 
 We want to identify  _**cell types which are present in all samples/conditions/modalities**_ within our dataset, and therefore would like to observe a representation of cells from both samples/conditions/modalities in every cluster. This will enable more interpretable results downstream (i.e. DE analysis, ligand-receptor analysis, differential abundance analysis...).
 
+So then how would you determine if integration is necessary? In this dataset, we know that the gene `LYZ` is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monoctyes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the UMAP embedding.
+
+```{r}
+#| label: fig-lyz_featureplot
+#| fig-cap: Expression of gene LYZ on the unintegrated UMAP to show when integration is necessary.
+FeaturePlot(seurat_phase,
+            features = "LYZ")
+```
+
+However we can clearly see that there is a split in the grouping of monocytes that is driven by batch, as seen in the previous UMAP plot.
+
 In this lesson, we will cover the integration of our samples across conditions, which is adapted from the [Seurat Guided Integration Tutorial](https://satijalab.org/seurat/articles/integration_introduction.html).
 
 ::: callout-note
@@ -106,17 +117,17 @@ Seurat has a [vignette](https://satijalab.org/seurat/articles/sctransform_vignet
 - Different **conditions** (e.g. control and stimulated)
 
 ::: {#fig-integration-conditions .figure}
-![](../img/seurat_condition_integ.png)
+![](../img/seurat_condition_integ.png){width=60%}
 
-**Example of condition-specific clustering and post-integration alignment using Seurat (control vs stimulated).**
+Example of condition-specific clustering and post-integration alignment using Seurat (control vs stimulated).
 :::
 
 - Different **datasets** (e.g. scRNA-seq from datasets generated using different library preparation methods on the same samples)
 
 ::: {#fig-integration-datasets .figure}
-![](../img/seurat_dataset_integ.png)
+![](../img/seurat_dataset_integ.png){width=60%}
 
-**Example of integrating multiple scRNA-seq datasets generated with different library preparation methods.**
+Example of integrating multiple scRNA-seq datasets generated with different library preparation methods.
 :::
 
 <!-- - Different **modalities** (e.g. scRNA-seq and scATAC-seq) -->
@@ -140,8 +151,8 @@ The steps in the `Seurat` integration workflow are outlined in the figure below:
 ::: {#fig-integration-workflow .figure}
 ![](../img/integration.png)
 
-**Overview of the Seurat integration workflow using canonical correlation analysis (CCA) and anchors.**  
-*Source: [Stuart & Butler et al., 2018](https://doi.org/10.1101/460147)*
+Overview of the Seurat integration workflow using canonical correlation analysis (CCA) and anchors.
+_Source: [Stuart & Butler et al., 2018](https://doi.org/10.1101/460147)_
 :::
 
 

@@ -43,8 +43,8 @@ The algorithm for the single-cell RNA-seq (scRNA) version of cellranger is descr
 ::: {#fig-cellranger-algorithm .figure}
 ![](../img/SC3pGEX-algo-diagram.png){width=350}
 
-**Overview of the Cell Ranger gene expression workflow.**  
-*Image credit: [10x](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-gex-algorithm)*
+Overview of the Cell Ranger gene expression workflow.
+_Image credit: [10x](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-gex-algorithm)_
 :::
 
 The main elements of this pipeline are as follows:
@@ -172,7 +172,7 @@ Includes information such as the total number of reads and how many of those rea
 ::: {#fig-web-summary-sequencing .figure}
 ![](../img/web_summary_sequencing.png){width=400}
 
-**Sequencing metrics panel from the Cell Ranger web summary report.**
+Sequencing metrics panel from the Cell Ranger web summary report.
 :::
 
 Ideally, you would like to see >75% for almost all of these values since lower values are indicative of a low quality sequencing run or bad sample quality.
@@ -184,7 +184,7 @@ Percentage of reads that map to different regions of the reference genome as rep
 ::: {#fig-web-summary-mapping .figure}
 ![](../img/web_summary_mapping.png){width=400}
 
-**Mapping metrics panel from the Cell Ranger web summary report.**
+Mapping metrics panel from the Cell Ranger web summary report.
 :::
 
 The percent of reads mapped to the genome should be on the higher end, around 85% or higher. Values that are very low could indicate that the reference genome supplied was incorrect or that the sample was problematic. Otherwise, the expectation for a scRNA runs is that the majority of reads will belong to exonic regions. If nuclei were used instead of whole cells, the percentage of reads mapping to intronic regions will be higher (~45%).
@@ -196,8 +196,8 @@ Here we can see what an ideal representation of the Barcode Rank Plot looks like
 ::: {#fig-barcode-rank-plot .figure}
 ![](../img/barcode_rank_plot.png){width=400}
 
-**Example barcode rank plot from the Cell Ranger web summary report.**  
-*Image credit: [10x](https://cdn.10xgenomics.com/image/upload/v1660261286/support-documents/CG000329_TechnicalNote_InterpretingCellRangerWebSummaryFiles_RevA.pdf)*
+Example barcode rank plot from the Cell Ranger web summary report.  
+_Image credit: [10x](https://cdn.10xgenomics.com/image/upload/v1660261286/support-documents/CG000329_TechnicalNote_InterpretingCellRangerWebSummaryFiles_RevA.pdf)_
 :::
 
 The shape of these plots can indicate a few different things about the sample:
@@ -216,7 +216,7 @@ The sample section contains important metadata used by cellranger, such as what 
 ::: {#fig-web-summary-sample .figure}
 ![](../img/web_summary_sample.png){width=400}
 
-**Sample metadata panel from the Cell Ranger web summary report.**
+Sample metadata panel from the Cell Ranger web summary report.
 :::
 
 ### Gene Expression
@@ -230,7 +230,7 @@ Dotplot showing the t-SNE projection of filtered cells colored by UMI counts and
 ::: {#fig-web-summary-tsne .figure}
 ![](../img/web_summary_tsne.png){width=800}
 
-**t-SNE projection panels from the Cell Ranger web summary report.**
+t-SNE projection panels from the Cell Ranger web summary report.
 :::
 
 Later in the workshop we will spend more time on the intricacies of clustering. The requirements for this QC report would be to see clear separation of cells into groups with defined clusters - representing different cell types.
@@ -242,7 +242,7 @@ This table shows the log2 fold-change and p-value for each gene and cluster afte
 ::: {#fig-web-summary-degs .figure}
 ![](../img/web_summary_degs.png){width=800}
 
-**Top features by cluster (log2 fold-change, p-value) table from the Cell Ranger web summary report.**
+Top features by cluster (log2 fold-change, p-value) table from the Cell Ranger web summary report.
 :::
 
 These top genes per cluster can give a brief peek into the cell type distribution of the sample. If no expected cell type marker genes appear or mitochondrial/ribosomal genes show up frequently, this can be indicative of something wrong with the sample.
@@ -256,7 +256,7 @@ Similar to the sequencing saturation plot, looking at the median gene per cells 
 ::: {#fig-web-summary-saturation .figure}
 ![](../img/web_summary_seq_saturation.png){width=1200}
 
-**Sequencing saturation and median genes per cell plots from the Cell Ranger web summary report.**
+Sequencing saturation and median genes per cell plots from the Cell Ranger web summary report.
 :::
 
 ## Metrics evaluation

@@ -50,8 +50,8 @@ merged_seurat <- readRDS("data/merged_seurat.RDS")
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
-**Overview of the single-cell RNA-seq workflow.**  
-*Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
+Overview of the single-cell RNA-seq workflow.
+_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
 :::
 
 ***

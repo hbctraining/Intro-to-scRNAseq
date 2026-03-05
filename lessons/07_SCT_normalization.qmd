@@ -57,8 +57,8 @@ Now that we have our high quality cells, we can explore our data and see if we a
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
-**Overview of the single-cell RNA-seq workflow.**  
-*Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
+Overview of the single-cell RNA-seq workflow.
+_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
 :::
 
 ***
@@ -89,7 +89,7 @@ The main factors often considered during normalization are:
 ::: {#fig-sequencing-depth .figure}
 ![](../img/sequencing_depth.png){width=400}
 
-**Effect of sequencing depth on observed gene expression counts between cells.**
+Effect of sequencing depth on observed gene expression counts between cells.
 :::
 
 
@@ -100,7 +100,7 @@ Each cell in scRNA-seq will have a differing number of reads associated with it.
 ::: {#fig-gene-length .figure}
 ![](../img/length_of_gene.png){width=400}
 
-**Effect of gene length on observed read counts when comparing expression between genes.**
+Effect of gene length on observed read counts when comparing expression between genes.
 :::
 
 ::: callout-note
@@ -218,7 +218,7 @@ Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells*
 ::: {#fig-pca-schematic .figure}
 ![](../img/PCA_scrnaseq_1_updated.png){width=900}
 
-**Schematic of PCA: from a cell-by-gene count matrix to principal component scores per cell.**
+Schematic of PCA: from a cell-by-gene count matrix to principal component scores per cell.
 :::
 
 After the PC scores have been calculated, you are looking at a matrix of 12,000 x 12,000 that represents the information about relative gene expression in all the cells. You can select the PC1 and PC2 columns and plot that in a 2D way.
@@ -226,7 +226,7 @@ After the PC scores have been calculated, you are looking at a matrix of 12,000 
 ::: {#fig-pca-pc1-pc2 .figure}
 ![](../img/PCA_scrnaseq_2.png){width=600}
 
-**Example of visualizing cells using the first two principal components (PC1 vs PC2).**
+Example of visualizing cells using the first two principal components (PC1 vs PC2).
 :::
 
 You can also use the PC scores from the first 40 PCs for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. We will be talking a lot more about this later in this workshop.
@@ -234,7 +234,7 @@ You can also use the PC scores from the first 40 PCs for downstream analysis lik
 ::: {#fig-pca-many-pcs .figure}
 ![](../img/PCA_scrnaseq_3.png){width=600}
 
-**Using multiple principal components for downstream analyses such as clustering and marker identification.**
+Using multiple principal components for downstream analyses such as clustering and marker identification.
 :::
 
 ::: {.callout-note}
@@ -308,8 +308,8 @@ This first plot is similar to what we plotted above, it is a PCA prior to regres
 ::: {#fig-cell-cycle-not-regressed .figure}
 ![](../img/cell_cycle_not_regressed.png){width=400}
 
-**PCA colored by cell cycle phase before regression, illustrating strong separation driven by cell cycle.**  
-*Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette.*
+PCA colored by cell cycle phase before regression, illustrating strong separation driven by cell cycle.
+_Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette._
 :::
 
 This second PCA plot is **post-regression**, and displays how effective the regression was in removing the effect we observed.
@@ -317,8 +317,8 @@ This second PCA plot is **post-regression**, and displays how effective the regr
 ::: {#fig-cell-cycle-regressed .figure}
 ![](../img/cell_cycle_regressed.png){width=400}
 
-**PCA colored by cell cycle phase after regression, showing reduced separation by cell cycle.**  
-*Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette.*
+PCA colored by cell cycle phase after regression, showing reduced separation by cell cycle.
+_Image adapted from the Seurat [Cell-Cycle Scoring and Regression](https://satijalab.org/seurat/archive/v3.1/cell_cycle_vignette.html) vignette._
 :::
 
 
@@ -363,8 +363,8 @@ In the [Hafemeister and Satija, 2019 paper](https://genomebiology.biomedcentral.
 ::: {#fig-sct-fig1 .figure}
 ![](../img/SCT_Fig1.png){width=600}
 
-**Illustration of the limitations of simple log normalization and resulting variance imbalances in scRNA-seq data.**  
-*Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)*
+Illustration of the limitations of simple log normalization and resulting variance imbalances in scRNA-seq data._
+_Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)_
 :::
 
 The conclusion is, **we cannot treat all genes the same.**
@@ -388,8 +388,8 @@ As described earlier, all genes cannot be treated the same. As such, the **SCTra
 ::: {#fig-sct-umap .figure}
 ![](../img/SCT_UMAP.png){width=400}
 
-**Example UMAP visualization demonstrating improved normalization and variance stabilization with SCTransform.**  
-*Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)*
+Example UMAP visualization demonstrating improved normalization and variance stabilization with SCTransform.
+_Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)_
 :::
 
 

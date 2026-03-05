@@ -43,37 +43,39 @@ load(bzfile("data/seurat_integrated.RData.bz2"))
 
 ## Learning Objectives:
 
-* Evaluate whether clustering artifacts are present 
-* Determine the quality of clustering with PCA and UMAP plots, and decide when to re-cluster
-* Assess known cell type markers to hypothesize cell type identities of clusters
+- Evaluate whether clustering artifacts are present 
+- Determine the quality of clustering with PCA and UMAP plots, and decide when to re-cluster
+- Assess known cell type markers to hypothesize cell type identities of clusters
 
-# Single-cell RNA-seq clustering analysis
-
+# Clustering QC
 
 Now that we have performed the integration, we want to know the different cell types present within our population of cells. 
 
-<p align="center">
-<img src="../img/sc_workflow_2022.jpg" width="630">
-</p>
+::: {#fig-sc-workflow .figure}
+![](../img/sc_workflow_2022.jpg){width=630}
+
+Overview of the single-cell RNA-seq workflow.  
+_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
+:::
 
 ***
 
-_**Goals:**_ 
- 
- - _To **determine whether clusters represent true cell types or cluster due to biological or technical variation**, such as clusters of cells in the S phase of the cell cycle, clusters of specific batches, or cells with high mitochondrial content._
- - _To use known cell type marker genes to **determine the identities of the clusters**._
+<!-- _**Goals:**_  -->
 
-_**Challenges:**_
- - _**Identifying the cell types** of each cluster_
- - _Maintaining patience as this can be a highly iterative process between clustering and marker identification (sometimes even going back to the QC filtering or normalization)_
+<!--  - _To **determine whether clusters represent true cell types or cluster due to biological or technical variation**, such as clusters of cells in the S phase of the cell cycle, clusters of specific batches, or cells with high mitochondrial content._ -->
+<!--  - _To use known cell type marker genes to **determine the identities of the clusters**._ -->
 
-_**Recommendations:**_
- 
- - _Have a good idea of your expectations for the **cell types to be present** and a handful of marker genes for these cell types. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_
- - _Identify any junk clusters for removal. Possible junk clusters could include those with high **mitochondrial content** and low UMIs/genes_
- - _If **not detecting all cell types as separate clusters**, try changing the UMAP resolution first, and if this doesn't work, then can alter the number of PCs used for clustering, the number of variable genes used, or subset the dataset to clusters of interest and re-cluster_
+<!-- _**Challenges:**_ -->
+<!--  - _**Identifying the cell types** of each cluster_ -->
+<!--  - _Maintaining patience as this can be a highly iterative process between clustering and marker identification (sometimes even going back to the QC filtering or normalization)_ -->
 
-***
+<!-- _**Recommendations:**_ -->
+
+<!--  - _Have a good idea of your expectations for the **cell types to be present** and a handful of marker genes for these cell types. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_ -->
+<!--  - _Identify any junk clusters for removal. Possible junk clusters could include those with high **mitochondrial content** and low UMIs/genes_ -->
+<!--  - _If **not detecting all cell types as separate clusters**, try changing the UMAP resolution first, and if this doesn't work, then can alter the number of PCs used for clustering, the number of variable genes used, or subset the dataset to clusters of interest and re-cluster_ -->
+
+<!-- *** -->
 
 ## Exploration of quality control metrics
 
@@ -86,7 +88,8 @@ To explore and visualize the various quality metrics, we will use the versatile 
 We can start by exploring the distribution of cells per cluster in each sample:
 
 ```{r}
-#| label: cells_per_cluster_barplot
+#| label: fig-cells_per_cluster_barplot
+#| fig-cap: Barplot representing the number of cells found in each cluster, split by sample identity.
 #| fig.width: 15
 # Extract identity and sample information from seurat object to determine the number of cells per cluster per sample
 n_cells <- FetchData(seurat_integrated, 
@@ -104,7 +107,8 @@ ggplot(n_cells, aes(x=ident, y=n, fill=sample)) +
 We can visualize the cells per cluster for each sample using the UMAP:
 
 ```{r}
-#| label: cells_per_cluster_UMAP
+#| label: fig-cells_per_cluster_UMAP
+#| fig-cap: UMAP `split.by` sample identity and colored by cluster identity.
 #| fig.width: 10
 # UMAP of cells in each cluster by sample
 DimPlot(seurat_integrated, 
@@ -116,7 +120,8 @@ DimPlot(seurat_integrated,
 Additionally, we can supply the metadata dataframe from our seurat object into ggplot to create more visuals. Looking at a UMAP is a great way to get a first pass look at your dataset, but we encourage you to look at your data in multiple different ways. For example, looking at the proportion of cells from a sample in each cluster.
 
 ```{r}
-#| label: cell_proportion_barplot
+#| label: fig-cell_proportion_barplot
+#| fig-cap: Barplot representing the proportion of cells from each samples for every cluster.
 # Barplot of proportion of cells in each cluster by sample
 ggplot(seurat_integrated@meta.data) +
     geom_bar(aes(x=integrated_snn_res.0.8, fill=sample), 
@@ -132,7 +137,8 @@ Next, we can explore whether the **cells cluster by the different cell cycle pha
 
 
 ```{r}
-#| label: clusters_DimPlot
+#| label: fig-clusters_DimPlot
+#| fig-cap: UMAP `split.by` cell cycle phase and colored by cluster identity.
 #| fig.width: 15
 # Explore whether clusters segregate by cell cycle phase
 DimPlot(seurat_integrated,
@@ -147,7 +153,8 @@ We do not see much clustering by cell cycle score, so we can proceed with the QC
 Next we will explore additional metrics, such as the number of UMIs and genes per cell, S-phase and G2M-phase markers, and mitochondrial gene expression by UMAP. Looking at the individual S and G2M scores can give us additional information to checking the phase as we did previously.
 
 ```{r}
-#| label: cell_phase_FeaturePlot
+#| label: fig-cell_phase_FeaturePlot
+#| fig-cap: UMAP `FeaturePlot` showing a variety of QC metrics with cluster annotated on top.
 #| fig.width: 9
 #| fig.height: 9
 # Determine metrics to plot present in seurat_integrated@meta.data
@@ -163,13 +170,15 @@ FeaturePlot(seurat_integrated,
 ```
 
 ::: callout-note
+# `order` argument
 The `order` argument will plot the positive cells above the negative cells, while the `min.cutoff` argument will determine the threshold for shading. A `min.cutoff` of `q10` translates to the 10% of cells with the lowest expression of the gene will not exhibit any purple shading (completely gray).
 :::
 
 The metrics seem to be relatively even across the clusters, with the exception of `nGene` exhibiting slightly higher values in clusters to the left of the plot. This can be more clearly seen when we look at the distribution as a boxplot. We can keep an eye on these clusters to see whether the cell types may explain the increase.
 
 ```{r}
-#| label: genes_per_cluster_boxplot
+#| label: fig-genes_per_cluster_boxplot
+#| fig-cap: Boxplot distribution of nGenes for each cluster.
 # Boxplot of nGene per cluster
 ggplot(seurat_integrated@meta.data) +
     geom_boxplot(aes(x=integrated_snn_res.0.8, y=nGene, 
@@ -188,6 +197,7 @@ First, we identify the information we would like to extract from the Seurat obje
 
 ```{r}
 #| label: FetchData_seurat_integrated
+#| eval: false
 # Defining the information in the seurat object of interest
 columns <- c(paste0("PC_", 1:16),
             "ident",
@@ -199,9 +209,26 @@ pc_data <- FetchData(seurat_integrated,
 head(pc_data)
 ```
 
-::: callout-note
-# Note 1
-How did we know in the `FetchData()` function to include `UMAP_1` to obtain the UMAP coordinates? The [Seurat cheatsheet](https://satijalab.org/seurat/essential_commands.html) describes the function as being able to pull any data from the expression matrices, cell embeddings, or metadata. 
+```{r}
+#| label: tbl-FetchData_seurat_integrated
+#| tbl-cap: Principal component scores for the first several cells of the dataset.
+#| echo: false
+# Defining the information in the seurat object of interest
+columns <- c(paste0("PC_", 1:16),
+            "ident",
+            "UMAP_1", "UMAP_2")
+
+# Extracting this data from the seurat object
+pc_data <- FetchData(seurat_integrated, 
+                     vars = columns)
+pc_data %>%
+  head() %>%
+  knitr::kable()
+```
+
+::: {.callout-note collapse="true"}
+# The `FetchData()` function
+How did we know in the `FetchData()` function to include `UMAP_1` to obtain the UMAP coordinates? The [Seurat cheatsheet](12_seurat_cheatsheet.qmd) describes the function as being able to pull any data from the expression matrices, cell embeddings, or metadata. 
  
 For instance, if you explore the `seurat_integrated@reductions` list object, the first component is for PCA, and includes a slot for `cell.embeddings`. We can use the column names (`PC_1`, `PC_2`, `PC_3`, etc.) to pull out the coordinates or PC scores corresponding to each cell for each of the PCs. 
 
@@ -217,7 +244,7 @@ The `FetchData()` function just allows us to extract the data more easily.
 :::
 
 ::: callout-note
-# Note 2
+# Seurat version < 5.0
 The pre-existing `seurat_integrated` loaded in previously was created using an older version of Seurat. As such the columns we `Fetch()` are in upper case (i.e `UMAP_1`). **If you are using your own seurat object using a newer version of Seurat you will need to change the column names as shown below.** Alternatively, explore your Seurat object to see how they have been stored.
 
 ```{r}
@@ -235,7 +262,8 @@ In the UMAP plots below, the cells are colored by their PC score for each respec
 Let's take a quick look at the top 16 PCs:
 
 ```{r}
-#| label: UMAP_per_PC
+#| label: fig-UMAP_per_PC
+#| fig-cap: UMAP scatterplot of top 16 PCs, coloring each cell by its score in the PC.
 #| fig.height: 10
 #| fig.width: 10
 #| warning: false
@@ -270,7 +298,7 @@ We can see how the clusters are represented by the different PCs. For instance, 
 print(seurat_integrated[["pca"]], dims = 1:5, nfeatures = 5)
 ```
 
-With the GNLY and NKG7 genes as positive markers of `PC_2`, we can hypothesize that clusters 8 and 12 correspond to NK cells. This just hints at what the clusters identity could be, with the identities of the clusters being determined through a combination of the PCs. 
+With the `GNLY` and `NKG7` genes as positive markers of `PC_2`, we can hypothesize that clusters 8 and 12 correspond to NK cells. This just hints at what the clusters identity could be, with the identities of the clusters being determined through a combination of the PCs. 
 
 To truly determine the identity of the clusters and whether the `resolution` is appropriate, it is helpful to explore a handful of known gene markers for the cell types expected. 
 
@@ -279,7 +307,8 @@ To truly determine the identity of the clusters and whether the `resolution` is 
 With the cells clustered, we can explore the cell type identities by looking for known markers. The UMAP plot with clusters marked is shown, followed by the different cell types expected.
 
 ```{r}
-#| label: DimPlot_clusters
+#| label: fig-DimPlot_clusters
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
 DimPlot(object = seurat_integrated, 
         reduction = "umap", 
         label = TRUE) + NoLegend()
@@ -303,7 +332,14 @@ DimPlot(object = seurat_integrated,
 The `FeaturePlot()` function from seurat makes it easy to visualize a handful of genes using the gene IDs stored in the Seurat object. We can easily explore the expression of known gene markers on top of our UMAP visualizations. Let's go through and determine the identities of the clusters. To access the normalized expression levels of all genes, we can use the normalized count data stored in the `RNA` assay slot. 
 
 ::: callout-note
-The SCTransform normalization was performed only on the 3000 most variable genes, so many of our genes of interest may not be present in this data.
+# SCTransform dimensions
+The SCTransform normalization and integration was performed only on the 3000 most variable genes, so many of our genes of interest may not be present in this data.
+
+```{r}
+dim(seurat_integrated[["RNA"]])
+dim(seurat_integrated[["integrated"]])
+```
+
 :::
 
 ```{r}
@@ -317,6 +353,7 @@ seurat_integrated
 ```
 
 ::: callout-note
+# Assays
 Assay is a slot defined in the Seurat object, it has multiple slots within it. In a given assay, the `counts` slot stores non-normalized raw counts, and the `data` slot stores normalized expression data. Therefore, when we run the `NormalizeData()` function in the above code, the normalized data will be stored in the `data` slot of the RNA assay while the `counts` slot will remain unaltered.
 :::
 
@@ -328,7 +365,8 @@ For the markers used here, we are looking for positive markers and consistency o
 **CD14+ monocyte markers**
 
 ```{r}
-#| label: CD4_FeaturePlot
+#| label: fig-CD4_FeaturePlot
+#| fig-cap: UMAP `FeaturePlot()` of top CD14+ monocyte markers.
 #| fig.width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
@@ -343,7 +381,8 @@ CD14+ monocytes appear to correspond to clusters 1, and 3. We wouldn't include c
 **FCGR3A+ monocyte markers**
 
 ```{r}
-#| label: FCGR3A_monocyte_plot
+#| label: fig-FCGR3A_monocyte_plot
+#| fig-cap: UMAP `FeaturePlot()` of top FCGR3A+ monocyte markers.
 #| fig.width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
@@ -359,7 +398,8 @@ FCGR3A+ monocytes markers distinctly highlight cluster 10, although we do see so
 **Macrophages**
 
 ```{r}
-#| label: Macrophages_plot
+#| label: fig-Macrophages_plot
+#| fig-cap: UMAP `FeaturePlot()` of top FCGR3A+ Macrophages markers.
 #| fig.width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
@@ -371,11 +411,23 @@ FeaturePlot(seurat_integrated,
 
 We don't see much overlap of our markers, so no clusters appear to correspond to macrophages; perhaps cell culture conditions negatively selected for macrophages (more highly adherent).
 
+To clearly see the expression levels of these genes, we can generate a `VlnPlot()` of these genes to more clearly see the distribution of expression.
+
+```{r}
+#| label: fig-Macrophages_plot_vln
+#| fig-cap: Violin plot of top FCGR3A+ Macrophages markers.
+#| fig.height: 6
+VlnPlot(seurat_integrated,
+        c("MARCO", "ITGAM", "ADGRE1"),
+        ncol = 1)
+```
+
 **Conventional dendritic cell markers**
 
 ```{r}
-#| label: conventional_dendritic cell_plot
-#| fig.width: 8
+#| label: fig-conventional_dendritic cell_plot
+#| fig-cap: UMAP `FeaturePlot()` of top Conventional dendritic cell markers.
+#| fig-width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
             features = c("FCER1A", "CST3"), 
@@ -389,7 +441,8 @@ The markers corresponding to conventional dendritic cells identify cluster 14 (b
 **Plasmacytoid dendritic cell markers**
 
 ```{r}
-#| label: plasmacytoid_dendritic cell_plot
+#| label: fig-plasmacytoid_dendritic_cell_plot
+#| fig-cap: UMAP `FeaturePlot()` of top Plasmacytoid dendritic cell markers.
 #| fig.width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
@@ -406,7 +459,8 @@ Plasmacytoid dendritic cells represent cluster 16. While there are a lot of diff
 Seurat also has a built in visualization tool which allows us to view the average expression of genes across clusters called `DotPlot()`. This function additionally shows us how many cells within the cluster have expression of one gene. As input, we supply a list of genes - note that we cannot use the same gene twice or an error will be thrown. 
 
 ```{r}
-#| label: DotPlot_known_markers
+#| label: fig-DotPlot_known_markers
+#| fig-cap: DotPlot representing top marker genes for a variety of celltypes, with each circle reprsenting the average expression of that cluster and the size showing the percentage of cells that express that gene.
 #| fig.width: 15
 # List of known celltype markers
 markers <- list()

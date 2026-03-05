@@ -43,36 +43,39 @@ load(bzfile("data/seurat_integrated.RData.bz2"))
 * Describe methods for evaluating the number of principal components used for clustering
 * Perform clustering of cells based on significant principal components
 
-# Single-cell RNA-seq clustering analysis
+# Clustering analysis
 
 Now that we have our high quality cells integrated, we want to know the different cell types present within our population of cells. 
 
-<p align="center">
-<img src="../img/sc_workflow_2022.jpg" width="630">
-</p>
+::: {#fig-sc-workflow .figure}
+![](../img/sc_workflow_2022.jpg){width=630}
+
+Overview of the single-cell RNA-seq workflow.  
+_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
+:::
 
 ***
 
-_**Goals:**_ 
- 
- - _To **generate cell type-specific clusters** and use known cell type marker genes to determine the identities of the clusters._
- - _To **determine whether clusters represent true cell types or cluster due to biological or technical variation**, such as clusters of cells in the S phase of the cell cycle, clusters of specific batches, or cells with high mitochondrial content._
+<!-- _**Goals:**_  -->
 
-_**Challenges:**_
- 
- - _**Identifying poor quality clusters** that may be due to uninteresting biological or technical variation_
- - _**Identifying the cell types** of each cluster_
- - _Maintaining patience as this can be a highly iterative process between clustering and marker identification (sometimes even going back to the QC filtering)_
+<!--  - _To **generate cell type-specific clusters** and use known cell type marker genes to determine the identities of the clusters._ -->
+<!--  - _To **determine whether clusters represent true cell types or cluster due to biological or technical variation**, such as clusters of cells in the S phase of the cell cycle, clusters of specific batches, or cells with high mitochondrial content._ -->
 
-_**Recommendations:**_
- 
- - _Have a good idea of your expectations for the **cell types to be present** prior to performing the clustering. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_
- - _If you have **more than one condition**, it's often helpful to perform integration to align the cells_
- - _**Regress out** number of UMIs (by default with sctransform), mitochondrial content, and cell cycle, if needed and appropriate for experiment, so not to drive clustering_
- - _Identify any junk clusters for removal or re-visit QC filtering. Possible junk clusters could include those with high **mitochondrial content** and low UMIs/genes. If comprised of a lot of cells, then may be helpful to go back to QC to filter out, then re-integrate/cluster._
- - _If **not detecting all cell types as separate clusters**, try changing the resolution or the number of PCs used for clustering_
- 
-***
+<!-- _**Challenges:**_ -->
+
+<!--  - _**Identifying poor quality clusters** that may be due to uninteresting biological or technical variation_ -->
+<!--  - _**Identifying the cell types** of each cluster_ -->
+<!--  - _Maintaining patience as this can be a highly iterative process between clustering and marker identification (sometimes even going back to the QC filtering)_ -->
+
+<!-- _**Recommendations:**_ -->
+
+<!--  - _Have a good idea of your expectations for the **cell types to be present** prior to performing the clustering. Know whether you expect cell types of low complexity or higher mitochondrial content AND whether the cells are differentiating_ -->
+<!--  - _If you have **more than one condition**, it's often helpful to perform integration to align the cells_ -->
+<!--  - _**Regress out** number of UMIs (by default with sctransform), mitochondrial content, and cell cycle, if needed and appropriate for experiment, so not to drive clustering_ -->
+<!--  - _Identify any junk clusters for removal or re-visit QC filtering. Possible junk clusters could include those with high **mitochondrial content** and low UMIs/genes. If comprised of a lot of cells, then may be helpful to go back to QC to filter out, then re-integrate/cluster._ -->
+<!--  - _If **not detecting all cell types as separate clusters**, try changing the resolution or the number of PCs used for clustering_ -->
+
+<!-- *** -->
 
 ## Clustering cells based on top PCs (metagenes)
 
@@ -104,7 +107,8 @@ It is useful to explore the PCs prior to deciding which PCs to include for the d
 The `cells` argument specifies the number of cells with the most negative or postive PCA scores to use for the plotting. The idea is that we are looking for a PC where the heatmap starts to look more "fuzzy", i.e. where the distinctions between the groups of genes is not so distinct.
 
 ```{r}
-#| label: integrated_DimHeatmap
+#| label: fig-integrated_DimHeatmap
+#| fig-cap: Heatmap of the first 9 principal components, showing expression across 500 cells for the top genes (negative and positive) for the component.
 # Explore heatmap of PCs
 DimHeatmap(seurat_integrated, 
            dims = 1:9, 
@@ -127,7 +131,8 @@ print(x = seurat_integrated[["pca"]],
 Let's draw an elbow plot using the top 40 PCs:
 
 ```{r}
-#| label: PC_elbow_plot
+#| label: fig-PC_elbow_plot
+#| fig-cap: Plot showing the standard deviation represented with each component to determine a cutoff value for the number of PCs.
 # Plot the elbow plot
 ElbowPlot(object = seurat_integrated, 
           ndims = 40)
@@ -152,14 +157,15 @@ Seurat uses a graph-based clustering approach using a K-nearest neighbor approac
 
 The first step is to **construct a K-nearest neighbor (KNN) graph** based on the euclidean distance in PCA space. 
 
-<p align="center">
-<img src="../img/k-means.png" width="500">
-</p>
+::: {#fig-k-means .figure}
+![](../img/k-means.png){width=500}
 
-_Image source: [Analysis of Single cell RNA-seq data](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html)_
-  
-  * Edges are drawn between cells with similar features expression patterns.
-  * Edge weights are refined between any two cells based on shared overlap in their local neighborhoods.
+Schematic representation of K-nearest neighbor–based clustering for single-cell RNA-seq data.  
+_Source: [Analysis of Single cell RNA-seq data](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-n.html)_
+:::
+
+  - Edges are drawn between cells with similar features expression patterns.
+  - Edge weights are refined between any two cells based on shared overlap in their local neighborhoods.
 
 This is done in Seurat by using the `FindNeighbors()` function:
 
@@ -203,6 +209,20 @@ seurat_integrated@meta.data %>%
         View()
 ```
 
+```{r}
+#| label: tbl-evaluate_resolutions
+#| tbl-cap: Table of `@meta.data` to see the results of clustering for each different resolution.
+#| echo: false
+# Explore resolutions
+seurat_integrated@meta.data %>% 
+  head(n = 5) %>% 
+  remove_rownames() %>%
+  relocate(cells) %>%
+  DT::datatable() %>% 
+  DT::formatStyle("cells", 
+                  "white-space" = "nowrap")
+```
+
 To **choose a resolution to start with**, we often pick something in the middle of the range like 0.6 or 0.8. We will start with a resolution of 0.8 by assigning the identity of the clusters using the `Idents()` function.
 
 ```{r}
@@ -212,6 +232,11 @@ Idents(object = seurat_integrated) <- "integrated_snn_res.0.8"
 ```
 
 Now, we can plot the UMAP to look at how cells cluster together at a resolution of 0.8:
+
+::: {.callout-note collapse="true"}
+# Calculate UMAP code
+
+We calculate the UMAP coordinates in the last lesson with the following code:
 
 ```{r}
 #| label: UMAP_for_0.8_resolution
@@ -224,8 +249,11 @@ seurat_integrated <- RunUMAP(seurat_integrated,
                              dims = 1:40)
 ```
 
+:::
+
 ```{r}
-#| label: integrated_DimPlot_0.8
+#| label: fig-integrated_DimPlot_0.8
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
 # Plot the UMAP
 DimPlot(seurat_integrated,
         reduction = "umap",
@@ -237,7 +265,9 @@ DimPlot(seurat_integrated,
 It can be useful to **explore other resolutions as well**. It will give you a quick idea about how the clusters would change based on the resolution parameter. For example, let's switch to a resolution of 0.4:
 
 ```{r}
-#| label: integrated_DimPlot_0.4
+#| label: fig-integrated_DimPlot_0.4
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.4.
+
 # Assign identity of clusters
 Idents(object = seurat_integrated) <- "integrated_snn_res.0.4"
 
@@ -281,7 +311,9 @@ After loading `seurat_integrated.RData.bz2`, check the object clusters with diff
 We will now continue with the 0.8 resolution to check the quality control metrics and known markers for the anticipated cell types. Plot the UMAP again to make sure your image now (or still) matches what you see in the lesson:
 
 ```{r}
-#| label: reassign_0.8_ident_and_DimPlot
+#| label: fig-reassign_0.8_ident_and_DimPlot
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8 for the downloaded, processed data.
+
 # Assign identity of clusters
 Idents(object = seurat_integrated) <- "integrated_snn_res.0.8"
 
