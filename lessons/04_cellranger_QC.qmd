@@ -40,11 +40,12 @@ Approximate time: 15 minutes
 
 The algorithm for the single-cell RNA-seq (scRNA) version of cellranger is described by 10x as follows:
 
+::: {#fig-cellranger-algorithm .figure}
+![](../img/SC3pGEX-algo-diagram.png){width=350}
 
-<img src="../img/SC3pGEX-algo-diagram.png" width="350">
-
-
+**Overview of the Cell Ranger gene expression workflow.**  
 *Image credit: [10x](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-gex-algorithm)*
+:::
 
 The main elements of this pipeline are as follows:
 
@@ -73,9 +74,9 @@ Note that prior to this step, **you must have a cellranger compatible reference 
 
 Here we are showing an example of how to run `cellranger count` on Harvard's O2 HPC using SLURM. To run this script, you will have to add additional information, such as:
 
-* The name of the project (the results will be placed in a folder of the same name)
-* Path to the FASTQ files from your experiment
-* Path to the reference genome 
+- The name of the project (the results will be placed in a -older of the same name)
+- Path to the FASTQ files from your experiment
+- Path to the reference genome 
 
 In the following **example script**, you would just have to change the variable specified in the ["Inputs for cellranger" section](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/inputs/cr-inputs-overview) on the 10x support site. We have already provided some optimal parameters in terms of runtime and memory for running `cellranger count`.
 
@@ -168,7 +169,11 @@ The remaining 4 sections include various metrics that describe the overall quali
 
 Includes information such as the total number of reads and how many of those reads did not meet the length requirements. Additionally, since all barcodes and UMIs are known values (from the kit used to prep scRNA experiments), we can evaluate what percentage of the barcodes and UMIs belong to that whitelist and are valid. 
 
-<img src="../img/web_summary_sequencing.png" width="400">
+::: {#fig-web-summary-sequencing .figure}
+![](../img/web_summary_sequencing.png){width=400}
+
+**Sequencing metrics panel from the Cell Ranger web summary report.**
+:::
 
 Ideally, you would like to see >75% for almost all of these values since lower values are indicative of a low quality sequencing run or bad sample quality.
 
@@ -176,7 +181,11 @@ Ideally, you would like to see >75% for almost all of these values since lower v
 
 Percentage of reads that map to different regions of the reference genome as reported by STAR.
 
-<img src="../img/web_summary_mapping.png" width="400">
+::: {#fig-web-summary-mapping .figure}
+![](../img/web_summary_mapping.png){width=400}
+
+**Mapping metrics panel from the Cell Ranger web summary report.**
+:::
 
 The percent of reads mapped to the genome should be on the higher end, around 85% or higher. Values that are very low could indicate that the reference genome supplied was incorrect or that the sample was problematic. Otherwise, the expectation for a scRNA runs is that the majority of reads will belong to exonic regions. If nuclei were used instead of whole cells, the percentage of reads mapping to intronic regions will be higher (~45%).
 
@@ -184,9 +193,12 @@ The percent of reads mapped to the genome should be on the higher end, around 85
 
 Here we can see what an ideal representation of the Barcode Rank Plot looks like. The cells are sorted by the number of UMIs found in the cell to differentiate empty droplets/low quality cells (background) from actual cells. 
 
-<img src="../img/barcode_rank_plot.png" width="400">
+::: {#fig-barcode-rank-plot .figure}
+![](../img/barcode_rank_plot.png){width=400}
 
+**Example barcode rank plot from the Cell Ranger web summary report.**  
 *Image credit: [10x](https://cdn.10xgenomics.com/image/upload/v1660261286/support-documents/CG000329_TechnicalNote_InterpretingCellRangerWebSummaryFiles_RevA.pdf)*
+:::
 
 The shape of these plots can indicate a few different things about the sample:
 
@@ -201,7 +213,11 @@ This section additionally describes averages and medians for number of genes and
 
 The sample section contains important metadata used by cellranger, such as what the Sample ID and the path used for the reference. The chemistry version (which 10x kit was used) and intron flags are also stored here. This information is useful for reproducibility reasons, as the version of cellranger used is also kept.
 
-<img src="../img/web_summary_sample.png" width="400">
+::: {#fig-web-summary-sample .figure}
+![](../img/web_summary_sample.png){width=400}
+
+**Sample metadata panel from the Cell Ranger web summary report.**
+:::
 
 ### Gene Expression
 
@@ -211,7 +227,11 @@ The "Gene Expression" tab contains information downstream of the basic QC, such 
 
 Dotplot showing the t-SNE projection of filtered cells colored by UMI counts and clusters. The report allows you to select various values of K for the K-means clustering, showing different groupings that can be generated from the data.
 
-<img src="../img/web_summary_tsne.png" width="800">
+::: {#fig-web-summary-tsne .figure}
+![](../img/web_summary_tsne.png){width=800}
+
+**t-SNE projection panels from the Cell Ranger web summary report.**
+:::
 
 Later in the workshop we will spend more time on the intricacies of clustering. The requirements for this QC report would be to see clear separation of cells into groups with defined clusters - representing different cell types.
 
@@ -219,7 +239,11 @@ Later in the workshop we will spend more time on the intricacies of clustering. 
 
 This table shows the log2 fold-change and p-value for each gene and cluster after a differential expression analysis is run.
 
-<img src="../img/web_summary_degs.png" width="800">
+::: {#fig-web-summary-degs .figure}
+![](../img/web_summary_degs.png){width=800}
+
+**Top features by cluster (log2 fold-change, p-value) table from the Cell Ranger web summary report.**
+:::
 
 These top genes per cluster can give a brief peek into the cell type distribution of the sample. If no expected cell type marker genes appear or mitochondrial/ribosomal genes show up frequently, this can be indicative of something wrong with the sample.
 
@@ -229,7 +253,11 @@ The sequencing saturation plot is a measure of library complexity. In scRNA, mor
 
 Similar to the sequencing saturation plot, looking at the median gene per cells against mean reads per cell will indicate if your have over or under-sequenced. The slope near the endpoint can be used to determine how much benefit would be gained from sequencing more deeply.
 
-<img src="../img/web_summary_seq_saturation.png" width="1200">
+::: {#fig-web-summary-saturation .figure}
+![](../img/web_summary_seq_saturation.png){width=1200}
+
+**Sequencing saturation and median genes per cell plots from the Cell Ranger web summary report.**
+:::
 
 ## Metrics evaluation
 
@@ -284,7 +312,8 @@ With all of this information available as a dataframe, we can use ggplot to visu
 
 
 ```{r}
-#| label: mapping_reads_to_regions_plot
+#| label: fig-mapping_reads_to_regions_plot
+#| fig-cap: Mapping percentage of reads to different regions of the genome.
 # Columns of interest
 cols <- c("Reads.Mapped.Confidently.to.Intergenic.Regions",
           "Reads.Mapped.Confidently.to.Intronic.Regions",
@@ -310,7 +339,6 @@ df %>% ggplot() +
         y = "Percentage of Reads",
         title = "Percent of Reads Mapped to Each Region",
         fill = "Region")
-
 ```
 
 
