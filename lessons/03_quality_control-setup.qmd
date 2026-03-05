@@ -39,7 +39,7 @@ Approximate time: 90 minutes
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
-**Overview of the single-cell RNA-seq workflow used in this course.**  
+**Overview of the single-cell RNA-seq workflow.**  
 *Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
 :::
 
@@ -195,7 +195,7 @@ This is a text file which contains all cellular barcodes present for that sample
 
 ```{r}
 #| label: tbl-barcodes
-#| tbl-cap: First several rows of a the `barcodes.tsv.gz` file
+#| tbl-cap: First several rows of the `barcodes.tsv.gz` file
 #| echo: false
 bcs <- read_tsv("data/ctrl_raw_feature_bc_matrix/barcodes.tsv.gz",
                 col_names = FALSE)
@@ -208,7 +208,7 @@ This is a text file which contains the identifiers of the quantified genes. The 
 
 ```{r}
 #| label: tbl-features
-#| tbl-cap: First several rows of a the `features.tsv.gz` file
+#| tbl-cap: First several rows of the `features.tsv.gz` file
 #| echo: false
 fts <- read_tsv("data/ctrl_raw_feature_bc_matrix/features.tsv.gz",
                 col_names = FALSE)
@@ -221,7 +221,7 @@ This is a text file which contains a matrix of count values. The rows are associ
 
 ```{r}
 #| label: tbl-mtx
-#| tbl-cap: First 10 rows and columns of a the `matrix.mtx.gz` file
+#| tbl-cap: First 10 rows and columns of the `matrix.mtx.gz` file
 #| echo: false
 mtx <- Matrix::readMM("data/ctrl_raw_feature_bc_matrix/matrix.mtx.gz")
 mtx[1:10, 1:10] %>% knitr::kable()

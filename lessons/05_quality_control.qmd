@@ -44,31 +44,35 @@ merged_seurat <- readRDS("data/merged_seurat.RDS")
 - Construct quality control metrics and visually evaluate the quality of the data
 - Apply appropriate filters to remove low quality cells
 
-# Single-cell RNA-seq: Quality control
+# Quality control
 
 
-<img src="../img/sc_workflow_2022.jpg" width="630">
+::: {#fig-sc-workflow .figure}
+![](../img/sc_workflow_2022.jpg){width=630}
 
-
-***
-
-Each step of this workflow has its own goals and challenges. For QC of our raw count data, they include:
-
-_**Goals:**_ 
- 
- - _To **filter the data to only include true cells that are of high quality**, so that when we cluster our cells it is easier to identify distinct cell type populations_
- - _To **identify any failed samples** and either try to salvage the data or remove from analysis, in addition to, trying to understand why the sample failed_
-
-_**Challenges:**_
- 
- - _Delineating cells that are **poor quality from less complex cells**_
- - _Choosing appropriate thresholds for filtering, so as to **keep high quality cells without removing biologically relevant cell types**_
-
-_**Recommendations:**_
- 
- - _Have a good idea of your expectations for the **cell types to be present** prior to performing the QC. For instance, do you expect to have low complexity cells or cells with higher levels of mitochondrial expression in your sample? If so, then we need to account for this biology when assessing the quality of our data._
+**Overview of the single-cell RNA-seq workflow.**  
+*Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials.*
+:::
 
 ***
+
+<!-- Each step of this workflow has its own goals and challenges. For QC of our raw count data, they include: -->
+
+<!-- _**Goals:**_  -->
+
+<!--  - _To **filter the data to only include true cells that are of high quality**, so that when we cluster our cells it is easier to identify distinct cell type populations_ -->
+<!--  - _To **identify any failed samples** and either try to salvage the data or remove from analysis, in addition to, trying to understand why the sample failed_ -->
+
+<!-- _**Challenges:**_ -->
+
+<!--  - _Delineating cells that are **poor quality from less complex cells**_ -->
+<!--  - _Choosing appropriate thresholds for filtering, so as to **keep high quality cells without removing biologically relevant cell types**_ -->
+
+<!-- _**Recommendations:**_ -->
+
+<!--  - _Have a good idea of your expectations for the **cell types to be present** prior to performing the QC. For instance, do you expect to have low complexity cells or cells with higher levels of mitochondrial expression in your sample? If so, then we need to account for this biology when assessing the quality of our data._ -->
+
+<!-- *** -->
 
 ## Generating quality metrics
 
@@ -82,7 +86,7 @@ View(merged_seurat@meta.data)
 ```
 
 ```{r}
-#| label: table_metadata
+#| label: tbl-table_metadata
 #| tbl-cap: "Inspecting our metadata table to get a sense for the type of information stored within it."
 #| echo: false
 merged_seurat@meta.data %>% 
@@ -115,19 +119,18 @@ merged_seurat$log10GenesPerUMI <- log10(merged_seurat$nFeature_RNA) / log10(merg
 
 Seurat has a convenient function that allows us to calculate the **proportion of transcripts mapping to mitochondrial genes**. The `PercentageFeatureSet()` function takes in a `pattern` argument and searches through all gene identifiers in the dataset for that pattern. Since we are looking for mitochondrial genes, we are searching any gene identifiers that begin with the pattern "MT-". For each cell, the function takes the sum of counts across all genes (features) belonging to the "Mt-" set, and then divides by the count sum for all genes (features). This value is multiplied by 100 to obtain a percentage value. 
 
-::: callout-note
 For our analysis, rather than using a percentage value we would prefer to work with the ratio value. As such, we will reverse that last step performed by the function by taking the output value and dividing by 100.
-:::
+
 
 ```{r}
 #| label: compute_mito_ratio
 # Compute percent mito ratio
 merged_seurat$mitoRatio <- PercentageFeatureSet(object = merged_seurat, pattern = "^MT-")
 merged_seurat$mitoRatio <- merged_seurat@meta.data$mitoRatio / 100
-
 ```
 
-::: callout-note
+::: {.callout-note collapse="true"}
+# MT genes for organisms other than human
 The pattern provided ("^MT-") works for human gene names. You may need to adjust the pattern argument depending on your organism of interest. Additionally, if you weren't using gene names as the gene ID then this function wouldn't work as we have used it above as the pattern will not suffice. Since there are caveats to using this function, it is advisable to manually compute this metric. If you are interested, we have [code available to compute this metric on your own](https://github.com/hbctraining/scRNA-seq/blob/master/lessons/mitoRatio.md).
 :::
 
@@ -153,15 +156,12 @@ Next, we'll add a **new column for cell identifiers**. This information is curre
 metadata$cells <- rownames(metadata)
 ```
 
-You should see that each cell ID has a `ctrl_` or `stim_` prefix as we had specified when we merged the Seurat objects. We can use this prefix to create a **new column indicating which condition** each cell is classfied under. We will call this column `sample`:
-
+Additionally we are going to create another column titled `sample` which is also stored in `orig.ident`. We do this because this because `sample` is a commonly used metadata field that others will look for when they download your data.
 
 ```{r}
 #| label: add_sample_to_metadata
 # Create sample column
-metadata$sample <- NA
-metadata$sample[which(str_detect(metadata$cells, "^ctrl_"))] <- "ctrl"
-metadata$sample[which(str_detect(metadata$cells, "^stim_"))] <- "stim"
+metadata$sample <- metadata$orig.ident
 ```
 
 And finally, we will **rename some of the existing columns** in our metadata dataframe to be more intuitive:
@@ -178,7 +178,7 @@ metadata <- metadata %>%
 Now you are **all setup with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
 
 ```{r}
-#| label: table_renamed_metadata
+#| label: tbl-table_renamed_metadata
 #| tbl-cap: "Inspecting the first ten rows of our metadata table to ensure that they look formatted correctly."
 #| echo: false
 metadata %>% 
