@@ -36,8 +36,12 @@ Approximate time: 90 minutes
 # Quality control set-up
 
 
-<img src="../img/sc_workflow_2022.jpg" width="630">
+::: {#fig-sc-workflow .figure}
+![](../img/sc_workflow_2022.jpg)
 
+**Overview of the single-cell RNA-seq workflow used in this course.**  
+*Source: HBC Training Intro-to-scRNAseq materials.*
+:::
 
 After quantifying gene expression we need to bring this data into R to generate metrics for performing QC. In this lesson we will talk about the format(s) count data can be expected in, and how to read it into R so we can move on to the QC step in the workflow. We will also discuss the dataset we will be using and the associated metadata.
 
@@ -49,9 +53,12 @@ For this workshop we will be working with a single-cell RNA-seq dataset which is
 
 The data used to test their algorithm is comprised of pooled Peripheral Blood Mononuclear Cells (PBMCs) taken from eight lupus patients, split into control and interferon beta-treated (stimulated) conditions. 
 
-<img src="../img/kangetal_image.png" width="700">
+::: {#fig-kang-2017 .figure}
+![](../img/kangetal_image.png)
 
-*Image credit: [Kang et al, 2017](https://www.nature.com/articles/nbt.4042)*
+**Overview of the Kang et al. (2017) pooled PBMC single-cell RNA-seq study design.**  
+*Image credit: [Kang et al., 2017](https://www.nature.com/articles/nbt.4042)*
+:::
 
 ### Raw data
 
@@ -105,8 +112,11 @@ Once downloaded, you should see a file called `single_cell_rnaseq.zip` on your c
 4. **Locate the `.Rproj file` and double-click on it.** This will open up RStudio with the "single_cell_rnaseq" project loaded. 
 
 
-<img src="../img/proj_screenshot.png" width="500">
+::: {#fig-project-structure .figure}
+![](../img/proj_screenshot.png)
 
+**Project directory structure for the `single_cell_rnaseq` workshop materials.**
+:::
 
 ## Project organization
 
@@ -146,8 +156,11 @@ Next, open a new Rscript file, and start with some comments to indicate what thi
 Save the Rscript as `quality_control.R`. Your working directory should look something like this:
 
 
-<img src="../img/Rstudio_singlecell.png" width="400">
+::: {#fig-rstudio-singlecell .figure}
+![](../img/Rstudio_singlecell.png)
 
+**RStudio interface with the `single_cell_rnaseq` project opened.**
+:::
 
 ### Loading libraries 
 

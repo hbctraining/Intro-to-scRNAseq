@@ -148,14 +148,15 @@ The Web Summary HTML file is a great resource for looking at the basic quality o
 We have included these Web Summary files for the control and stimulated samples your project `data` folder. You can click on them to open them in your web browser.
 
 ::: callout-note
+# Older versions of 10x kits
 Some of the values in these reports will be slightly different from current standards, as these samples were generated using the version 1 chemistry kit and optimization have been made since then.
 :::
 
 ### Summary
 
-At the top of the "Summary" tab, under the "Alerts" header, will be a list of warnings and messages on the quality/important information about the sample. These messages are very informative on what may have gone wrong with the sample or other flags that can be set in the `cellranger count` run to gain better results.
+At the top of the `Summary` tab, under the `Alerts` header, will be a list of warnings and messages on the quality/important information about the sample. These messages are very informative on what may have gone wrong with the sample or other flags that can be set in the `cellranger count` run to gain better results.
 
-Underneath the "Summary" tab, in green text, are the estimated number of high quality cells in the sample, average reads per cells, and median genes per cell. The number of cells will vary depending on how many were loaded in sample preparation, but some general recommendations are provided below:
+Underneath the `Summary` tab, in green text, are the estimated number of high quality cells in the sample, average reads per cells, and median genes per cell. The number of cells will vary depending on how many were loaded in sample preparation, but some general recommendations are provided below:
 
 - 500 cells is the **lower limit** for a good quality sample.
 - 10x also recommends a minimum of 20,000 reads per cell on average.
