@@ -171,8 +171,7 @@ And finally, we will **rename some of the existing columns** in our metadata dat
 #| label: rename_metadata_columns
 # Rename columns
 metadata <- metadata %>%
-        dplyr::rename(seq_folder = orig.ident,
-                      nUMI = nCount_RNA,
+        dplyr::rename(nUMI = nCount_RNA,
                       nGene = nFeature_RNA)
 ```
 
