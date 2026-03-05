@@ -21,10 +21,9 @@ execute:
 | 09:30 - 09:45 | [Workshop introduction](../slides/workshop_intro_slides.pdf) | Will |
 | 09:45 - 10:35| [Introduction to Single Cell RNA-sequencing: a practical guide](../slides/HBC_single_cell_analysis_course-SEP_2025.pdf) | [Dr. Mandovi Chatterjee](https://singlecellcore.hms.harvard.edu/people/mandovi-chatterjee) |
 | 10:35 - 10:40 | Break |
-| 10:40 - 11:00 | scRNA-seq pre-reading discussion | All |
-| 11:00 - 11:45 | [Quality control set-up](../lessons/03_quality_control-setup.qmd) | Noor |
+| 10:40 - 11:00 | scRNA-seq pre-reading discussion | Noor |
+| 11:00 - 11:45 | [Quality control set-up](../lessons/03_quality_control-setup.qmd) | Will |
 | 11:45 - 12:00 | Overview of self-learning materials and homework submission | Will |
-
 
 ### Before the next class:
 
@@ -73,7 +72,7 @@ II. **Submit your work**:
 | Time |  Topic  | Instructor |
 |:-----------:|:----------:|:--------:|
 | 09:30 - 10:00 | Self-learning lessons discussion | All |
-| 10:00 - 10:45 | [Quality control with additional metrics](../lessons/05_quality_control.qmd) | Noor |
+| 10:00 - 10:45 | [Quality control with additional metrics](../lessons/05_quality_control.qmd) | Will |
 | 10:45 - 10:50 | Break |
 | 10:50 - 11:40 | [Normalization and regressing out unwanted variation](../lessons/07_SCT_normalization.qmd) | Noor |
 | 11:40 - 12:00| [A brief introduction to Integration](../lessons/08_integration_cca_theory.qmd) | Will |
@@ -112,10 +111,10 @@ II. **Submit your work**:
 
 | Time |  Topic  | Instructor |
 |:-----------:|:----------:|:--------:|
-| 09:30 - 10:00 | Self-learning lessons discussion | All |
-| 10:00 - 11:00 | [Clustering](../lessons/10_clustering_cells_SCT.qmd) | Noor |
+| 09:30 - 10:00 | Self-learning lessons discussion | Noor |
+| 10:00 - 11:00 | [Clustering](../lessons/10_clustering_cells_SCT.qmd) | Elizabeth |
 | 11:00 - 11:05 | Break |
-| 11:05 - 12:00 | [Clustering quality control](../lessons/11_clustering_quality_control.qmd) | Noor |
+| 11:05 - 12:00 | [Clustering quality control](../lessons/11_clustering_quality_control.qmd) | Will |
 
 
 ### Before the next class:
