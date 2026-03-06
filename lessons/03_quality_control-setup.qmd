@@ -372,7 +372,6 @@ To start, let us test out what happens if we print out what `sample` looks like 
 ```{r}
 #| label: create_individual_seurat_objects
 #| eval: false
-## DO NOT RUN
 sample_names <- c("ctrl", "stim")
 # Empty list to populate seurat object for each sample
 list_seurat <- list()
