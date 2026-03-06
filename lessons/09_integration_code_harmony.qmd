@@ -196,6 +196,7 @@ Since it can take a while to integrate, it's often a good idea to **save the int
 
 ```{r}
 #| label: save_integrated_object
+#| eval: false
 # Save integrated Seurat object
 saveRDS(seurat_integrated, "data/integrated_seurat.rds")
 ```
