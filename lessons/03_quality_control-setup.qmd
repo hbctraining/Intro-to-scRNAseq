@@ -35,7 +35,6 @@ Approximate time: 90 minutes
 
 # Quality control set-up
 
-
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
@@ -132,8 +131,10 @@ Look inside your project space and you will find that a directory structure has 
 #| eval: false
 single_cell_rnaseq/
 ├── data
+├── figures
 ├── results
-└── figures
+└── scripts
+└── single_cell_rnaseq.Rproj
 ```
 
 ::: callout-important
