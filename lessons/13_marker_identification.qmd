@@ -589,6 +589,8 @@ You can find out more about the `sink()` function [at this link](https://www.rdo
 
 ***
 
+# Downstream Analyses
+
 Now that we have our clusters defined and the markers for each of our clusters, we have a few different questions we can answer:
 
 - Determine if there is a shift in cell populations between `ctrl` and `stim`. Ideally this would be done with replicates to determine if the changes are significant.
@@ -612,9 +614,7 @@ ggplot(n_cells, aes(x=celltype, y=n, fill=sample)) +
     geom_text(aes(label=n), vjust = -.2, position=position_dodge(1))
 ```
 
-- Perform differential expression analysis between conditions `ctrl` and `stim`
-	- Biological replicates are **necessary** to proceed with this analysis, and we have [additional materials](https://hbctraining.github.io/Pseudobulk-for-scRNAseq/) to help walk through this analysis.
-  - For a first pass look, we can use the `FindMarkers()` function we have been using to do a simple wilcox test to see the difference in gene expression between conditions for the B cells
+- Perform differential expression analysis between conditions `ctrl` and `stim`. We can use the `FindMarkers()` function to do a simple wilcox test to see the difference in gene expression between conditions for the B cells
 
 ```{r}
 #| label: FindMarkers_B_cells
@@ -636,7 +636,7 @@ b_markers <- FindMarkers(seurat_b_cells,
 ```{r}
 #| label: fig-B_cells_volcano_plot
 #| fig-cap: Volcano plot showing the differences in p-value and logFoldChange between conditions `stim` and `ctrl` from the `FindMarkers` analysis.
-#| fig.height: 6
+#| fig.height: 8
 #| fig.width: 10
 library(EnhancedVolcano)
 EnhancedVolcano(b_markers,
@@ -648,6 +648,8 @@ EnhancedVolcano(b_markers,
 )
 ```
 
+- Pseudobulk DESEq2 differential gene analysis. Biological replicates are **necessary** to proceed with this analysis, and we have [additional materials](https://hbctraining.github.io/Pseudobulk-for-scRNAseq/) to help walk through this analysis.
+- [Pathway analysis](https://hbctraining.github.io/Pseudobulk-for-scRNAseq-Quarto/lessons/10_functional_analysis_pseudobulk.html) with GSEA and over-representation analysis (ORA)
 - Experimentally validate intriguing markers for our identified cell types.
 - Explore a subset of the cell types to discover subclusters of cells as described [here](Aside_seurat_subclustering.qmd)
 - Trajectory analysis, or lineage tracing, could be performed if trying to determine the progression between cell types or cell states. For example, we could explore any of the following using this type of analysis:
