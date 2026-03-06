@@ -4497,7 +4497,7 @@ Figure 3: Project directory structure for the <code>single_cell_rnaseq</code> w
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>├── data</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>├── figures</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>├── results</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>└── scripts</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>├── scripts</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>└── single_cell_rnaseq.Rproj</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -5887,7 +5887,7 @@ Table 6: Last several rows of a the <code>merged_seurat@meta.data</code>
 <span id="cb22-134"><a href="#cb22-134" aria-hidden="true" tabindex="-1"></a>├── data</span>
 <span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a>├── figures</span>
 <span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a>├── results</span>
-<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a>└── scripts</span>
+<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a>├── scripts</span>
 <span id="cb22-138"><a href="#cb22-138" aria-hidden="true" tabindex="-1"></a>└── single_cell_rnaseq.Rproj</span>
 <span id="cb22-139"><a href="#cb22-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-140"><a href="#cb22-140" aria-hidden="true" tabindex="-1"></a></span>
@@ -6220,41 +6220,42 @@ Table 6: Last several rows of a the <code>merged_seurat@meta.data</code>
 <span id="cb22-501"><a href="#cb22-501" aria-hidden="true" tabindex="-1"></a>This indicates that the matrices for each sample are being stored separately. Instead, we want to concatenate these together so that in the future when we run normalization, it is run on the entire dataset collectively. So to create one <span class="in">`counts`</span> matrix, that is not sample/batch specific, we run the <span class="in">`JoinLayers()`</span> function.</span>
 <span id="cb22-502"><a href="#cb22-502" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-505"><a href="#cb22-505" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-506"><a href="#cb22-506" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the count matrices of both samples together</span></span>
-<span id="cb22-507"><a href="#cb22-507" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">JoinLayers</span>(merged_seurat)</span>
-<span id="cb22-508"><a href="#cb22-508" aria-hidden="true" tabindex="-1"></a>merged_seurat</span>
-<span id="cb22-509"><a href="#cb22-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-510"><a href="#cb22-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-511"><a href="#cb22-511" aria-hidden="true" tabindex="-1"></a>Now that we’ve merged and joined the dataset as we wanted, we can verify that it looks correct. In the merged object’s metadata, we should see the rowname prefixes added by <span class="in">`add.cell.id`</span> and the <span class="in">`orig.ident`</span> values set during <span class="in">`CreateSeuratObject`</span> with <span class="in">`project = sample`</span>:</span>
-<span id="cb22-512"><a href="#cb22-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-515"><a href="#cb22-515" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-516"><a href="#cb22-516" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inspect_seurat_object_head</span></span>
-<span id="cb22-517"><a href="#cb22-517" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb22-518"><a href="#cb22-518" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
-<span id="cb22-519"><a href="#cb22-519" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
-<span id="cb22-520"><a href="#cb22-520" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-521"><a href="#cb22-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-506"><a href="#cb22-506" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: JoinLayers</span></span>
+<span id="cb22-507"><a href="#cb22-507" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the count matrices of both samples together</span></span>
+<span id="cb22-508"><a href="#cb22-508" aria-hidden="true" tabindex="-1"></a>merged_seurat <span class="ot">&lt;-</span> <span class="fu">JoinLayers</span>(merged_seurat)</span>
+<span id="cb22-509"><a href="#cb22-509" aria-hidden="true" tabindex="-1"></a>merged_seurat</span>
+<span id="cb22-510"><a href="#cb22-510" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-511"><a href="#cb22-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-512"><a href="#cb22-512" aria-hidden="true" tabindex="-1"></a>Now that we’ve merged and joined the dataset as we wanted, we can verify that it looks correct. In the merged object’s metadata, we should see the rowname prefixes added by <span class="in">`add.cell.id`</span> and the <span class="in">`orig.ident`</span> values set during <span class="in">`CreateSeuratObject`</span> with <span class="in">`project = sample`</span>:</span>
+<span id="cb22-513"><a href="#cb22-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-516"><a href="#cb22-516" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-517"><a href="#cb22-517" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inspect_seurat_object_head</span></span>
+<span id="cb22-518"><a href="#cb22-518" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-519"><a href="#cb22-519" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
+<span id="cb22-520"><a href="#cb22-520" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
+<span id="cb22-521"><a href="#cb22-521" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-522"><a href="#cb22-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-525"><a href="#cb22-525" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-526"><a href="#cb22-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-merged_seurat_metadata_head</span></span>
-<span id="cb22-527"><a href="#cb22-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: First several rows of a the `merged_seurat@meta.data`</span></span>
-<span id="cb22-528"><a href="#cb22-528" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb22-529"><a href="#cb22-529" aria-hidden="true" tabindex="-1"></a>merged_seurat<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb22-530"><a href="#cb22-530" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-531"><a href="#cb22-531" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-534"><a href="#cb22-534" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-535"><a href="#cb22-535" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inspect_seurat_object_tail</span></span>
-<span id="cb22-536"><a href="#cb22-536" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb22-537"><a href="#cb22-537" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
-<span id="cb22-538"><a href="#cb22-538" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
-<span id="cb22-539"><a href="#cb22-539" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-540"><a href="#cb22-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-543"><a href="#cb22-543" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb22-544"><a href="#cb22-544" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-merged_seurat_metadata_tail</span></span>
-<span id="cb22-545"><a href="#cb22-545" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Last several rows of a the `merged_seurat@meta.data`</span></span>
-<span id="cb22-546"><a href="#cb22-546" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb22-547"><a href="#cb22-547" aria-hidden="true" tabindex="-1"></a>merged_seurat<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">tail</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb22-548"><a href="#cb22-548" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-523"><a href="#cb22-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-526"><a href="#cb22-526" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-527"><a href="#cb22-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-merged_seurat_metadata_head</span></span>
+<span id="cb22-528"><a href="#cb22-528" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: First several rows of a the `merged_seurat@meta.data`</span></span>
+<span id="cb22-529"><a href="#cb22-529" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-530"><a href="#cb22-530" aria-hidden="true" tabindex="-1"></a>merged_seurat<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb22-531"><a href="#cb22-531" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-532"><a href="#cb22-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-535"><a href="#cb22-535" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-536"><a href="#cb22-536" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inspect_seurat_object_tail</span></span>
+<span id="cb22-537"><a href="#cb22-537" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb22-538"><a href="#cb22-538" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the merged object has the appropriate sample-specific prefixes</span></span>
+<span id="cb22-539"><a href="#cb22-539" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(merged_seurat<span class="sc">@</span>meta.data)</span>
+<span id="cb22-540"><a href="#cb22-540" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-541"><a href="#cb22-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-544"><a href="#cb22-544" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-545"><a href="#cb22-545" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-merged_seurat_metadata_tail</span></span>
+<span id="cb22-546"><a href="#cb22-546" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Last several rows of a the `merged_seurat@meta.data`</span></span>
+<span id="cb22-547"><a href="#cb22-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-548"><a href="#cb22-548" aria-hidden="true" tabindex="-1"></a>merged_seurat<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> <span class="fu">tail</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb22-549"><a href="#cb22-549" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

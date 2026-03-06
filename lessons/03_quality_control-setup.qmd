@@ -132,7 +132,7 @@ single_cell_rnaseq/
 ├── data
 ├── figures
 ├── results
-└── scripts
+├── scripts
 └── single_cell_rnaseq.Rproj
 ```
 
@@ -465,6 +465,7 @@ However you may notice that when we look at our seurat object that we have 2 `la
 This indicates that the matrices for each sample are being stored separately. Instead, we want to concatenate these together so that in the future when we run normalization, it is run on the entire dataset collectively. So to create one `counts` matrix, that is not sample/batch specific, we run the `JoinLayers()` function.
 
 ```{r}
+#| label: JoinLayers
 # Concatenate the count matrices of both samples together
 merged_seurat <- JoinLayers(merged_seurat)
 merged_seurat
