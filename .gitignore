@@ -1,4 +1,5 @@
 /.quarto/
+.Rhistory
 lessons/data
 docs/data
 *.RDS
