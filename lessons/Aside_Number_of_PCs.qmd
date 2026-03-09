@@ -118,7 +118,10 @@ mean(recentered_expression_matrix[,"Gene_B"])
 
 So now our covariance formula will look like:
 
-<img src="https://latex.codecogs.com/svg.image?\mathrm{cov}(X,Y)=\frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i" width="300"/>
+$$
+\mathrm{cov}(X,Y)
+= \frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i
+$$
 
 ```{r}
 #| label: create_cell_covariance_matrix
@@ -173,11 +176,29 @@ round(eigen(cov_matrix_cells)$values, digits = 3)
 
 The eigenvalues are the same except the cell-wise covariance matrix returns two additonal zero value eigenvalues. We can remind ourselves that eigenvalues can be though of as influence, so eigenvalues with a value of zero have no influence and are not considered Principal Components. We can solve the `cov_matrix_cells`'s $\lambda$ values by hand and it will be a bit more clear why zero terms emerge.
 
-<img src="https://latex.codecogs.com/svg.image?\det\left(%0A\begin{bmatrix}388.52083&amp;87.02083&amp;-563.8958&amp;88.35417\\87.02083&amp;58.85417&amp;-146.0625&amp;0.18750\\-563.89583&amp;-146.06250&amp;828.3542&amp;-118.39583\\88.35417&amp;0.18750&amp;-118.3958&amp;29.85417\end{bmatrix}-%20\lambda\begin{bmatrix}1&amp;0&amp;0&amp;0\\0&amp;1&amp;0&amp;0\\0&amp;0&amp;1&amp;0\\0&amp;0&amp;0&amp;1\end{bmatrix}\right)=0" width="600"/>
+$$
+\det\left(
+\begin{bmatrix}
+388.52083 & 87.02083 & -563.8958 & 88.35417 \\
+87.02083 & 58.85417 & -146.0625 & 0.18750 \\
+-563.89583 & -146.06250 & 828.3542 & -118.39583 \\
+88.35417 & 0.18750 & -118.3958 & 29.85417
+\end{bmatrix}
+- \lambda
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\right)=0
+$$
 
 Simplifying this would yield:
 
-<img src="https://latex.codecogs.com/svg.image?\lambda^2(\lambda-1255.54)(\lambda-50.04)=0"/>
+$$
+\lambda^2(\lambda-1255.54)(\lambda-50.04)=0
+$$
 
 Therefore, the values, which satisfy $\lambda$ would be `0`, `1255.54` and `50.04`. 
 
