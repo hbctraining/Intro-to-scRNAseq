@@ -181,7 +181,10 @@ The next step that we will do after we have re-centered our data around the orig
 
 The equation to estimate the sample covariance is:
 
-<img src="https://latex.codecogs.com/svg.image?&space;cov(X,Y)=\frac{1}{n - 1}\sum_{i=1}^{n}(x_{i}-\bar{x})(y_{i}-\bar{y})" width="300">
+$$
+\operatorname{cov}(X,Y)
+= \frac{1}{n - 1}\sum_{i=1}^{n}(x_{i}-\bar{x})(y_{i}-\bar{y})
+$$
 
 Where:
 
