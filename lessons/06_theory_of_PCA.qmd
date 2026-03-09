@@ -433,7 +433,7 @@ prcomp_PCA <- expression_tibble %>%
   prcomp()
 ```
 
-Let's inspect the output from `prcomp()` to ensure that we are getting the same output:
+Let's inspect the output from `prcomp()` to ensure that we are getting the same output.
 
 ## Center of the Data
 
