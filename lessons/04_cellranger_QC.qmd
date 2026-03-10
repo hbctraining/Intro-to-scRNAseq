@@ -325,7 +325,9 @@ df <- metrics %>%
     select(all_of(cols)) %>%
     melt(id.vars="sample") %>%
     mutate(variable = str_replace_all(variable, "Reads.Mapped.Confidently.to.", "")) %>%
-    mutate(variable = str_replace_all(variable, ".Regions", ""))
+    mutate(variable = str_replace_all(variable, ".Regions", "")) %>%
+    mutate(value = str_replace_all(value, "%", "")) %>% # Remove % from value
+    mutate(value = as.numeric(value)) # Make percentage numeric
 
 # ggplot code to make a barplot
 df %>% ggplot() +
