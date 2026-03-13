@@ -296,7 +296,7 @@ Inside your `data` folder you will see a folder called `additional_data`. It con
 ```{r}
 #| label: load_data
 #| eval: false
-load(bzfile("data/additional_data/seurat_integrated.RData.bz2"))
+load(bzfile("data/seurat_integrated.RData.bz2"))
 ```
 
 ***
