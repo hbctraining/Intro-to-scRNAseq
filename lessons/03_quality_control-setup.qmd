@@ -167,18 +167,27 @@ RStudio interface with the `single_cell_rnaseq` project opened.
 
 Now, we can load the necessary libraries:
 
+::: {.panel-tabset group="language"}
+## R
+
 ```{r}
-#| label: load_libraries
+#| label: R_load_libraries
 #| warning: false
 # Load libraries
-library(SingleCellExperiment)
 library(Seurat)
 library(tidyverse)
-library(Matrix)
-library(scales)
-library(cowplot)
-library(RCurl)
 ```
+
+## Python
+
+```{python}
+#| label: py_load_libraries
+#| warning: false
+# Load packages
+import scanpy as sc
+```
+
+:::
 
 ## Loading single-cell RNA-seq count data 
 

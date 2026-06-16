@@ -1,0 +1,44 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const container = document.createElement("div");
+  container.id = "lang-toggle-container";
+  container.innerHTML = `
+    <span class="lang-label">Language</span>
+    <div class="btn-group" role="group">
+      <button id="btn-r"      class="lang-btn active" onclick="setLanguage('R')">R</button>
+      <button id="btn-python" class="lang-btn"        onclick="setLanguage('Python')">Python</button>
+    </div>`;
+  document.body.appendChild(container);
+
+  function getActiveLang() {
+    const stored = localStorage.getItem("quarto-tab-group-language");
+    return stored ? stored : "R";
+  }
+
+  function updateButtonState(lang) {
+    document.getElementById("btn-r").classList.toggle("active",      lang === "R");
+    document.getElementById("btn-python").classList.toggle("active", lang === "Python");
+  }
+
+  window.setLanguage = function (lang) {
+    const allTabs = document.querySelectorAll(
+      '.panel-tabset .nav-link[data-bs-toggle="tab"]'
+    );
+    for (const tab of allTabs) {
+      if (tab.textContent.trim() === lang) {
+        tab.click();
+        break;
+      }
+    }
+    updateButtonState(lang);
+  };
+
+  updateButtonState(getActiveLang());
+
+  document.addEventListener("click", function (e) {
+    const tab = e.target.closest('.panel-tabset .nav-link[data-bs-toggle="tab"]');
+    if (tab) updateButtonState(tab.textContent.trim());
+  });
+});
+</script>

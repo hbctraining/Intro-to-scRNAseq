@@ -1,0 +1,1 @@
+python -m ipykernel install --user --name scanpy_v4 --display-name "scanpy_v4"
