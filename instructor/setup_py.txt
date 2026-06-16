@@ -1,1 +1,8 @@
 python -m ipykernel install --user --name scanpy_v4 --display-name "scanpy_v4"
+
+
+conda create -n intro_scrna_scanpy python=3.12
+conda activate intro_scrna_scanpy
+conda install -c conda-forge scanpy python-igraph leidenalg
+pip install itables
+conda install -c conda-forge ipython

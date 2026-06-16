@@ -73,7 +73,7 @@ website:
 
 format:
   html:
-    theme: [simplex, css/custom.scss]
+    theme: [simplex, css/language_toggle.scss]
     include-after-body: css/language_toggle.html
     css: css/styles.css
     fig-align: "center"
