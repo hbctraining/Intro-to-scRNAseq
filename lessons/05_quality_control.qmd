@@ -30,13 +30,27 @@ editor_options:
 Approximate time: 90 minutes
 
 ```{r}
-#| label: load_libraries
+#| label: R_load_libraries
 #| echo: false
 # Load merged seurat object
 library(Seurat)
 library(tidyverse)
 library(knitr)
-merged_seurat <- readRDS("data/merged_seurat.RDS")
+merged_seurat <- readRDS("intermediate/03_merged_seurat.RDS")
+```
+
+```{python}
+#| label: py_load_libraries
+#| echo: false
+import matplotlib
+matplotlib.use('Agg')
+import scanpy as sc
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load merged object
+merged_adata = sc.read_h5ad("intermediate/03_merged_adata.h5ad")
 ```
 
 ## Learning Objectives:
@@ -56,27 +70,12 @@ _Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to
 
 ***
 
-<!-- Each step of this workflow has its own goals and challenges. For QC of our raw count data, they include: -->
-
-<!-- _**Goals:**_  -->
-
-<!--  - _To **filter the data to only include true cells that are of high quality**, so that when we cluster our cells it is easier to identify distinct cell type populations_ -->
-<!--  - _To **identify any failed samples** and either try to salvage the data or remove from analysis, in addition to, trying to understand why the sample failed_ -->
-
-<!-- _**Challenges:**_ -->
-
-<!--  - _Delineating cells that are **poor quality from less complex cells**_ -->
-<!--  - _Choosing appropriate thresholds for filtering, so as to **keep high quality cells without removing biologically relevant cell types**_ -->
-
-<!-- _**Recommendations:**_ -->
-
-<!--  - _Have a good idea of your expectations for the **cell types to be present** prior to performing the QC. For instance, do you expect to have low complexity cells or cells with higher levels of mitochondrial expression in your sample? If so, then we need to account for this biology when assessing the quality of our data._ -->
-
-<!-- *** -->
-
 ## Generating quality metrics
 
-When data is loaded into Seurat and the initial object is created, there is some basic metadata asssembled for each of the cells in the count matrix. To take a close look at this metadata, let's view the data frame stored in the `meta.data` slot of our `merged_seurat` object:
+When data is loaded into Seurat and the initial object is created, there is some basic metadata asssembled for each of the cells in the count matrix. To take a close look at this metadata, let's view the data frame stored in the `metadata` slot of our `merged` object:
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: inspect_metadata
@@ -94,6 +93,34 @@ merged_seurat@meta.data %>%
   kable()
 ```
 
+## Python
+
+To calculate some of our QC metrics, we can use the `calculate_qc_metrics()` function to automatically generate scores for each cell.
+
+```{python}
+#| label: calc_qc_metrics
+#| eval: false
+sc.pp.calculate_qc_metrics(merged_adata,
+                           percent_top=None,
+                           log1p=False,
+                           inplace=True)
+merged_adata.obs.head()
+```
+
+```{python}
+#| label: tbl-py_show_metadata_head
+#| tbl-cap: "Inspecting our metadata table to get a sense for the type of information stored within it."
+#| echo: false
+#| results: asis
+sc.pp.calculate_qc_metrics(merged_adata,
+                           percent_top=None,
+                           log1p=False,
+                           inplace=True)
+print(merged_adata.obs.head().to_markdown())
+```
+
+:::
+
 There are three columns of information:
 
 - `orig.ident`: this column will contain the sample identity if known. It will default to the value we provided for the `project` argument when loading in the data
@@ -109,11 +136,23 @@ In order to create the appropriate plots for the quality control analysis, we ne
 
 This value is quite easy to calculate, as we take the log10 of the number of genes detected per cell and the log10 of the number of UMIs per cell, then divide the log10 number of genes by the log10 number of UMIs. The novelty score and how it relates to complexity of the RNA species, is described in more detail later in this lesson.
 
+::: {.panel-tabset group="language"}
+## R
+
 ```{r}
 #| label: create_novelty_score
 # Add number of genes per UMI for each cell to metadata
 merged_seurat$log10GenesPerUMI <- log10(merged_seurat$nFeature_RNA) / log10(merged_seurat$nCount_RNA)
 ```
+
+## Python
+
+```{python}
+#| label: create_novelty_score_py
+merged_adata.obs["log10GenesPerUMI"] = np.log10(merged_adata.obs["n_genes"]) / np.log10(merged_adata.obs["total_counts"])
+```
+
+:::
 
 ### Mitochondrial Ratio
 
@@ -121,6 +160,8 @@ Seurat has a convenient function that allows us to calculate the **proportion of
 
 For our analysis, rather than using a percentage value we would prefer to work with the ratio value. As such, we will reverse that last step performed by the function by taking the output value and dividing by 100.
 
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: compute_mito_ratio
@@ -129,6 +170,24 @@ merged_seurat$mitoRatio <- PercentageFeatureSet(object = merged_seurat,
                                                 pattern = "^MT-")
 merged_seurat$mitoRatio <- merged_seurat@meta.data$mitoRatio / 100
 ```
+
+## Python
+
+```{python}
+#| label: label_mito
+# Identify mitochondrial genes
+mito_genes = merged_adata.var_names.str.startswith('MT-')
+merged_adata.var['mito'] = mito_genes
+
+# Calculate number of counts coming from mito_genes
+sc.pp.calculate_qc_metrics(merged_adata, 
+                           qc_vars=("mito"), 
+                           inplace=True)
+# We want the value as a ratio
+merged_adata.obs["mito_ratio"] = merged_adata.obs["pct_counts_mito"] / 100
+```
+
+:::
 
 ::: {.callout-note collapse="true"}
 # MT genes for organisms other than human
@@ -236,6 +295,9 @@ The capture efficiency could appear much lower if the cell concentration used fo
 
 The cell numbers can also vary by protocol, **producing cell numbers that are much higher than what we loaded**. For example, during the inDrops protocol, the cellular barcodes are present in the hydrogels, which are encapsulated in the droplets with a single cell and lysis/reaction mixture. While each hydrogel should have a single cellular barcode associated with it, occasionally a hydrogel can have more than one cellular barcode. Similarly, with the 10X protocol there is a chance of obtaining only a barcoded bead in the emulsion droplet (GEM) and no actual cell.  Both of these, in addition to the presence of dying cells can lead to a higher number of cellular barcodes than cells.
 
+::: {.panel-tabset group="language"}
+## R
+
 ```{r}
 #| label: fig-cell_counts_per_sample
 #| fig-cap: Barplot of the number of cells per sample.
@@ -249,12 +311,35 @@ metadata %>%
   	ggtitle("NCells")
 ```
 
+## Python
+
+```{python}
+#| label: fig-py_plot_ncells
+#| fig-cap: Barplot of the number of cells per sample.
+fig, ax = plt.subplots()
+ax = sns.countplot(data=merged_adata.obs, 
+                   x="sample", hue="sample",
+                   ax = ax)
+ax.set_title("Number of Cells per Sample")
+
+# Add counts above the bars
+for container in ax.containers:
+    ax.bar_label(container)
+
+plt.show()
+plt.close('all')
+```
+
+:::
 
 We see over 15,000 cells per sample, which is quite a bit more than the 12-13,000 expected. It is clear that we likely have some junk 'cells' present.
 
 ### UMI counts (transcripts) per cell
 
 The UMI counts per cell should generally be above 500, that is the low end of what we expect. If UMI counts are between 500-1000 counts, it is usable but the cells probably should have been sequenced more deeply. 
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: fig-UMIs_per_cell
@@ -269,12 +354,36 @@ metadata %>%
   	geom_vline(xintercept = 500)
 ```
 
+## Python
+
+```{python}
+#| label: fig-UMIs_per_cell_py
+#| fig-cap: Density plot showing the distribution of UMI counts per cell for each sample
+# Visualize the number UMIs/transcripts per cell
+fig, ax = plt.subplots()
+ax = sns.histplot(merged_adata.obs, x="total_counts", hue="sample",
+                  kde=True, # adds line showing general trend
+                  log_scale=True, # apply log scale to counts
+                  alpha=0.2, ax=ax)
+ax.set_title("Total Counts")
+
+# Add line showing potential threshold
+ax.axvline(500, color="black")
+plt.show()
+plt.close('all')
+```
+
+:::
+
 We can see that majority of our cells in both samples have 1000 UMIs or greater, which is great. 
 
 ### Genes detected per cell
 
 We have similar expectations for gene detection as for UMI detection, although it may be a bit lower than UMIs. For high quality data, the proportional histogram should contain **a single large peak that represents cells that were encapsulated**. If we see a **small shoulder** to the left of the major peak (not present in our data), or a bimodal distribution of the cells, that can indicate a couple of things. It might be that there are a set of **cells that failed** for some reason. It could also be that there are **biologically different types of cells** (i.e. quiescent cell populations, less complex cells of interest), and/or one type is much smaller than the other (i.e. cells with high counts may be cells that are larger in size). Therefore, this threshold should be assessed with other metrics that we describe in this lesson.
  
+::: {.panel-tabset group="language"}
+## R
+
 ```{r}
 #| label: fig-genes_detected
 #| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
@@ -287,14 +396,37 @@ metadata %>%
   	geom_vline(xintercept = 300)
 ```
 
+## Python
+
+```{python}
+#| label: fig-genes_detected_py
+#| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
+#| eval: false
+# Visualize the distribution of genes detected per cell via histogram
+ax = sns.histplot(merged_adata.obs, x="n_genes", hue="sample",
+                  kde=True, # adds line showing general trend
+                  log_scale=True, # apply log scale to counts
+                  alpha=0.2)
+ax.set_title("Genes per Cell")
+
+# Add line showing potential threshold
+ax.axvline(300, color="black")
+plt.show()
+plt.close('all')
+```
+
+:::
+
 ### Complexity
 
 We can evaluate each cell in terms of how complex the RNA species are by using a measure called the novelty score. The novelty score is computed by taking the ratio of nGenes over nUMI. If there are many captured transcripts (high nUMI) and a low number of genes detected in a cell, this likely means that you only captured a low number of genes and simply sequenced transcripts from those lower number of genes over and over again. These low complexity (low novelty) cells could represent a specific cell type (i.e. red blood cells which lack a typical transcriptome), or could be due to an artifact or contamination. Generally, we expect the novelty score to be above 0.80 for good quality cells.
 
+::: {.panel-tabset group="language"}
+## R
+
 ```{r}
 #| label: fig-complexity_score_plot
 #| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
-
 # Visualize the overall complexity of the gene expression by visualizing 
 # the genes detected per UMI (novelty score)
 metadata %>%
@@ -304,10 +436,31 @@ metadata %>%
   	geom_vline(xintercept = 0.8)
 ```
 
+## Python
+
+```{python}
+#| label: fig-complexity_score_plot_py
+#| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
+#| eval: false
+ax = sns.histplot(merged_adata.obs, x="log10GenesPerUMI", hue="sample",
+                  kde=True, # adds line showing general trend
+                  alpha=0.2)
+ax.set_title("Complexity")
+
+# Add line showing potential threshold
+ax.axvline(0.8, color="black")
+plt.show()
+plt.close('all')
+```
+
+:::
 
 ### Mitochondrial counts ratio
 
 This metric can identify whether there is a large amount of **mitochondrial contamination from dead or dying cells**. We define poor quality samples for mitochondrial counts as cells which surpass the 0.2 mitochondrial ratio mark, unless of course you are expecting this in your sample.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: fig-mito_ratio_plot
@@ -322,6 +475,25 @@ metadata %>%
   	geom_vline(xintercept = 0.2)
 ```
 
+## Python
+
+```{python}
+#| label: fig-mito_ratio_plot_py
+#| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
+#| eval: false
+
+ax = sns.histplot(merged_adata.obs, x="mito_ratio", hue="sample",
+                  kde=True, # adds line showing general trend
+                  alpha=0.2)
+ax.set_title("Mitochondrial Ratio")
+
+# Add line showing potential threshold
+ax.axvline(0.2, color="black")
+plt.show()
+plt.close('all')
+```
+
+:::
 
 ::: callout-note
 # Reads per cell
@@ -334,6 +506,9 @@ Considering any of these QC metrics in isolation can lead to misinterpretation o
 
 
 Two metrics that are often evaluated together are the number of UMIs and the number of genes detected per cell. Here, we have plotted the **number of genes versus the number of UMIs coloured by the fraction of mitochondrial reads**. Jointly visualizing the count and gene thresholds and additionally overlaying the mitochondrial fraction, gives a summarized persepective of the quality per cell.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: fig-joint_effects_plot
@@ -353,6 +528,39 @@ metadata %>%
   	facet_wrap(~sample)
 ```
 
+## Python
+
+```{python}
+#| label: fig-joint_effects_plot_py
+#| fig-cap: Scatterplot contrasting nUMI and nGenes while coloring each cell by mitochondrial ratio.
+#| eval: false
+# Order dataset so values are plotted 
+# such that largest values are on top
+meta = merged_adata.obs.sort_values('mito_ratio', ascending=True)
+
+g = sns.FacetGrid(meta, col="sample", height=5)
+g.map_dataframe(sns.scatterplot, 
+                x="total_counts", 
+                y="n_genes", 
+                hue="mito_ratio",
+                palette="viridis")
+
+# Scale x,y axes by log10
+for ax in g.axes.flat:
+    ax.set(xscale="log", yscale="log")
+
+# Add threshold lines
+g.refline(x=500, y=300)
+
+# Add colorbar for the legend 
+sm = g.axes[0, 0].collections[0]
+plt.colorbar(sm, ax=g.axes, 
+             label="mito_ratio")
+plt.show()
+plt.close('all')
+```
+
+:::
 
 Good cells will generally exhibit both higher number of genes per cell and higher numbers of UMIs (upper right quadrant of the plot). Cells that are **poor quality are likely to have low genes and UMIs per cell**, and correspond to the data points in the bottom left quadrant of the plot. With this plot we also evaluate the **slope of the line**, and any scatter of data points in the **bottom right hand quadrant** of the plot. These cells have a high number of UMIs but only a few number of genes. These could be dying cells, but also could represent a population of a low complexity celltype (i.e red blood cells).
 
@@ -451,6 +659,7 @@ Based on these QC metrics we would identify any failed samples and move forward 
 
 ```{r}
 #| label: save_filtered_seurat_object
+#| eval: false
 # Create .RData object to load at any time
 save(filtered_seurat, file="data/seurat_filtered.RData")
 ```
