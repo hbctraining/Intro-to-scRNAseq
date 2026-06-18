@@ -1,0 +1,34 @@
+---
+title: "Loading Single-cell RNA-seq Data - Answer Key"
+author:
+  - Noor Sohail
+date: "2026-06-17"
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load_libraries_data
+#| echo: false
+# Load libraries and data
+
+```
+
+# Exercise 1
+
+1. Given the information that we know from the metadata, what might be some questions that we want to answer using our data?
+
+- What are differences in gene expression between IFN-β treated and control conditions?
+- Does the treament condition induce changes in celltype populations?
+
+2. What are some of the limitations of this dataset that we should keep in mind as we analyze it?
+
+We do not have any replicates as the data has bot been demultiplexed, so we cannot make any conclusions about the generalizability of our findings with statistical confidence.
+
+***
+
+[Back to Lesson >>](03_quality_control-setup.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)

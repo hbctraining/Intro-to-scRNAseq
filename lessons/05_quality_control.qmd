@@ -42,8 +42,8 @@ merged_seurat <- readRDS("intermediate/03_merged_seurat.RDS")
 ```{python}
 #| label: py_load_libraries
 #| echo: false
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 import scanpy as sc
 import numpy as np
 import seaborn as sns
@@ -362,7 +362,7 @@ metadata %>%
 # Visualize the number UMIs/transcripts per cell
 fig, ax = plt.subplots()
 ax = sns.histplot(merged_adata.obs, x="total_counts", hue="sample",
-                  kde=True, # adds line showing general trend
+                  # kde=True, # adds line showing general trend
                   log_scale=True, # apply log scale to counts
                   alpha=0.2, ax=ax)
 ax.set_title("Total Counts")
@@ -401,10 +401,9 @@ metadata %>%
 ```{python}
 #| label: fig-genes_detected_py
 #| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
-#| eval: false
 # Visualize the distribution of genes detected per cell via histogram
 ax = sns.histplot(merged_adata.obs, x="n_genes", hue="sample",
-                  kde=True, # adds line showing general trend
+                  # kde=True, # adds line showing general trend
                   log_scale=True, # apply log scale to counts
                   alpha=0.2)
 ax.set_title("Genes per Cell")
@@ -441,9 +440,8 @@ metadata %>%
 ```{python}
 #| label: fig-complexity_score_plot_py
 #| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
-#| eval: false
 ax = sns.histplot(merged_adata.obs, x="log10GenesPerUMI", hue="sample",
-                  kde=True, # adds line showing general trend
+                  # kde=True, # adds line showing general trend
                   alpha=0.2)
 ax.set_title("Complexity")
 
@@ -480,10 +478,9 @@ metadata %>%
 ```{python}
 #| label: fig-mito_ratio_plot_py
 #| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
-#| eval: false
 
 ax = sns.histplot(merged_adata.obs, x="mito_ratio", hue="sample",
-                  kde=True, # adds line showing general trend
+                  # kde=True, # adds line showing general trend
                   alpha=0.2)
 ax.set_title("Mitochondrial Ratio")
 
@@ -533,7 +530,6 @@ metadata %>%
 ```{python}
 #| label: fig-joint_effects_plot_py
 #| fig-cap: Scatterplot contrasting nUMI and nGenes while coloring each cell by mitochondrial ratio.
-#| eval: false
 # Order dataset so values are plotted 
 # such that largest values are on top
 meta = merged_adata.obs.sort_values('mito_ratio', ascending=True)

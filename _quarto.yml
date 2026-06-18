@@ -86,6 +86,7 @@ format:
     google-analytics: G-68JBPLLNLG
     prompt: true         
     self-contained: true
+    lightbox: true
 
 # Global Execution Defaults
 execute:
