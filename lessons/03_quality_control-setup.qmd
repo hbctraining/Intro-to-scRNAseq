@@ -1,7 +1,7 @@
 ---
 title: "Loading Single-cell RNA-seq Data"
 description: |
-  Write a description of the lesson here. 
+  In this lesson, participants learn how to load single‑cell RNA‑seq count data. The lesson introduces the structure of typical 10X Genomics output files, demonstrates how to import these files efficiently and shows how to generate objects for one or multiple samples. Participants also practice using loops to streamline data loading and explore the metadata. By the end, participants will be able to prepare their data for downstream quality control and analysis.
 author:
   - Mary Piper
   - Meeta Mistry
@@ -12,17 +12,15 @@ author:
   - Noor Sohail
 date: "2026-06-17"
 categories: 
-  - category_1
-  - category_2
-  - category_3
-  - category_4
+  - Single-cell RNA-seq
+  - Quality Control
+  - R
+  - Python
 keywords:
-  - keyword_1
-  - keyword_2
-  - keyword_3
-  - keyword_4
-  - keyword_5
-  - keyword_6
+  - data import
+  - 10X Genomics
+  - Seurat
+  - scanpy
 license: "CC-BY-4.0"
 editor_options: 
   markdown: 
@@ -82,7 +80,7 @@ _Image credit: [Kang et al. (2017)](https://www.nature.com/articles/nbt.4042)_
 
 This dataset is available on GEO ([GSE96583](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96583)), however the available counts matrix lacked mitochondrial reads, so we downloaded the BAM files from the SRA ([SRP102802](https://www-ncbi-nlm-nih-gov.ezp-prod1.hul.harvard.edu/sra?term=SRP102802)). These BAM files were converted back to FASTQ files, then run through [Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) to obtain the count data that we will be using.
 
-The count data for this dataset is also freely available from 10X Genomics and is used in the [Seurat tutorial](https://satijalab.org/seurat/v3.0/immune_alignment.html). 
+The count data for this dataset is also freely available from 10X Genomics and in several popular tutorials, including the [Seurat PBMC tutorial](https://satijalab.org/seurat/v3.0/immune_alignment.html). 
 :::
 
 ### Metadata
@@ -268,7 +266,7 @@ Regardless of the technology or pipeline used to process your raw single-cell RN
 
 We can explore these files by clicking the `data/ctrl_raw_feature_bc_matrix` folder:
 
-### 1. `barcodes.tsv` 
+### `barcodes.tsv` 
 This is a text file which contains all cellular barcodes present for that sample. Barcodes are listed in the order of data presented in the matrix file (i.e. these are the column names). 
 
 ```{r}
@@ -281,7 +279,7 @@ bcs %>% head() %>% knitr::kable()
 ```
 
 
-### 2. `features.tsv`
+### `features.tsv`
 This is a text file which contains the identifiers of the quantified genes. The source of the identifier can vary depending on what reference (i.e. Ensembl, NCBI, UCSC) you use in the quantification methods, but most often these are official gene symbols. The order of these genes corresponds to the order of the rows in the matrix file (i.e. these are the row names).
 
 ```{r}
@@ -293,7 +291,7 @@ fts <- read_tsv("data/ctrl_raw_feature_bc_matrix/features.tsv.gz",
 fts %>% head() %>% knitr::kable()
 ```
 
-### 3. `matrix.mtx`
+### `matrix.mtx`
 This is a text file which contains a matrix of count values. The rows are associated with the gene IDs above and columns correspond to the cellular barcodes. Note that there are **many zero values** in this matrix.
 
 ```{r}
@@ -408,13 +406,19 @@ print(ctrl.obs.head().to_markdown())
 
 What do the columns of metadata mean?
 
-- Identity (`Seurat` will default to the value "SeuratProject" in `orig.ident`)
-- Number of UMIs per cell (`nCount_RNA` or `total_counts`)
-- Number of genes detected per cell (`nFeature_RNA` or `n_genes`)
+- Sample or identity:
+    - In Seurat: stored in `orig.ident` (defaults to `"SeuratProject"` unless set).
+    - In scanpy/AnnData: can be stored in `obs["sample"]` or another column you define.
+- Number of UMIs per cell:
+    - In Seurat: `nCount_RNA`
+    - In scanpy/AnnData: `total_counts`
+- Number of genes detected per cell:
+    - In Seurat: `nFeature_RNA`
+    - In scanpy/AnnData: `n_genes`
 
 ## Reading in multiple samples with a `for loop`
 
-In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into R more efficient we can use a `for` loop, which will iterate over a series of commands for each of the inputs given and create seurat objects for each of our samples. 
+In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into more efficient we can use a `for` loop, which will iterate over a series of commands for each of the inputs given and create scanpy/seurat objects for each of our samples. 
 
 ::: {.callout-note collapse="true"}
 # `for` loop syntax
@@ -604,7 +608,7 @@ dict_ad
 
 :::
 
-Next, we need to merge these objects together into a single Seurat object. This will make it easier to run the QC steps for both sample groups together and enable us to easily compare the data quality for all the samples.  
+Next, we need to merge these objects together into a singular object. This will make it easier to run the QC steps for both sample groups together and enable us to easily compare the data quality for all the samples.  
 
 ::: {.panel-tabset group="language"}
 ## R
