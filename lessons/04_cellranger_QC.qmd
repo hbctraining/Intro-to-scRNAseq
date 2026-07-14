@@ -3,20 +3,18 @@ title: "Quality Control of Cell Ranger Output"
 description: |
   This lesson introduces participants to evaluating the quality of Cell Ranger output for single-cell RNA‑seq experiments. Participants will learn how Cell Ranger processes data, how to interpret the generated QC reports and how to examine key metrics to assess sample quality. The lesson also guides participants through understanding the various output files produced by Cell Ranger and how these results inform the downstream single‑cell analysis.
 author:
-  - Mary Piper
-  - Meeta Mistry
-  - Radhika Khetani
-  - Lorena Pantano
-  - Jihe Liu
-  - Will Gammerdinger
   - Noor Sohail
-date: "2025-05-30"
+  - Meeta Mistry
+  - Will Gammerdinger
+date: "2026-07-12"
 categories: 
   - R Programming
+  - Python Programming
   - Single-cell RNA-seq
   - Quality Control
 keywords:
   - R
+  - Python
   - Cell Ranger
   - 10x Genomics
 license: "CC-BY-4.0"
@@ -25,14 +23,33 @@ editor_options:
     wrap: 72
 ---
 
-Approximate time: 15 minutes
+```{r}
+#| label: load_libraries_data_R
+#| echo: false
+# Load libraries and data
 
-## Learning Objectives:
+```
+
+```{python}
+#| label: load_libraries_data_py
+#| echo: false
+# Load libraries and data
+
+```
+
+Approximate time: 25 minutes
+
+## Learning objectives 
+
+In this lesson, we will:
 
 - Describe how cellranger is run and what the ouputs are
 - Review the cellranger generated QC report (web summary HTML)
 - Create plots with cellranger metrics
 
+## Overview of lesson
+
+Sequencing data comes in a raw format that requires additional processing in order to be interpretable. In the case single-cell RNA-sequencing, we utilize algorithms to take reads and convert them into a counts matrix. In the process, tools like CellRanger generate intermediate outputs that can give a first-pass look at the quality of the data. In this lesson, we will cover how to run CellRanger and interpret the web summary generated in the process.
 
 ## Cellranger
 
@@ -268,7 +285,8 @@ We have included these csv files for the control and stimulated samples in your 
 - Control sample `metrics.csv` file (`ctrl_metrics_summary.csv`)
 - Stimulated sample `metrics.csv` file (`stim_metrics_summary.csv`)
 
-First, to read the files in:
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: load_metrics_data
@@ -310,7 +328,6 @@ colnames(metrics)
 
 With all of this information available as a dataframe, we can use ggplot to visualize these values. As an example of how this information can be used, we can display what percentage of reads map to the various parts of the genome (Intergentic, Intronic, and Exonic).
 
-
 ```{r}
 #| label: fig-mapping_reads_to_regions_plot
 #| fig-cap: Mapping percentage of reads to different regions of the genome.
@@ -343,6 +360,119 @@ df %>% ggplot() +
         fill = "Region")
 ```
 
+## Python
+
+```{python}
+#| label: load_metrics_data_py
+## Cellranger metrics evaluation (Python)
+
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Names of samples (same name as folders stored in data)
+samples = ["ctrl", "stim"]
+
+# Loop over each sample and read the metrics summary in
+metrics_list = []
+for sample in samples:
+    path_csv = f"data/{sample}_metrics_summary.csv"
+    df = pd.read_csv(path_csv)
+    # Add a sample column (analogous to df$sample <- sample)
+    df["sample"] = sample
+    # Optional: set row index to sample name
+    df.index = [sample] * len(df)
+    metrics_list.append(df)
+
+# Concatenate each sample's metrics together
+metrics = pd.concat(metrics_list, axis=0, ignore_index=False)
+
+# Remove commas and percentages to make the values numeric where possible
+def clean_numeric_columns(df):
+    out = df.copy()
+    for col in out.columns:
+        if out[col].dtype == "object":
+            # Remove commas and percent signs
+            cleaned = (
+                out[col]
+                .astype(str)
+                .str.replace(",", "", regex=False)
+                .str.replace("%", "", regex=False)
+            )
+            # Try converting to numeric; if fails, keep as strings
+            out[col] = pd.to_numeric(cleaned, errors="ignore")
+    return out
+
+metrics = clean_numeric_columns(metrics)
+```
+
+The information available in this file include: 
+
+```{python}
+#| label: columns_in_metrics_data_py
+# Show the column names in the metrics dataframe
+metrics.columns
+```
+
+With all of this information available as a dataframe, we can use ggplot to visualize these values. As an example of how this information can be used, we can display what percentage of reads map to the various parts of the genome (Intergentic, Intronic, and Exonic).
+
+```{python}
+#| label: fig-mapping_reads_to_regions_plot_py
+#| fig-cap: Mapping percentage of reads to different regions of the genome.
+#| fig-width: 6
+#| fig-height: 6
+# Columns of interest
+cols = [
+    "Reads Mapped Confidently to Intergenic Regions",
+    "Reads Mapped Confidently to Intronic Regions",
+    "Reads Mapped Confidently to Exonic Regions",
+    "sample",
+]
+
+# Subset and reshape to a "tidy" dataframe (long format)
+df = metrics[cols].copy()
+
+df_long = df.melt(
+    id_vars="sample",
+    var_name="variable",
+    value_name="value"
+)
+
+# Clean up the variable names to match the R version
+df_long["variable"] = (
+    df_long["variable"]
+    .str.replace("Reads.Mapped.Confidently.to.", "", regex=False)
+    .str.replace(".Regions", "", regex=False)
+)
+
+# Ensure the values are numeric (in case they were still strings)
+df_long["value"] = pd.to_numeric(df_long["value"], errors="coerce")
+
+# Pivot for stacked horizontal bar plot
+df_pivot = df_long.pivot(index="sample", columns="variable", values="value")
+
+# Create stacked horizontal bar plot (similar to ggplot + coord_flip)
+fig, ax = plt.subplots(figsize=(6, 4))
+
+df_pivot.plot(
+    kind="barh",
+    stacked=True,
+    ax=ax
+)
+
+ax.set_xlabel("Percentage of Reads")
+ax.set_ylabel("Sample")
+ax.set_title("Percent of Reads Mapped to Each Region")
+ax.legend(title="Region", 
+          loc="upper center",
+          bbox_to_anchor=(0.5, -0.15))
+
+plt.tight_layout()
+plt.show()
+```
+
+:::
 
 ## Matrix folders
 
@@ -352,3 +482,10 @@ The most important files that are generated during this cellranger run are the t
 - `filtered_feature_bc_matrix`
 
 In the **next lesson, we will use `raw_feature_bc_matrix`** to load the counts into Seurat. You can similarly do the same with `filtered_feature_bc_matrix`, the difference being that the filtered matrix has removed cells that cellranger determined as low quality using a variety of different tools. We chose to start with the raw counts matrix in this lesson so that you can better see what metrics are used to determine which cells are considered high quality.
+
+
+***
+
+[Next Lesson >>](05_quality_control.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)
