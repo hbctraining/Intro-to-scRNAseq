@@ -9,11 +9,13 @@ author:
 date: "2025-05-30"
 categories: 
   - R Programming
+  - Python Programming
   - Single-cell RNA-seq
   - Statistics
   - Data Science 
 keywords:
   - R
+  - Python
   - PCA
   - covariance matrix
   - eigenvalues
@@ -57,15 +59,38 @@ From a high-level perspective, what we will be doing is:
 
 Let's open a new R script and save it as `PCA-example.R`. Next, we will be using some functions from `tidyverse` in the lesson, so we will need to load it:
 
-```{r load_tidyverse}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: load_tidyverse
 library(tidyverse)
 ```
+
+## Python
+
+```{python}
+#| label: load_py
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Use a clean default style for plots
+sns.set(style="whitegrid")
+```
+
+:::
 
 ## Creating an example data set
 
 We are going to discuss the steps for deriving a Principal Components analysis, but in order to do it, we are going to use an example dataset. Let's start by creating an tibble that has gene expression values for two genes from four cells.
 
-```{r create_tibble}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: create_tibble
 # Create a vector for Cell IDs
 cells <- c("Cell_1", "Cell_2", "Cell_3", "Cell_4")
 # Create a vector to hold expression values for Gene A across all of the cells
@@ -80,9 +105,37 @@ expression_tibble <- tibble(cells, Gene_A, Gene_B)
 expression_tibble
 ```
 
+## Python
+
+```{python}
+#| label: create_tibble_py
+# Create a list for Cell IDs
+cells = ["Cell_1", "Cell_2", "Cell_3", "Cell_4"]
+# Create a list to hold expression values for Gene A across all of the cells
+Gene_A = [0, 12, 65, 23]
+# Create a list to hold expression values for Gene B across all of the cells
+Gene_B = [4, 30, 57, 18]
+
+# Create a DataFrame to hold the cell names and expression values
+expression_df = pd.DataFrame({
+    "cells": cells,
+    "Gene_A": Gene_A,
+    "Gene_B": Gene_B
+})
+
+# View the expression dataframe
+expression_df
+```
+
+:::
+
 Let's get an idea of what our data looks like by plotting it:
 
-```{r plot_raw_data}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: plot_raw_data
 # Create a plot to view the raw expression data
 ggplot(expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells)) +
   geom_point(color = "cornflowerblue") +
@@ -96,6 +149,31 @@ ggplot(expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+## Python
+
+```{python}
+#| label: plot_raw_data_py
+# Create a plot to view the raw expression data
+fig, ax = plt.subplots()
+
+ax.scatter(expression_df["Gene_A"], expression_df["Gene_B"],
+           color="cornflowerblue")
+
+for _, row in expression_df.iterrows():
+    ax.text(row["Gene_A"], row["Gene_B"], row["cells"],
+            ha="left", va="bottom")
+
+ax.set_xlim(0, 80)
+ax.set_ylim(0, 80)
+ax.set_xlabel("Gene A")
+ax.set_ylabel("Gene B")
+ax.set_title("Example Expression Values from Four Cells")
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
 As a reminder, if were were to consider our data set, it would have ***`r format(nrow(filtered_seurat), scientific=FALSE)`*** genes and ***`r format(ncol(filtered_seurat), scientific=FALSE)`*** cells, so this is a simplified example. 
 
 ## Re-centering the dataset
@@ -106,7 +184,11 @@ The first step of PCA is to find the central spot among all of our datapoints (c
 
 We can find the center of the data by taking the average gene expression across each gene (dimension).
 
-```{r center_of_data}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: center_of_data
 # Determine the center of the data by:
 # Finding the average expression of gene A
 Gene_A_mean <- mean(expression_tibble$Gene_A)
@@ -121,9 +203,33 @@ names(center_of_data) <- c("Gene_A", "Gene_B")
 center_of_data
 ```
 
+## Python
+
+```{python}
+#| label: center_of_data_py
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean = expression_df["Gene_A"].mean()
+# Finding the average expression of gene B
+Gene_B_mean = expression_df["Gene_B"].mean()
+
+# Create a dictionary to hold the center of the data
+center_of_data_py = {
+    "Gene_A": Gene_A_mean,
+    "Gene_B": Gene_B_mean
+}
+center_of_data_py
+```
+
+:::
+
 The new center of the data will be where ***( `r center_of_data` )*** currently is. We can visualize this center and inspect that this is does in fact appear to be roughly in the middle of the data.
 
-``` {r new_center_plot}
+::: {.panel-tabset group="language"}
+## R
+
+``` {r}
+#| label: new_center_plot
 # View where the center of the data is located
 ggplot(expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells)) +
   geom_point(color = "cornflowerblue") +
@@ -139,11 +245,45 @@ ggplot(expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+## Python
+
+```{python}
+#| label: new_center_plot_py
+# View where the center of the data is located
+fig, ax = plt.subplots()
+
+ax.scatter(expression_df["Gene_A"], expression_df["Gene_B"],
+           color="cornflowerblue")
+
+for _, row in expression_df.iterrows():
+    ax.text(row["Gene_A"], row["Gene_B"], row["cells"],
+            ha="left", va="bottom")
+
+# Add the new center in red
+ax.scatter([Gene_A_mean], [Gene_B_mean], color="red", s=50)
+ax.text(Gene_A_mean, Gene_B_mean, "New Center",
+        color="red", ha="left", va="bottom")
+
+ax.set_xlim(0, 80)
+ax.set_ylim(0, 80)
+ax.set_xlabel("Gene A")
+ax.set_ylabel("Gene B")
+ax.set_title("Example Expression Values from Four Cells")
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
 **2. Translate the points from their raw expression coordinates to coordinates centered around the center of the data**
 
 Next, we need to shift the points so that the center of the data corresponds to the origin. We can do this by subtracting the mean value for each gene from the raw values.
 
-```{r recentered_data}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: recentered_data
 # Shift the data points so that they data is centered on the origin
 recentered_expression_tibble <- expression_tibble %>%
   mutate(
@@ -155,9 +295,28 @@ recentered_expression_tibble <- expression_tibble %>%
 recentered_expression_tibble
 ```
 
+## Python
+
+```{python}
+#| label: recentered_data_py
+# Shift the data points so that the data is centered on the origin
+recentered_expression_df = expression_df.copy()
+recentered_expression_df["Gene_A"] = recentered_expression_df["Gene_A"] - Gene_A_mean
+recentered_expression_df["Gene_B"] = recentered_expression_df["Gene_B"] - Gene_B_mean
+
+# Print out the re-centered data
+recentered_expression_df
+```
+
+:::
+
 *As with any data analysis, it is always a good idea to visualize your data to ensure that it appears to behaving how you intended.* So let's visualize our re-centered data to ensure that the data appears centered around the origin. 
 
-```{r plot_recentered_data}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: plot_recentered_data
 # Plot the raw data after it has been shifted to have the center of the data align with the origin
 ggplot(recentered_expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells)) +
   geom_point(color = "cornflowerblue") +
@@ -172,6 +331,36 @@ ggplot(recentered_expression_tibble, aes(x = Gene_A, y = Gene_B, label = cells))
   ggtitle("Example Re-centered Expression Values from Four Cells") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
+## Python
+
+```{python}
+#| label: plot_recentered_data_py
+# Plot the raw data after it has been shifted to have the center of the data align with the origin
+fig, ax = plt.subplots()
+
+ax.scatter(recentered_expression_df["Gene_A"],
+           recentered_expression_df["Gene_B"],
+           color="cornflowerblue")
+
+for _, row in recentered_expression_df.iterrows():
+    ax.text(row["Gene_A"], row["Gene_B"], row["cells"],
+            ha="left", va="bottom")
+
+# Mark the new center at the origin
+ax.scatter([0], [0], color="red", s=50)
+ax.text(0, 0, "New Center", color="red", ha="left", va="bottom")
+
+ax.set_xlim(-50, 50)
+ax.set_ylim(-50, 50)
+ax.set_xlabel("Gene A")
+ax.set_ylabel("Gene B")
+ax.set_title("Example Re-centered Expression Values from Four Cells")
+plt.tight_layout()
+plt.show()
+```
+
+:::
 
 ## Create a covariance matrix
 
@@ -198,7 +387,11 @@ Where:
 
 Now we will calculate the covariance for all pairwise comparisons for our re-centered expression data.
 
-```{r create_covariance_matrix}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: create_covariance_matrix
 # Move the cell IDs to the rownames and convert the tibble to a matrix
 recentered_expression_matrix <- recentered_expression_tibble %>% 
   column_to_rownames("cells") %>% 
@@ -211,15 +404,66 @@ cov_matrix <- cov(recentered_expression_matrix)
 cov_matrix
 ```
 
+## Python
+
+```{python}
+#| label: create_covariance_matrix_py
+# Move the cell IDs to the index and convert the DataFrame to a NumPy array
+recentered_expression_matrix_py = (
+    recentered_expression_df.set_index("cells")[["Gene_A", "Gene_B"]].to_numpy()
+)
+
+# Create a covariance matrix (rowvar=False because columns are variables)
+cov_matrix_py = np.cov(recentered_expression_matrix_py, rowvar=False)
+
+# Wrap in a DataFrame for nicer display
+cov_matrix_py_df = pd.DataFrame(
+    cov_matrix_py,
+    index=["Gene_A", "Gene_B"],
+    columns=["Gene_A", "Gene_B"]
+)
+cov_matrix_py_df
+```
+
+:::
+
 Let's go ahead and manually check a covariance by hand to ensure that we trust the outputted covariance matrix. Let's estimate the covariance of Gene A and Gene B.
 
-```{r handcheck_covariance_matrix}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: handcheck_covariance_matrix
 # Estimate the covariance of Gene A and Gene B by hand
 (1/(4-1))*((0-25)*(4-27.25) + (12-25)*(30-27.25) + (65-25)*(57-27.25) + (23-25)*(18-27.25))
 
 # Or you can use the covariance function
 cov(recentered_expression_matrix[, "Gene_A"], recentered_expression_matrix[, "Gene_B"])
 ```
+
+## Python
+
+```{python}
+#| label: handcheck_covariance_matrix_py
+# Estimate the covariance of Gene A and Gene B by hand
+cov_hand = (1/(4-1)) * (
+    (0 - 25) * (4 - 27.25) +
+    (12 - 25) * (30 - 27.25) +
+    (65 - 25) * (57 - 27.25) +
+    (23 - 25) * (18 - 27.25)
+)
+
+# Or you can use NumPy's covariance function directly
+cov_np = np.cov(
+    recentered_expression_matrix_py[:, 0],
+    recentered_expression_matrix_py[:, 1],
+    bias=False
+)[0, 1]
+
+cov_hand, cov_np
+```
+
+:::
 
 This value should match the covariance found in our covariance matrix for the covariance between Gene A and Gene B.
 
@@ -277,13 +521,34 @@ First, we will need to calculate our eigenvalues, which are a measure of varianc
 
 Now that we have a covariance matrix for the re-centered expression values, we need to estimate the eigenvalues and eigenvectors for the covariance matrix. 
 
-```{r eigen_calculation}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigen_calculation
 # Find the eigenvalues and eigenvectors of the covariance matrix
 eig <- eigen(cov_matrix)
 
 # Print the output from eigen()
 eig
 ```
+
+## Python
+
+```{python}
+#| label: eigen_calculation_py
+# Find the eigenvalues and eigenvectors of the covariance matrix
+eig_values_py, eig_vectors_py = np.linalg.eig(cov_matrix_py)
+
+# For nicer display, wrap in a dict-like structure
+eig_py = {
+    "values": eig_values_py,
+    "vectors": eig_vectors_py
+}
+eig_py
+```
+
+:::
 
 ::: {.callout-note collapse="true" title="Click here to see how to calculate eigenvalues and eigenvectors"}
 
@@ -316,10 +581,24 @@ We can now replace the variance and covariance values with the values that we ha
 
 We can see that this is equal to the eigenvalues returned from our `eig` object:
 
-```{r eigenvalues}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvalues
 # Print the eigenvalues
 eig$values
 ```
+
+## Python
+
+```{python}
+#| label: eigenvalues_py
+# Print the eigenvalues
+eig_values_py
+```
+
+:::
 
 **Calculating Eigenvectors**
 
@@ -341,17 +620,47 @@ $$
 
 We can confirm this by plugging our covariance matrix, eigenvalues and eigenvectors back into the above equation and it should return 0, or near 0 (due to rounding errors).
 
-```{r check_eigen}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: check_eigen
 # Check the eigenvalues and eigenvectors
 (cov_matrix - eig$values[1]*diag(2)) %*% eig$vectors[,1]
 ```
 
+## Python
+
+```{python}
+#| label: check_eigen_py
+# Check the eigenvalues and eigenvectors
+check_vec = (cov_matrix_py - eig_values_py[0] * np.eye(2)).dot(eig_vectors_py[:, 0])
+check_vec
+```
+
+:::
+
 We then repeat this process for *$\lambda$~2~* in order to to find its associated eigenvector, *v~2~*, which results in `r eig$vectors[,2]`. Thus, our resulting matrix of eigenvectors appears as:
 
-```{r eigenvectors}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvectors
 # Print the eigenvectors
 eig$vectors
 ```
+
+## Python
+
+```{python}
+#| label: eigenvectors_py
+# Print the eigenvectors
+eig_vectors_py
+```
+
+:::
+
 :::
 
 ## Principal Component Scores
@@ -360,7 +669,11 @@ Now that we have our re-centered expression matrix and eigenvectors, we can perf
 
 <img src="../img/PC_generation.png" width="800">
 
-```{r pc_scores}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: pc_scores
 # Transform the data into PC space by multiply the re-centered expression matrix by the eigenvectors
 pc_scores <- recentered_expression_matrix %*% eig$vectors
 # Name the columns in pc_scores object
@@ -369,6 +682,26 @@ colnames(pc_scores) <- c("PC_1", "PC_2")
 # Print out the pc_scores object
 pc_scores
 ```
+
+## Python
+
+```{python}
+#| label: pc_scores_py
+# Transform the data into PC space by multiplying the re-centered expression matrix by the eigenvectors
+pc_scores_py = recentered_expression_matrix_py.dot(eig_vectors_py)
+
+# Name the columns in pc_scores object
+pc_scores_df_py = pd.DataFrame(
+    pc_scores_py,
+    index=recentered_expression_df["cells"],
+    columns=["PC_1", "PC_2"]
+)
+
+# Print out the pc_scores object
+pc_scores_df_py
+```
+
+:::
 
 :::callout-note
 You can see the use of `%*%` here. This is the operator used to carry out matrix multiplication.
@@ -380,7 +713,11 @@ We are likely interested in knowing the amount of variance explained in our data
 
 Thus, if we want to know the proportion of the variance explained by each principal component, then we would need to divide each eigenvalue by the total variance explained (the sum of the eigenvalues) and if we wanted this as a percentage then we would need to multiply it by 100.
 
-```{r percent_explained}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: percent_explained
 # Calculate the percent of variance explained by each PC using the eigenvalues
 pct_var_explained <- (eig$values / sum(eig$values)) * 100
 # Name the elements of the pct_var_explained by their PC
@@ -390,11 +727,32 @@ names(pct_var_explained) <- c("PC_1", "PC_2")
 pct_var_explained
 ```
 
+## Python
+
+```{python}
+#| label: percent_explained_py
+# Calculate the percent of variance explained by each PC using the eigenvalues
+pct_var_explained_py = (eig_values_py / eig_values_py.sum()) * 100
+
+# Wrap in a Series with PC names
+pct_var_explained_series_py = pd.Series(
+    pct_var_explained_py,
+    index=["PC_1", "PC_2"]
+)
+pct_var_explained_series_py
+```
+
+:::
+
 ## Plotting our Principal Components
 
 With our principal components in hand, we will create a visualization of the principal components.
 
-```{r plotting_PCA_hand}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: plotting_PCA_hand
 # Create a tibble to hold the PC scores we found and also make the Cell IDs into a column
 pc_scores_tibble <- pc_scores %>% 
   as.data.frame() %>% 
@@ -414,6 +772,39 @@ ggplot(pc_scores_tibble, aes(x = PC_1, y = PC_2, label = cells)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+## Python
+
+```{python}
+#| label: plotting_PCA_hand_py
+# Create a DataFrame to hold the PC scores
+pc_scores_tibble_py = pc_scores_df_py.reset_index().rename(columns={"index": "cells"})
+
+# Plot the PC scores we found
+fig, ax = plt.subplots()
+
+ax.scatter(pc_scores_tibble_py["PC_1"],
+           pc_scores_tibble_py["PC_2"],
+           color="cornflowerblue")
+
+for _, row in pc_scores_tibble_py.iterrows():
+    ax.text(row["PC_1"], row["PC_2"], row["cells"],
+            ha="left", va="bottom")
+
+ax.set_xlim(-50, 50)
+ax.set_ylim(-12, 12)
+
+xlab = f"PC 1 (Variance Explained {pct_var_explained_series_py['PC_1']:.2f}%)"
+ylab = f"PC 2 (Variance Explained {pct_var_explained_series_py['PC_2']:.2f}%)"
+
+ax.set_xlabel(xlab)
+ax.set_ylabel(ylab)
+ax.set_title("PCA of Expression Values from Four Cells")
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
 ::: callout-tip
 # [**Exercise 2**](06_theory_of_PCA_Answer-key.qmd#exercise-2)
 
@@ -426,12 +817,43 @@ At this point we have completed a principal components analysis, but we can also
 
 In order to run `prcomp()`, we need to start from an expression matrix and move the cell IDs to the rownames:
 
-```{r prcomp_check}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: prcomp_check
 # Run prcomp() on the expression tibble after moving the Cell IDs to be rownames
 prcomp_PCA <- expression_tibble %>% 
   column_to_rownames("cells") %>% 
   prcomp()
 ```
+
+## Python
+
+```{python}
+#| label: prcomp_check_py
+# Run PCA using NumPy/linear algebra on the expression dataframe
+# (after moving the Cell IDs to be the index)
+expression_matrix_py = expression_df.set_index("cells")[["Gene_A", "Gene_B"]].to_numpy()
+
+# Center the data as prcomp() does
+center_py = expression_matrix_py.mean(axis=0)
+expression_centered_py = expression_matrix_py - center_py
+
+# Compute covariance and eigen-decomposition
+cov_matrix_prcomp_py = np.cov(expression_centered_py, rowvar=False)
+eig_vals_prcomp_py, eig_vecs_prcomp_py = np.linalg.eig(cov_matrix_prcomp_py)
+
+prcomp_PCA_py = {
+    "center": center_py,
+    "sdev": np.sqrt(eig_vals_prcomp_py),
+    "rotation": eig_vecs_prcomp_py,
+    "x": expression_centered_py.dot(eig_vecs_prcomp_py)
+}
+prcomp_PCA_py
+```
+
+:::
 
 Let's inspect the output from `prcomp()` to ensure that we are getting the same output.
 
@@ -439,17 +861,45 @@ Let's inspect the output from `prcomp()` to ensure that we are getting the same 
 
 First we can ensure that we have the same center of the data. `prcomp()` says that the center of the data is:
 
-```{r center_prcomp}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: center_prcomp
 # Print the center of the data found by prcomp()
 prcomp_PCA$center
 ```
 
+## Python
+
+```{python}
+#| label: center_prcomp_py
+# Print the center of the data found by the Python "prcomp" analog
+prcomp_PCA_py["center"]
+```
+
+:::
+
 We can compare this with what we derived as the center of the data:
 
-```{r center_hand}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: center_hand
 # Print the center of the data we found
 center_of_data
 ```
+
+## Python
+
+```{python}
+#| label: center_hand_py
+# Print the center of the data we found
+center_of_data_py
+```
+
+:::
 
 They match which is a great sign that we did this correctly!
 
@@ -463,7 +913,11 @@ $$
 
 `prcomp()` reports the standard deviation, so we will need to square the items in the `prcomp_PCA$sdev` slot in order to recover our variance, or eigenvalues.
 
-```{r eigenvalues_prcomp}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvalues_prcomp
 # Print the eigenvalues found by prcomp() by squaring prcomp_PCA$sdev
 prcomp_eigenvalues <- prcomp_PCA$sdev ** 2
 # Name the elements of the prcomp_eigenvalues by their PC
@@ -473,28 +927,81 @@ names(prcomp_eigenvalues) <- c("PC_1", "PC_2")
 prcomp_eigenvalues
 ```
 
+## Python
+
+```{python}
+#| label: eigenvalues_prcomp_py
+# Print the eigenvalues found by the Python "prcomp" analog
+prcomp_eigenvalues_py = prcomp_PCA_py["sdev"] ** 2
+prcomp_eigenvalues_py
+```
+
+:::
+
 We can compare this with our estimation of eigenvalues by hand:
 
-```{r eigenvalue_hand}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvalue_hand
 # Print the eigenvalues we found
 eig$values
 ```
+
+## Python
+
+```{python}
+#| label: eigenvalue_hand_py
+# Print the eigenvalues we found
+eig_values_py
+```
+
+:::
 
 ## Eigenvectors
 
 Let's go ahead and compare the eigenvectors from `prcomp()` to the eigenvectors that we calculated. `prcomp()` calculated the eigenvectors as:
 
-```{r eigenvector_prcomp}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvector_prcomp
 # Print the eigenvectors found by prcomp()
 prcomp_PCA$rotation
 ```
 
+## Python
+
+```{python}
+#| label: eigenvector_prcomp_py
+# Print the eigenvectors found by the Python "prcomp" analog
+prcomp_PCA_py["rotation"]
+```
+
+:::
+
 While we calculated the eigenvectors as:
 
-```{r eigenvector_hand}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: eigenvector_hand
 # Print the eigenvectors we found
 eig$vectors
 ```
+
+## Python
+
+```{python}
+#| label: eigenvector_hand_py
+# Print the eigenvectors we found
+eig_vectors_py
+```
+
+:::
 
 We can see that the values are the same, but the sign is flipped between the two methods. This is because eigenvectors are only defined "up to sign". This means for a given eigenvalue, the eigenvector *v~1~* and *-v~1~* are the same line, but point in different directions. This does not impact our principal components calculations. However, it could mean that a plot derived *v~1~* will look rotated 180&deg; when compared to a plot derived from *-v~1~*. Regardless, it looks like we have the same eigenvectors in both approaches.
 
@@ -502,17 +1009,45 @@ We can see that the values are the same, but the sign is flipped between the two
 
 Finally, we can check our PC scores to ensure that they are also equivalent. We should note that since the eigenvector from `prcomp()` and the eigenvector we calculated differed by sign and eigenvectors are multiplied by the re-centered expression, then we should expect our principal components to also differ by sign. The principal components from `prcomp()` are:
 
-```{r pc_scores_prcomp}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: pc_scores_prcomp
 # Print the PC scores found by prcomp()
 prcomp_PCA$x
 ```
 
+## Python
+
+```{python}
+#| label: pc_scores_prcomp_py
+# Print the PC scores found by the Python "prcomp" analog
+prcomp_PCA_py["x"]
+```
+
+:::
+
 While our calculated principal components were:
 
-```{r pc_scores_hand}
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: pc_scores_hand
 # Print the PC scores we found
 pc_scores
 ```
+
+## Python
+
+```{python}
+#| label: pc_scores_hand_py
+# Print the PC scores we found
+pc_scores_py
+```
+
+:::
 
 Once again, the values are the same, but the only difference is the sign, which comes from the arbitrary direction of the eigenvector.
 
@@ -524,3 +1059,10 @@ Create a plot of the Principal Components Analysis derived from `prcomp()`. Is i
 # Number of PCs
 
 When carrying out a PCA, it could be interesting the know how many the possible Principal Components axes exist. The answer isn't so simple but the easiest metric to use is that **the number of PCs ≤ minimum(number_of_genes, number_of_cells)**. For a deeper dive in how the number of PCs is determined and factors that influence them, consider [this lesson](Aside_Number_of_PCs.qmd).
+
+
+***
+
+[Next Lesson >>](07_SCT_normalization.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)
