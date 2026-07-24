@@ -6,3 +6,4 @@ docs/data
 *.RData
 *.rds
 lessons/intermediate
+**/*.quarto_ipynb
