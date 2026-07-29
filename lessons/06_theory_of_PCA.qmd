@@ -89,6 +89,7 @@ from sklearn.decomposition import PCA
 We are going to discuss the steps for deriving a Principal Components analysis, but in order to do it, we are going to use an example dataset. Let's start by creating a dataset that has gene expression values for two genes from four cells.
 
 ::: {.panel-tabset group="language"}
+
 ### R
 
 ```{r}
@@ -380,7 +381,7 @@ recentered_expression_tibble
 # Shift the data so it is centered on the origin
 recentered_expression_df = expression_df.assign(
     Gene_A = expression_df["Gene_A"] - Gene_A_mean,
-    Gene_B = expression_df["Gene_B"] - Gene_B_mean,
+    Gene_B = expression_df["Gene_B"] - Gene_B_mean
 )
 
 # Print out the re-centered data
@@ -1117,11 +1118,12 @@ prcomp_PCA$rotation
 
 ```{python}
 #| label: eigenvector_sklearn_Python
-# Print the eigenvectors found by scikit-learn
+# Create a dataframe to hold the eigenvectors found by scikit-learn
 eigenvector_sklearn = pd.DataFrame(
     pca_sklearn.components_.T
 )
 
+# Print the eigenvectorsfound by scikit-learn
 print(eigenvector_sklearn)
 ```
 
@@ -1173,6 +1175,7 @@ We should note that since both eigenvectors from `PCA()` and the eigenvectors we
 
 ```{python}
 #| label: pc_scores_sklearn_Python
+# Create a dataframe to hold the PC scores found by scikit-learn
 pc_scores_sklearn_df = pd.DataFrame(
     pc_scores_sklearn,
     index = expression_df.index,
@@ -1209,7 +1212,7 @@ print(pc_scores_df)
 Once again, the values are the same, but the only difference is the sign, which comes from the arbitrary direction of the eigenvector.
 
 ::: callout-tip
-## [**Exercise 3**](06_theory_of_PCA_Answer-key#exercise-3)
+## [**Exercise 3**](06_theory_of_PCA_Answer-key.qmd#exercise-3)
 Create a plot of the Principal Components Analysis derived from `prcomp()`/`PCA()`. Is it the same as the plot we derived except only reflected over the x-axis (R)/rotated 180&deg;(Python)?
 :::
 
