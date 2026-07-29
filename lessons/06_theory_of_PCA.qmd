@@ -138,7 +138,8 @@ Let's next get an idea of what our data looks like by plotting it.
 ### R
 
 ```{r}
-#| label: plot_raw_data_R
+#| label: fig-plot_raw_data_R
+#| fig-cap: "Plot of the raw expression data for each cell"
 # Create a plot to view the raw expression data
 ggplot(expression_tibble,
        aes(x = Gene_A,
@@ -159,7 +160,9 @@ ggplot(expression_tibble,
 ### Python
 
 ```{python}
-#| label: plot_raw_data_Python
+#| label: plot_raw_data_Python_show
+#| eval: false
+#| echo: true
 # Set the theme to "whitegrid"
 sns.set(style="whitegrid")
 
@@ -201,6 +204,55 @@ plt.ylabel(ylabel = "Gene B")
 plt.title(label = "Example Expression Values from Four Cells")
 
 # Render the plot
+plt.show()
+```
+
+```{python}
+#| label: fig-plot_raw_data_Python_hidden
+#| fig-cap: "Plot of the raw expression data for each cell."
+#| echo: false
+
+def plot_raw_data(expression_df):
+    # Set the theme to "whitegrid"
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    expression_plot = sns.scatterplot(
+        data=expression_df,
+        x="Gene_A",
+        y="Gene_B",
+        color="cornflowerblue",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-5, 80)
+    ax.set_ylim(-5, 80)
+
+    # Add cell labels
+    for cell_id, row in expression_df.iterrows():
+        ax.text(
+            x=row["Gene_A"] + 1,
+            y=row["Gene_B"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Axis labels
+    ax.set_xlabel("Gene A")
+    ax.set_ylabel("Gene B")
+
+    # Title
+    ax.set_title("Example Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = plot_raw_data(expression_df)
 plt.show()
 ```
 
@@ -263,7 +315,8 @@ The new center of the data will be where ***( `r center_of_data` )*** currently 
 ### R
 
 ``` {r}
-#| label: new_center_plot_R
+#| label: fig-new_center_plot_R
+#| fig-cap: "Raw expression data with the center of data highlighted."
 # View where the center of the data is located
 ggplot(expression_tibble,
        aes(x = Gene_A, 
@@ -296,7 +349,9 @@ ggplot(expression_tibble,
 ### Python
 
 ```{python}
-#| label: new_center_plot_Python
+#| label: new_center_plot_Python_show
+#| eval: false
+#| echo: true
 # Set the theme to "whitegrid"
 sns.set(style="whitegrid")
 
@@ -352,6 +407,70 @@ plt.title(label = "Example Expression Values from Four Cells")
 plt.show()
 ```
 
+```{python}
+#| label: fig-new_center_plot_Python_hidden
+#| fig-cap: "Raw expression data with the center of data highlighted."
+#| echo: false
+
+def new_center_plot(expression_df, Gene_A_mean, Gene_B_mean):
+    # Set the theme to "whitegrid"
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    sns.scatterplot(
+        data=expression_df,
+        x="Gene_A",
+        y="Gene_B",
+        color="cornflowerblue",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-5, 80)
+    ax.set_ylim(-5, 80)
+
+    # Add cell labels
+    for cell_id, row in expression_df.iterrows():
+        ax.text(
+            x=row["Gene_A"] + 1,
+            y=row["Gene_B"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Add the new center in red
+    ax.scatter(
+        x=Gene_A_mean,
+        y=Gene_B_mean,
+        color="red"
+    )
+
+    # Add label for new center
+    ax.text(
+        x=Gene_A_mean + 1,
+        y=Gene_B_mean + 1,
+        s="New Center",
+        color="red"
+    )
+
+    # Axis labels
+    ax.set_xlabel("Gene A")
+    ax.set_ylabel("Gene B")
+
+    # Title
+    ax.set_title("Example Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = new_center_plot(expression_df, Gene_A_mean, Gene_B_mean)
+plt.show()
+```
+
 :::
 
 #### Translate the points from their raw expression coordinates to coordinates centered around the center of the data
@@ -396,7 +515,8 @@ print(recentered_expression_df)
 ### R
 
 ```{r}
-#| label: plot_recentered_data_R
+#| label: fig-plot_recentered_data_R
+#| fig-cap: "Scatterplot of re-centered Gene A vs Gene B expression with the new center at the origin."
 # Plot the raw data after it has been shifted to have the center of the data align with the origin
 ggplot(recentered_expression_tibble,
        aes(x = Gene_A,
@@ -429,7 +549,9 @@ ggplot(recentered_expression_tibble,
 ### Python
 
 ```{python}
-#| label: plot_recentered_data_Python
+#| label: plot_recentered_data_Python_show
+#| eval: false
+#| echo: true
 # Set the theme to "whitegrid"
 sns.set(style="whitegrid")
 
@@ -485,6 +607,69 @@ plt.title(label = "Example Re-centered Expression Values from Four Cells")
 plt.show()
 ```
 
+```{python}
+#| label: fig-plot_recentered_data_Python_show
+#| fig-cap: "Scatterplot of re-centered Gene A vs Gene B expression with the new center at the origin."
+#| echo: false
+
+def plot_recentered_data(recentered_expression_df):
+    # Set the theme to "whitegrid"
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    sns.scatterplot(
+        data=recentered_expression_df,
+        x="Gene_A",
+        y="Gene_B",
+        color="cornflowerblue",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-55, 55)
+    ax.set_ylim(-55, 55)
+
+    # Add cell labels
+    for cell_id, row in recentered_expression_df.iterrows():
+        ax.text(
+            x=row["Gene_A"] + 1,
+            y=row["Gene_B"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Add the new center in red at (0, 0)
+    ax.scatter(
+        x=0,
+        y=0,
+        color="red"
+    )
+
+    # Add label for new center
+    ax.text(
+        x=1,
+        y=1,
+        s="New Center",
+        color="red"
+    )
+
+    # Axis labels
+    ax.set_xlabel("Gene A")
+    ax.set_ylabel("Gene B")
+
+    # Title
+    ax.set_title("Example Re-centered Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = plot_recentered_data(recentered_expression_df)
+plt.show()
+```
 :::
 
 ### Create a covariance matrix
@@ -874,7 +1059,8 @@ With our principal components in hand, we will create a visualization of the pri
 ### R
 
 ```{r}
-#| label: plotting_PCA_hand_R
+#| label: fig-plotting_PCA_hand_R
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` derived by hand."
 # Create a tibble to hold the PC scores we found and also make the Cell IDs into a column
 pc_scores_tibble <- pc_scores %>% 
   as.data.frame() %>% 
@@ -901,7 +1087,9 @@ ggplot(pc_scores_tibble,
 ### Python
 
 ```{python}
-#| label: plotting_PCA_hand_Python
+#| label: plotting_PCA_hand_Python_show
+#| eval: false
+#| echo: true
 # Set the theme to "whitegrid"
 sns.set(style="whitegrid")
 
@@ -943,6 +1131,55 @@ plt.ylabel(ylabel = f"PC 2 (Variance Explained {pct_var_explained[1].round(2)}%)
 plt.title(label = "PCA of Expression Values from Four Cells")
 
 # Render the plot
+plt.show()
+```
+
+```{python}
+#| label: fig-plotting_PCA_hand_Python_hidden
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` derived by hand."
+#| echo: false
+
+def plot_pca_scores(pc_scores_df, pct_var_explained):
+    # Set the theme to "whitegrid"
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    sns.scatterplot(
+        data=pc_scores_df,
+        x="PC_1",
+        y="PC_2",
+        color="cornflowerblue",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-55, 55)
+    ax.set_ylim(-15, 15)
+
+    # Add cell labels at PC coordinates
+    for cell_id, row in pc_scores_df.iterrows():
+        ax.text(
+            x=row["PC_1"] + 1,
+            y=row["PC_2"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Axis labels with variance explained
+    ax.set_xlabel(f"PC 1 (Variance Explained {pct_var_explained[0].round(2)}%)")
+    ax.set_ylabel(f"PC 2 (Variance Explained {pct_var_explained[1].round(2)}%)")
+
+    # Title
+    ax.set_title("PCA of Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = plot_pca_scores(pc_scores_df, pct_var_explained)
 plt.show()
 ```
 

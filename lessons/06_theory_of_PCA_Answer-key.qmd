@@ -316,7 +316,7 @@ print(pct_var_explained)
 
 :::
 
-Yes, `PC_1` explains `r pct_var_explained[1]` and `PC_2` explains `r pct_var_explained[2]`
+Yes, `PC_1` explains `python pct_var_explained[0]` and `PC_2` explains `python pct_var_explained[1]`
 
 ## Exercise 3
 
@@ -327,7 +327,8 @@ Create a plot of the Principal Components Analysis derived from `prcomp()`/`PCA(
 ### R
 
 ```{r}
-#| label: plotting_PCA_prcomp_R
+#| label: fig-plotting_PCA_prcomp_R
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` from `prcomp()`."
 # Create a tibble to hold the PC scores prcomp() found and also make the Cell IDs into a column
 prcomp_pc_scores_tibble <- prcomp_PCA$x %>% 
   as.data.frame() %>% 
@@ -352,7 +353,9 @@ Yes, it is the same plot just reflected over the x-axis.
 ### Python
 
 ```{python}
-#| label: plotting_PCA_PCA_Python
+#| label: plotting_PCA_PCA_Python_show
+#| eval: false
+#| echo: true
 sns.set(style="whitegrid")
 
 # Initialize a plot with a specific size
@@ -392,6 +395,57 @@ plt.ylabel(ylabel = f"PC 2 (Variance Explained {pca_sklearn.explained_variance_r
 plt.title(label = "PCA of Expression Values from Four Cells")
 
 # Render the plot
+plt.show()
+```
+
+```{python}
+#| label: fig-plotting_PCA_PCA_Python_hidden
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` from scikit-learn."
+#| echo: false
+
+def plot_pca_sklearn(pc_scores_sklearn_df, pca_sklearn):
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    sns.scatterplot(
+        data=pc_scores_sklearn_df,
+        x="PC_1",
+        y="PC_2",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-55, 55)
+    ax.set_ylim(-15, 15)
+
+    # Add cell labels at PC coordinates
+    for cell_id, row in pc_scores_sklearn_df.iterrows():
+        ax.text(
+            x=row["PC_1"] + 1,
+            y=row["PC_2"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Axis labels with variance explained from sklearn PCA
+    ax.set_xlabel(
+        f"PC 1 (Variance Explained {pca_sklearn.explained_variance_ratio_[0].round(4) * 100}%)"
+    )
+    ax.set_ylabel(
+        f"PC 2 (Variance Explained {pca_sklearn.explained_variance_ratio_[1].round(4) * 100}%)"
+    )
+
+    # Title
+    ax.set_title("PCA of Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = plot_pca_sklearn(pc_scores_sklearn_df, pca_sklearn)
 plt.show()
 ```
 
