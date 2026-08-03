@@ -1460,6 +1460,6 @@ When carrying out a PCA, it could be interesting the know how many the possible 
 
 ***
 
-[Next Lesson >>](07_SCT_normalization.qmd)
+[Next Lesson >>](07_normalization.qmd)
 
 [Back to Schedule](../schedule/schedule.qmd)
