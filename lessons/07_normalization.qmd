@@ -1,7 +1,7 @@
 ---
 title: "Normalization and exploring data for unwanted variation"
 description: |
-  Write a description of the lesson here. 
+  This lesson introduces normalization strategies for single-cell RNA-seq data and how to explore and correct for unwanted sources of variation. Participants will perform simple log normalization, identify highly variable genes, and apply PCA to assess technical and biological covariates such as sequencing depth, mitochondrial content and cell cycle.
 author:
   - Mary Piper
   - Meeta Mistry
@@ -889,7 +889,7 @@ split_seurat$ctrl@assays
 Now we can see that in addition to the raw RNA counts, we now have a SCT component in our `assays` slot. The most variable features will be the only genes stored inside the SCT assay. As we move through the scRNA-seq analysis, we will choose the most appropriate assay to use for the different steps in the analysis. 
 
 ::: callout-tip
-# [**Exercise 2**](07_SCT_normalization-Answer_key.qmd#exercise-2)
+# [**Exercise 2**](07_normalization-Answer_key.qmd#exercise-2)
 
 3. Are the same assays available for the "stim" samples within the `split_seurat` object? What is the code you used to check that?
 
