@@ -31,7 +31,7 @@ editor_options:
 
 ```
 
-```{r}
+```{python}
 #| label: load_libraries_data_py
 #| echo: false
 # Load libraries and data
