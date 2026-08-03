@@ -5347,11 +5347,7 @@ margin-bottom: 0.25rem;
   <li><a href="#examples-scenarios-for-integration" id="toc-examples-scenarios-for-integration" class="nav-link" data-scroll-target="#examples-scenarios-for-integration">Examples scenarios for integration</a></li>
   <li><a href="#integration-in-our-dataset" id="toc-integration-in-our-dataset" class="nav-link" data-scroll-target="#integration-in-our-dataset">Integration in our dataset</a></li>
   </ul></li>
-  <li><a href="#integration-methods" id="toc-integration-methods" class="nav-link" data-scroll-target="#integration-methods">Integration methods</a>
-  <ul class="collapse">
-  <li><a href="#canonical-correlation-analysis-cca-seurat" id="toc-canonical-correlation-analysis-cca-seurat" class="nav-link" data-scroll-target="#canonical-correlation-analysis-cca-seurat">Canonical Correlation Analysis (CCA) (Seurat)</a></li>
-  <li><a href="#single-cell-variational-inference-scvi-scanpy" id="toc-single-cell-variational-inference-scvi-scanpy" class="nav-link" data-scroll-target="#single-cell-variational-inference-scvi-scanpy">single-cell Variational Inference (scVI) (scanpy)</a></li>
-  </ul></li>
+  <li><a href="#integration-methods" id="toc-integration-methods" class="nav-link" data-scroll-target="#integration-methods">Integration methods</a></li>
   </ul>
 </nav>
     </div>
@@ -5609,8 +5605,10 @@ Start with method for your programming language
 <p><strong>This text is quite dense, so we recommend focusing on the method that suits the programming language you are working in first. scVI for python and CCA for R.</strong></p>
 </div>
 </div>
-<section id="canonical-correlation-analysis-cca-seurat" class="level3">
-<h3 class="anchored" data-anchor-id="canonical-correlation-analysis-cca-seurat">Canonical Correlation Analysis (CCA) (Seurat)</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R: Canonical Correlation Analysis (CCA)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python: single-cell Variational Inference (scVI)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>Integration is a powerful method that <strong>uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets</strong> [<a href="https://www.biorxiv.org/content/early/2018/11/02/460147">Stuart and Bulter et al. (2018)</a>]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</p>
 <p>The integration method that is available in the Seurat package utilizes the <strong>canonical correlation analysis</strong> (CCA); a method that expects “correspondences” or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat <strong>does not modify the underlying expression data, but instead projects continuous data across experiments</strong>.</p>
 <p>The steps in the <code>Seurat</code> integration workflow are outlined in the figure below:</p>
@@ -5667,9 +5665,8 @@ Reciprocal PCA
 <p>If there are a substantial number of cells that do not have a match between groups or there are a large number of cells to integrate, an alternative approach recommended by the Seurat vignette is <a href="https://satijalab.org/seurat/articles/integration_rpca.html">reciprocal PCA (RPCA)</a>.</p>
 </div>
 </div>
-</section>
-<section id="single-cell-variational-inference-scvi-scanpy" class="level3">
-<h3 class="anchored" data-anchor-id="single-cell-variational-inference-scvi-scanpy">single-cell Variational Inference (scVI) (scanpy)</h3>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>TODO: edit</p>
 <p>scVI is a neural-newtork based method that was published in <a href="https://www.nature.com/articles/s41592-018-0229-2">2018 by Lopez et. al</a> to reduce technical noise.</p>
 <div id="fig-scvi_schematic" class="figure quarto-float quarto-figure quarto-figure-center anchored">
@@ -5702,6 +5699,9 @@ Figure 9: Schematic of the scVI algorithm.<br> <em>Image source: <a href="https
 <ol start="6" type="1">
 <li>Use the posterior mean of <code>X</code> distribution as each cell’s latent space coordinates.</li>
 </ol>
+</div>
+</div>
+</div>
 <hr>
 <p><a href="../lessons/09_integration_code_harmony.html">Next Lesson &gt;&gt;</a></p>
 <p><a href="../schedule/schedule.html">Back to Schedule</a></p>
@@ -5709,7 +5709,6 @@ Figure 9: Schematic of the scVI algorithm.<br> <em>Image source: <a href="https
 
 <!-- -->
 
-</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div>CC-BY-4.0</div></div></section></div></main> <!-- /main -->
@@ -6394,100 +6393,104 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>**This text is quite dense, so we recommend focusing on the method that suits the programming language you are working in first. scVI for python and CCA for R.**</span>
 <span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="fu">### Canonical Correlation Analysis (CCA) (Seurat)</span></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [<span class="co">[</span><span class="ot">Stuart and Bulter et al. (2018)</span><span class="co">](https://www.biorxiv.org/content/early/2018/11/02/460147)</span>]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="fu">### R: Canonical Correlation Analysis (CCA)</span></span>
 <span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>The integration method that is available in the Seurat package utilizes the **canonical correlation analysis** (CCA); a method that expects &quot;correspondences&quot; or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat **does not modify the underlying expression data, but instead projects continuous data across experiments**.</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [<span class="co">[</span><span class="ot">Stuart and Bulter et al. (2018)</span><span class="co">](https://www.biorxiv.org/content/early/2018/11/02/460147)</span>]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</span>
 <span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>The steps in the <span class="in">`Seurat`</span> integration workflow are outlined in the figure below:</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>The integration method that is available in the Seurat package utilizes the **canonical correlation analysis** (CCA); a method that expects &quot;correspondences&quot; or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat **does not modify the underlying expression data, but instead projects continuous data across experiments**.</span>
 <span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>::: {#fig-integration-workflow .figure}</span>
-<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/integration.png)</span></span>
-<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>Overview of the Seurat integration workflow using canonical correlation analysis (CCA) and anchors.</span>
-<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>_Source: [Stuart &amp; Butler et al., 2018](https://doi.org/10.1101/460147)_</span>
-<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>**1. Identify shared variable genes**:</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>The steps in the <span class="in">`Seurat`</span> integration workflow are outlined in the figure below:</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>::: {#fig-integration-workflow .figure}</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/integration.png)</span></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>Overview of the Seurat integration workflow using canonical correlation analysis (CCA) and anchors.</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>_Source: [Stuart &amp; Butler et al., 2018](https://doi.org/10.1101/460147)_</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>Integration aims to take the matrix for each dataset (Ctrl and Stim) and identify correlated structures across them and align them in a common space. The **shared highly </span>
-<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>variable genes from each dataset are used to form the intersection set**, because they are the most likely to represent those genes distinguishing the different cell types present.</span>
-<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>_Each dataset can have a different number of cells, but must have the same number of genes._</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>**1. Identify shared variable genes**:</span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>Integration aims to take the matrix for each dataset (Ctrl and Stim) and identify correlated structures across them and align them in a common space. The **shared highly </span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>variable genes from each dataset are used to form the intersection set**, because they are the most likely to represent those genes distinguishing the different cell types present.</span>
 <span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>**2. Perform canonical correlation analysis (CCA):**</span>
-<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>Next, Seurat will jointly reduce the dimensionality of both datasets using diagonalized canonical correlation analysis (CCA) which is a form of PCA. Similar to principal components in PCA, the CCA will result in canonical correlation vectors. An L2-normalization is applied to the canonical correlation vectors, to use as input for the next step (identifying MNNs).</span>
-<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>**3. Find mutual nearest neighbors (MNNs) or anchors:**</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>_Each dataset can have a different number of cells, but must have the same number of genes._</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>**2. Perform canonical correlation analysis (CCA):**</span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>Next, Seurat will jointly reduce the dimensionality of both datasets using diagonalized canonical correlation analysis (CCA) which is a form of PCA. Similar to principal components in PCA, the CCA will result in canonical correlation vectors. An L2-normalization is applied to the canonical correlation vectors, to use as input for the next step (identifying MNNs).</span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>In this new shared low-dimensional space, Seurat will identify anchors or mutual nearest neighbors (MNNs) across datasets. These MNNs are pairs of cells that can be thought of as **&#39;best buddies&#39;**.</span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>**3. Find mutual nearest neighbors (MNNs) or anchors:**</span>
 <span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>For each cell in one condition:</span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>In this new shared low-dimensional space, Seurat will identify anchors or mutual nearest neighbors (MNNs) across datasets. These MNNs are pairs of cells that can be thought of as **&#39;best buddies&#39;**.</span>
 <span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The cell&#39;s closest neighbor in the other condition is identified based on gene expression values - its &#39;best buddy&#39;.</span>
-<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The reciprocal analysis is performed, and if the two cells are &#39;best buddies&#39; in both directions, then those cells will be marked as **anchors** to &#39;anchor&#39; the two datasets together.</span>
-<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>**4. Filter anchors** to remove incorrect anchors:</span>
-<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>Assess the similarity between anchor pairs by the overlap in their local neighborhoods (incorrect anchors will have low scores) - do the adjacent cells have &#39;best buddies&#39; that are adjacent to each other? If not, these are removed the anchor list.</span>
-<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>**5. Integrate the conditions/datasets**:</span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>For each cell in one condition:</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The cell&#39;s closest neighbor in the other condition is identified based on gene expression values - its &#39;best buddy&#39;.</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The reciprocal analysis is performed, and if the two cells are &#39;best buddies&#39; in both directions, then those cells will be marked as **anchors** to &#39;anchor&#39; the two datasets together.</span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>**4. Filter anchors** to remove incorrect anchors:</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>Assess the similarity between anchor pairs by the overlap in their local neighborhoods (incorrect anchors will have low scores) - do the adjacent cells have &#39;best buddies&#39; that are adjacent to each other? If not, these are removed the anchor list.</span>
 <span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a>Using the anchors and corresponding scores the cell expression values are transformed, allowing for the integration of the conditions/datasets (different samples, conditions, datasets, modalities). For each cell in the dataset we now have an integrated value, but only for the variable features used for this analysis.</span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a>**5. Integrate the conditions/datasets**:</span>
 <span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="fu"># Neighborhoods and correction values</span></span>
-<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>Transformation of each cell uses a weighted average of the two cells of each anchor across anchors of the datasets. Weights determined by cell similarity score (distance between cell and k nearest anchors) and anchor scores, so cells in the same neighborhood should have similar correction values.</span>
-<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>**If cell types are present in one dataset, but not the other, then the cells will still appear as a separate sample-specific cluster.**</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>Using the anchors and corresponding scores the cell expression values are transformed, allowing for the integration of the conditions/datasets (different samples, conditions, datasets, modalities). For each cell in the dataset we now have an integrated value, but only for the variable features used for this analysis.</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="fu"># Neighborhoods and correction values</span></span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>Transformation of each cell uses a weighted average of the two cells of each anchor across anchors of the datasets. Weights determined by cell similarity score (distance between cell and k nearest anchors) and anchor scores, so cells in the same neighborhood should have similar correction values.</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reciprocal PCA</span></span>
-<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a>If there are a substantial number of cells that do not have a match between groups or there are a large number of cells to integrate, an alternative approach recommended by the Seurat vignette is <span class="co">[</span><span class="ot">reciprocal PCA (RPCA)</span><span class="co">](https://satijalab.org/seurat/articles/integration_rpca.html)</span>.</span>
-<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a><span class="fu">### single-cell Variational Inference (scVI) (scanpy)</span></span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>**If cell types are present in one dataset, but not the other, then the cells will still appear as a separate sample-specific cluster.**</span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reciprocal PCA</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a>If there are a substantial number of cells that do not have a match between groups or there are a large number of cells to integrate, an alternative approach recommended by the Seurat vignette is <span class="co">[</span><span class="ot">reciprocal PCA (RPCA)</span><span class="co">](https://satijalab.org/seurat/articles/integration_rpca.html)</span>.</span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a>TODO: edit</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a><span class="fu">### Python: single-cell Variational Inference (scVI)</span></span>
 <span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>scVI is a neural-newtork based method that was published in <span class="co">[</span><span class="ot">2018 by Lopez et. al</span><span class="co">](https://www.nature.com/articles/s41592-018-0229-2)</span> to reduce technical noise.</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>TODO: edit</span>
 <span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>::: {#fig-scvi_schematic .figure}</span>
-<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/scVI_schematic.png)</span>{width=60%}</span>
-<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>Schematic of the scVI algorithm.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>_Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-0229-2)_</span>
-<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; You tell scVI which cells belong to which sample, choose a 2‑dimensional latent space, train the model so that a 2D vector plus the batch can reconstruct each cell’s counts, and then take those 2D vectors as your new batch‑corrected embedding.</span></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>scVI is a neural-newtork based method that was published in <span class="co">[</span><span class="ot">2018 by Lopez et. al</span><span class="co">](https://www.nature.com/articles/s41592-018-0229-2)</span> to reduce technical noise.</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>::: {#fig-scvi_schematic .figure}</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/scVI_schematic.png)</span>{width=60%}</span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>Schematic of the scVI algorithm.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>_Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-0229-2)_</span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>We assume that there is a batch-corrected latent space (<span class="in">`X`</span>) that we can map our cells to. This is simlar to how we flattened our cells into 2 principal components from our entire counts matrix.</span>
-<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Given a batch variable (<span class="in">`sample`</span>) and <span class="in">`total_counts`</span>, genes are modelled as a zero-inflated negative binomial distribution.</span>
-<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>_If I know a cell&#39;s latent representation and batch, I can generate its gene expression profile._</span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; You tell scVI which cells belong to which sample, choose a 2‑dimensional latent space, train the model so that a 2D vector plus the batch can reconstruct each cell’s counts, and then take those 2D vectors as your new batch‑corrected embedding.</span></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>We assume that there is a batch-corrected latent space (<span class="in">`X`</span>) that we can map our cells to. This is simlar to how we flattened our cells into 2 principal components from our entire counts matrix.</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Given a batch variable (<span class="in">`sample`</span>) and <span class="in">`total_counts`</span>, genes are modelled as a zero-inflated negative binomial distribution.</span>
 <span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Create a decoder neural network that takes in the latent space and batch label to generate a parameter for **each gene**.</span>
-<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Use an encoder neural network to take the _actual_ counts and its batch label to create a distribution over the latent space for each cell.</span>
-<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Run multiple iteration of encoder and decoder to optimize parameters, where:</span>
-<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>counts -&gt; <span class="in">`X`</span> (encoder)</span>
-<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`X`</span> + batch → counts (decoder)</span>
-<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Use the posterior mean of <span class="in">`X`</span> distribution as each cell&#39;s latent space coordinates.</span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>_If I know a cell&#39;s latent representation and batch, I can generate its gene expression profile._</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Create a decoder neural network that takes in the latent space and batch label to generate a parameter for **each gene**.</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Use an encoder neural network to take the _actual_ counts and its batch label to create a distribution over the latent space for each cell.</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Run multiple iteration of encoder and decoder to optimize parameters, where:</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>counts -&gt; <span class="in">`X`</span> (encoder)</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`X`</span> + batch → counts (decoder)</span>
 <span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Use the posterior mean of <span class="in">`X`</span> distribution as each cell&#39;s latent space coordinates.</span>
 <span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Next Lesson &gt;&gt;</span><span class="co">](09_integration_code_harmony.qmd)</span></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Back to Schedule</span><span class="co">](../schedule/schedule.qmd)</span></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Next Lesson &gt;&gt;</span><span class="co">](09_integration_code_harmony.qmd)</span></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Back to Schedule</span><span class="co">](../schedule/schedule.qmd)</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

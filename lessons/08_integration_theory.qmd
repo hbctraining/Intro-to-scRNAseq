@@ -185,7 +185,9 @@ There are [many different integration](https://www.scrna-tools.org/tools?sort=na
 **This text is quite dense, so we recommend focusing on the method that suits the programming language you are working in first. scVI for python and CCA for R.**
 :::
 
-### Canonical Correlation Analysis (CCA) (Seurat)
+::: {.panel-tabset}
+
+### R: Canonical Correlation Analysis (CCA)
 
 Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [[Stuart and Bulter et al. (2018)](https://www.biorxiv.org/content/early/2018/11/02/460147)]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).
 
@@ -244,7 +246,7 @@ Transformation of each cell uses a weighted average of the two cells of each anc
 If there are a substantial number of cells that do not have a match between groups or there are a large number of cells to integrate, an alternative approach recommended by the Seurat vignette is [reciprocal PCA (RPCA)](https://satijalab.org/seurat/articles/integration_rpca.html).
 :::
 
-### single-cell Variational Inference (scVI) (scanpy)
+### Python: single-cell Variational Inference (scVI)
 
 TODO: edit
 
@@ -273,6 +275,8 @@ _If I know a cell's latent representation and batch, I can generate its gene exp
   - `X` + batch → counts (decoder)
 
 6. Use the posterior mean of `X` distribution as each cell's latent space coordinates.
+
+:::
 
 ***
 
