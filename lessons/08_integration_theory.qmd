@@ -1,0 +1,105 @@
+---
+title: "Tmp"
+description: |
+  Write a description of the lesson here. 
+author:
+  - author_1
+  - author_2
+date: "YYYY-MM-DD"
+categories: 
+  - category_1
+  - category_2
+  - category_3
+  - category_4
+keywords:
+  - keyword_1
+  - keyword_2
+  - keyword_3
+  - keyword_4
+  - keyword_5
+  - keyword_6
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load_libraries_data_R
+#| echo: false
+# Load libraries and data
+
+```
+
+```{python}
+#| label: load_libraries_data_py
+#| echo: false
+# Load libraries and data
+
+```
+
+Approximate time: XX minutes
+
+## Learning objectives 
+
+In this lesson, we will:
+
+- Learning Objective 1
+- Learning Objective 2
+- Learning Objective 3
+
+## Overview of lesson
+
+When doing XYZ...
+
+## Topic 1
+
+::: {.panel-tabset group="language"}
+## R
+
+## Python
+
+:::
+
+### Subsection 1A
+
+### Subsection 1B
+
+:::{.callout-tip}
+# [**Exercise 1**](tmp-Answer_key.qmd#exercise-1)
+1. A question to evaluate Learning Objective 1
+2. A followup question to question #1
+3. ...
+:::
+
+## Topic 2
+
+### Subsection 2A
+
+### Subsection 2B
+
+:::{.callout-tip}
+# [**Exercise 2**](tmp-Answer_key.qmd#exercise-2)
+1. A question to evaluate Learning Objective 2
+2. A followup question to question #1
+3. ...
+:::
+
+## Topic 3
+
+### Subsection 3A
+
+### Subsection 3B
+
+:::{.callout-tip}
+# [**Exercise 3**](tmp-Answer_key.qmd#exercise-3)
+1. A question to evaluate Learning Objective 3
+2. A followup question to question #1
+3. ...
+:::
+
+***
+
+[Next Lesson >>](tmp.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)
