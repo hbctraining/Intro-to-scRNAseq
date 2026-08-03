@@ -51,8 +51,8 @@ website:
       - section: "Day 2:"
         contents:
           - lessons/05_quality_control.qmd
-          - lessons/07_SCT_normalization.qmd
-          - lessons/08_integration_cca_theory.qmd
+          - lessons/07_normalization.qmd
+          - lessons/08_integration_theory.qmd
       - section: "Day 2 Self-learning"
         contents:
           - lessons/09_integration_code_harmony.qmd
