@@ -165,6 +165,8 @@ Let's start by creating a new script for the normalization and integration steps
 # Created: August 2026
 
 import scanpy as sc
+import scvi
+
 import seaborn as sns
 import numpy as np
 import pandas as pd

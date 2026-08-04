@@ -210,8 +210,8 @@ We now have our new scVI values stores in our `adata_integrated` object, just li
 ```{python}
 #| label: instructor_scVI
 #| echo: false
-# adata_integrated.write_h5ad("intermediate/09_adata_integrated_scvi_1.h5ad")
-adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated_scvi_1.h5ad")
+# adata_integrated.write_h5ad("intermediate/09_adata_integrated.h5ad")
+adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
 ```
 
 :::
