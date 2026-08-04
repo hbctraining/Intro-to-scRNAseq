@@ -40,6 +40,9 @@ library(tidyverse)
 
 # Load data
 seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
+
+# Set randomness
+set.seed(1234)
 ```
 
 ```{python}
@@ -47,9 +50,13 @@ seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
 #| echo: false
 # Load libraries
 import scanpy as sc
+import numpy as np
 
 # Load data
 adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
+
+# Set randomness
+np.random.seed(1234)
 ```
 
 Approximate time: 90 minutes
@@ -74,7 +81,13 @@ Overview of the single-cell RNA-seq workflow.
 
 ## Principal component selection
 
-Before starting with this lesson, let's create a new script for the next few steps.
+Before starting with this lesson, let's create a new script for the next few steps. We are also going to "set our seed", which is assigning a fixed value for randomness to allow for reproducible results as many of the algorithms in this lesson utilize random sampling in their algorithms.
+
+::: callout-note
+# Setting seed
+Typically, the seed would be placed at the beginning of your script. In this way the selected random number would be applied to any function that uses pseudorandom numbers in its algorithm.
+:::
+
 
 
 ::: {.panel-tabset group="language"}
@@ -96,6 +109,9 @@ library(tidyverse)
 
 # Load data
 seurat_integrated <- readRDS("integrated/08_seurat_integrated")
+
+# Set randomness
+set.seed(1234)
 ```
 
 ## Python
@@ -112,9 +128,13 @@ Create a new notebook titled `clustering.ipynb`
 
 # Load libraries
 import scanpy as sc
+import numpy as np
 
 # Load data
 adata_integrated = sc.read_h5ad("data/adata_integrated.h5ad")
+
+# Set randomness
+np.random.seed(1234)
 ```
 
 :::
@@ -222,7 +242,7 @@ sc.pl.pca_variance_ratio(adata_integrated,
 Based on this plot, we could roughly determine the majority of the variation by where the elbow occurs around PC8 - PC10, or one could argue that it should be when the data points start to get close to the X-axis, PC30 or so. This gives us a very rough idea of the number of PCs needed to be included, we can extract the information visualized here in a [**more quantitative manner**](Aside_elbow_plot_metric.qmd), which may be a bit more reliable.  
 
 
-## Grouping similar cells together
+## k-nearest neighbors (kNN)
 
 Now, we want to group similar cells (cell states) together based upon their gene expression profiles with clustering. This is a two-step process that involves:
 
@@ -230,8 +250,6 @@ Now, we want to group similar cells (cell states) together based upon their gene
 2. Group cells together based upon the KNN graph to assign cluster labels to each cell.
 
 This graph-based approach allows us to partition the graph of cells into highly interconnected ‘quasi-cliques’ or ‘communities’ that represent clusters of similar cells. A nice in-depth description of clustering methods is provided in the [SVI Bioinformatics and Cellular Genomics Lab course](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html).
-
-## k-nearest neighbors (kNN)
 
 The first step is to **construct a K-nearest neighbor (KNN) graph**. As previously mentioned, this is calculated on the PCA space. Recall that we have multiple principal components (PCs) with scores for each one of our cells. We can think of the steps taken like so:
 
@@ -257,7 +275,7 @@ All of this is done in one step with the Seurat function `FindNeighbors()`. The 
 ```{r}
 #| label: FindNeighbors
 # Determine the K-nearest neighbor graph
-seurat_integrated <- FindNeighbors(seurat_integrated, 
+seurat_integrated <- FindNeighbors(seurat_integrated,
                                    dims = 1:40)
 seurat_integrated
 ```
@@ -281,7 +299,8 @@ kNN are calculate in one step with the `sc.pp.neighbors()` function. Importantly
 # Calculate neighbors
 sc.pp.neighbors(adata_integrated, 
                 use_rep="X_scvi", 
-                key_added="scvi")
+                key_added="scvi",
+                random_state = 1234)
 ```
 
 We specified `key_added` as "scvi" so that we do not overwrite any previous neighborhoods that may have calculated. This can more clearly be seen when we look at the `obsp` slot of our adata object.
@@ -293,9 +312,94 @@ adata_integrated.obsp
 
 :::
 
-Now that we have this shared nearest neighbor graph, we can begin the clustering step.
+Now that we have this shared nearest neighbor graph, we can begin the clustering and UMAP steps.
 
-### Clustering
+## UMAP
+
+To visualize the cells, there are a few additional [dimensionality reduction techniques](https://www.nature.com/articles/s41598-025-14301-8) beyond PCA that can be helpful. The most popular methods include:
+
+- t-distributed stochastic neighbor embedding: [t-SNE](https://www.nature.com/articles/s41467-019-13056-x)
+- Uniform manifold approximation and projection: [UMAP](https://www.scdiscoveries.com/blog/knowledge/what-is-a-umap-plot/)
+- Singular value decomposition: [SVD](https://pmc.ncbi.nlm.nih.gov/articles/PMC12753137/)
+
+::: {.callout-note collapse="true"}
+# UMAP vs t-SNE vs SVD
+
+Both UMAP and t-SNE are built under the same general structure of taking a larger dimensional space (PCA) and flattening it to two dimensions using manifolds. UMAP has come out on top between the two due its ability to balance both local and global structures of the dataset. Additionally, it is less sensitive to parameter choice, making it easier to tune. In contrast, the output of t-SNE plots tend to emphasize the local neighborhood to the detriment of the global structure of the data.
+
+::: {#fig-umap_vs_tsne .figure}
+![](../img/umap_vs_tsne.png){width=500}
+
+Schematic of how parameters are tuned for manifold learning algorithms to emphasize either local or global structure.<br>
+_Image source: [Marx (2024)](https://www.nature.com/articles/s41592-024-02301-x)_
+::: 
+
+SVD is another form of reduction that is best suited for sparse, scATAC-seq datasets.
+:::
+
+Each method aims to place cells with similar local neighborhoods in high-dimensional space together in low-dimensional space. These methods will require you to input the number of PCA dimensions to use for the visualization, we suggest using the same number of PCs as input to the clustering analysis. Here, we will proceed with the [UMAP method](https://umap-learn.readthedocs.io/en/latest/how_umap_works.html) for visualization.
+
+::: {.panel-tabset group="language"}
+## R
+
+First we compute the 
+
+```{r}
+#| label: RunUMAP
+# Calculation of UMAP
+seurat_integrated <- RunUMAP(seurat_integrated,
+                             reduction = "pca",
+                             dims = 1:40,
+                             seed.use = 1234)
+```
+
+Recall that our `pca` was generated after integration. Therefore, when we color cells, there should not be a strong bias by batch (sample)
+
+```{r}
+#| label: fig-umap_sample
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
+# Plot the UMAP
+DimPlot(seurat_integrated,
+        reduction = "umap",
+        group.by = "sample")
+```
+
+## Python
+
+```{python}
+#| label: tl_umap
+#| eval: false
+# Calculation of UMAP
+sc.tl.umap(adata_integrated,
+           neighbors_key = "scvi", 
+           key_added = "umap_scvi",
+           random_state = 1234)
+```
+
+```{python}
+#| label: instructor_save_load
+#| echo: false
+# Python and R collision for calculating UMAP
+# adata_integrated.write_h5ad("intermediate/10_adata_integrated_umap.h5ad")
+adata_integrated = sc.read_h5ad("intermediate/10_adata_integrated_umap.h5ad")
+```
+
+We are supplying the neighbors computed from the scVI latent space. Therefore, when we color cells, there should not be a strong bias by batch (sample) as we have already run integration.
+
+```{python}
+#| label: fig-umap_sample_py
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
+sc.pl.embedding(adata_integrated, 
+                color="sample", 
+                basis="umap_scvi")
+```
+
+
+:::
+
+Effectively, we are summarizing the information accross multiple PCs into 2D space for this representation.
+
+## Clustering
 
 The next step in the workflow is to **group cells into clusters based on the neighborhood graph**.
 
@@ -329,7 +433,8 @@ By default, the `FindClusters()` function using Louvain clustering. So, we will 
 # Determine the clusters for various resolutions
 seurat_integrated <- FindClusters(seurat_integrated,
                                   algorithm = 4,
-                                  resolution = c(0.4, 0.6, 0.8, 1.0, 1.4))
+                                  resolution = c(0.4, 0.6, 0.8, 1.0, 1.4),
+                                  random.seed = 1234)
 ```
 
 If we take a look at the columns in our `@meta.data`, we see that several new columns were added.
@@ -392,52 +497,64 @@ print(adata_integrated.obs.head().to_markdown())
 
 :::
 
+### Visualizing clusters
 
-## UMAP
+There are a variety of different ways to visualize the clusters we have just computed. For example, we could simply count the number of cells that belong to each cluster.
 
-To visualize the cell clusters, there are a few different [dimensionality reduction techniques](https://www.nature.com/articles/s41598-025-14301-8) that can be helpful. The most popular methods include:
+To **choose a resolution to start with**, we often pick something in the middle of the range like 0.6 or 0.8. We will start with a resolution of 0.8
 
-- t-distributed stochastic neighbor embedding: [t-SNE](https://www.nature.com/articles/s41467-019-13056-x)
-- Uniform manifold approximation and projection: [UMAP](https://www.scdiscoveries.com/blog/knowledge/what-is-a-umap-plot/)
-- Singular value decomposition: [SVD](https://pmc.ncbi.nlm.nih.gov/articles/PMC12753137/)
+::: {.panel-tabset group="language"}
+## R
 
-::: {.callout-note collapse="true"}
-# UMAP vs t-SNE vs SVD
+```{r}
+table(seurat_integrated$integrated_snn_res.0.8)
+```
 
-Both UMAP and t-SNE are built under the same general structure of taking a larger dimensional space (PCA) and flattening it to two dimensions using manifolds. UMAP has come out on top between the two due its ability to balance both local and global structures of the dataset. Additionally, it is less sensitive to parameter choice, making it easier to tune. In contrast, the output of t-SNE plots tend to emphasize the local neighborhood to the detriment of the global structure of the data.
+## Python
 
-::: {#fig-umap_vs_tsne .figure}
-![](../img/umap_vs_tsne.png){width=500}
+```{python}
+adata_integrated.obs["leiden_0.8"].value_counts()
+```
 
-Schematic of how parameters are tuned for manifold learning algorithms to emphasize either local or global structure.<br>
-_Image source: [Marx (2024)](https://www.nature.com/articles/s41592-024-02301-x)_
-::: 
-
-SVD is another form of reduction that is best suited for sparse, scATAC-seq datasets.
 :::
 
-Each method aims to place bins with similar local neighborhoods in high-dimensional space together in low-dimensional space. These methods will require you to input the number of PCA dimensions to use for the visualization, we suggest using the same number of PCs as input to the clustering analysis. Here, we will proceed with the [UMAP method](https://umap-learn.readthedocs.io/en/latest/how_umap_works.html) for visualizing the clusters.
+One of the most popular ways to show clusters is to color the cluster identity on top of the UMAP coordinates. 
 
+::: {.panel-tabset group="language"}
+## R
 
-:::{.callout-tip}
-# [**Exercise 2**](tmp-Answer_key.qmd#exercise-2)
-1. A question to evaluate Learning Objective 2
-2. A followup question to question #1
-3. ...
+```{r}
+#| label: fig-integrated_DimPlot_0.8
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
+# Plot the UMAP
+DimPlot(seurat_integrated,
+        group.by = "integrated_snn_res.0.8",
+        reduction = "umap",
+        label = TRUE,
+        label.size = 6)
+```
+
+## Python
+
+```{python}
+#| label: fig-integrated_DimPlot_0.8_py
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
+# Plot the UMAP
+sc.pl.embedding(adata_integrated, 
+                color="leiden_0.8", 
+                basis="umap_scvi",
+                legend_loc='on data',
+                legend_fontsize=14,
+                legend_fontoutline=3)
+```
+
 :::
 
-## Topic 3
+**How does your UMAP plot compare to the one above?**
 
-### Subsection 3A
+It is possible that there is some variability in the way your clusters look compared to the image in this lesson. In particular **you may see a difference in the labeling of clusters**. This is an unfortunate consequence of slight variations in the versions of packages and randomness introduced.
 
-### Subsection 3B
 
-:::{.callout-tip}
-# [**Exercise 3**](tmp-Answer_key.qmd#exercise-3)
-1. A question to evaluate Learning Objective 3
-2. A followup question to question #1
-3. ...
-:::
 
 ***
 

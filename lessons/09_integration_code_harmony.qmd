@@ -172,9 +172,9 @@ adata_integrated = adata_phase.copy()
 
 # Set parameters for the scVI model
 scvi.model.SCVI.setup_anndata(adata_integrated, 
-                              layer="counts", 
-                              batch_key="sample", 
-                              categorical_covariate_keys=["mitoFr"])
+                              layer = "counts", 
+                              batch_key = "sample", 
+                              categorical_covariate_keys =[ "phase", "mitoFr"])
 
 model = scvi.model.SCVI(adata_integrated, 
                         n_layers=2, 
@@ -185,15 +185,17 @@ model
 
 ::: callout-note
 # Epochs
-The number of epochs specifies how many iterations of the model training will be done. The more epochs will improve the results of the training. Here we have set it to 40 to _reduce the amount of time_ this step takes to run while retaining the accuracy of the results. By default the number of epochs is typically greater than 200.
+The number of epochs specifies how many iterations of the model training will be done. The more epochs will improve the results of the training. Here we have set it to 100 to _reduce the amount of time_ this step takes to run while retaining the accuracy of the results. 
+
+By default the number of epochs is typically greater than 200.
 :::
 
 ```{python}
 #| label: train_model
 #| eval: false
 # Train encoder and decoder neural networks
-# This step may take several minutes
-model.train(max_epochs=40)
+# This step will take several minutes
+model.train(max_epochs=100)
 ```
 
 We use the `get_latent_representation()` function to generate a new latent space (like PCA) that reduces the dimensionality of our dataset while taking into consideration the batch variable we specified earlier. This new latent space, which we store as `X_scvi` can later be used to calculate our nearest neighbors and UMAP coordinates.
@@ -205,7 +207,7 @@ We use the `get_latent_representation()` function to generate a new latent space
 adata_integrated.obsm["X_scvi"] = model.get_latent_representation()
 ```
 
-We now have our new scVI values stores in our `adata_integrated` object, just like we did for PCA>
+We now have our new scVI values stores in our `adata_integrated` object, just like we did for PCA.
 
 ```{python}
 #| label: instructor_scVI
@@ -280,7 +282,6 @@ plt.show()
 ```
 
 :::
-
 
 We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subject, so we will use several different ways to confirm whether or not the integration was succesful in future lessons.
 

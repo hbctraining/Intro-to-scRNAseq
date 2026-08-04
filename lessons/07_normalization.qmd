@@ -670,6 +670,9 @@ DimPlot(seurat_phase,
         split.by = "Phase")
 ```
 
+We can see that each phase is well dispersed throughout the PCA space, indicating that we likely do not need to account for cell-cycle in future steps.
+
+
 ## Python
 
 We once again plot PC1 vs PC2, but this time `color` each of our cells by which phase of the cell cycle they belong to.
@@ -703,8 +706,11 @@ plt.tight_layout()
 plt.show()
 ```
 
+We can see that in the top right quadrant, most of the cells primarily belong to the G1 phase. This is an indication that we may need to account for cell-cycle in our future steps.
+
 :::
 
+If you are unsure whether or not to include or omit a variable from your analysis, **try testing both scenarios**! Testing different parameters and models is a great way to better understand your dataset.
 
 ### Mitochondrial ratio
 
