@@ -82,10 +82,10 @@ II. **Submit your work**:
 
 I. Please **study the contents** and **work through all the code** within the following lesson:
 
-**1. [Running CCA integration and complex integration tasks](../lessons/09_integration_code_harmony.qmd)**
+**1. [Running integration and complex integration tasks](../lessons/09_integration_code_harmony.qmd)**
    
 :::{.callout-note collapse="true"}
-# Running CCA integration and complex integration tasks - Preview
+# Running integration and complex integration tasks - Preview
 
 In class, we described the theory of integration and in what situations we would implement it.
    

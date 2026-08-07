@@ -39,7 +39,8 @@ library(Seurat)
 library(tidyverse)
 
 # Load data
-seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
+# seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
+seurat_integrated <- readRDS("data/additional_data/seurat_integrated.rds")
 
 # Set randomness
 set.seed(1234)
@@ -53,7 +54,8 @@ import scanpy as sc
 import numpy as np
 
 # Load data
-adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
+# adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
+adata_integrated = sc.read_h5ad("data/additional_data/adata_integrated.h5ad")
 
 # Set randomness
 np.random.seed(1234)
@@ -108,7 +110,7 @@ library(Seurat)
 library(tidyverse)
 
 # Load data
-seurat_integrated <- readRDS("integrated/08_seurat_integrated")
+seurat_integrated <- readRDS("data/seurat_integrated.rds")
 
 # Set randomness
 set.seed(1234)
@@ -198,7 +200,8 @@ print(x = seurat_integrated[["pca"]],
 
 ```{python}
 #| label: fig-pca_loadings
-#| fig-cap: Ranking of top genes in the first 3 principal components, showing the top and bottom 15
+#| fig-cap: Ranking of top genes in the first 3 principal components, showing the top and bottom genes.
+# Print top and bottom ranked genes for first 3 PCs
 sc.pl.pca_loadings(adata_integrated,
                    components = '1,2,3')
 ```
@@ -251,14 +254,9 @@ Now, we want to group similar cells (cell states) together based upon their gene
 
 This graph-based approach allows us to partition the graph of cells into highly interconnected ‘quasi-cliques’ or ‘communities’ that represent clusters of similar cells. A nice in-depth description of clustering methods is provided in the [SVI Bioinformatics and Cellular Genomics Lab course](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html).
 
+### kNN steps
+
 The first step is to **construct a K-nearest neighbor (KNN) graph**. As previously mentioned, this is calculated on the PCA space. Recall that we have multiple principal components (PCs) with scores for each one of our cells. We can think of the steps taken like so:
-
-1. Each cell is a point in latent/PCA (n-dimensional) space.
-2. We calculate the distance (euclidean) between each cell and all other cells in this latent/PCA space.
-3. We then connect cells together (edges) that are close to each other. cells that are close together in latent/PCA space will have similar gene expression profiles, and thus are likely to be similar.
-4. To further confirm the similarity of cells, we ask, _do these two cells also share nearby neighbors (cells)?_ These shared neighbors are an additional layer of confirmation that cell A and cell B are similar to one another if they are connected to the same cells (neighbors). We use this to recalculate the edge weights between cells, **creating a shared nearest neighbor (SNN) graph**.
-
-This means that if two cells are close together in PCA space and have similar neighbors, they will have a stronger connection (higher edge weight) than two cells that are close together but do not share similar neighbors.
 
 ::: {#fig-k_means .figure}
 ![](../img/k-means.png){width=500}
@@ -267,6 +265,13 @@ Schematic showing how cells are connected in PCA space, where edges connected be
 _Image source: [Analysis of Single cell RNA-seq data](https://biocellgen-public.svi.edu.au/mig_2019_scrnaseq-workshop/clustering-and-cell-annotation.html)_.
 :::
 
+1. Each cell is a point in latent/PCA (n-dimensional) space.
+2. We calculate the distance (euclidean) between each cell and all other cells in this latent/PCA space.
+3. We then connect cells together (edges) that are close to each other. cells that are close together in latent/PCA space will have similar gene expression profiles, and thus are likely to be similar.
+4. To further confirm the similarity of cells, we ask, _do these two cells also share nearby neighbors (cells)?_ These shared neighbors are an additional layer of confirmation that cell A and cell B are similar to one another if they are connected to the same cells (neighbors). We use this to recalculate the edge weights between cells, **creating a shared nearest neighbor (SNN) graph**.
+
+This means that if two cells are close together in PCA space and have similar neighbors, they will have a stronger connection (higher edge weight) than two cells that are close together but do not share similar neighbors.
+
 ::: {.panel-tabset group="language"}
 ## R
 
@@ -274,10 +279,10 @@ All of this is done in one step with the Seurat function `FindNeighbors()`. The 
 
 ```{r}
 #| label: FindNeighbors
+#| eval: false
 # Determine the K-nearest neighbor graph
 seurat_integrated <- FindNeighbors(seurat_integrated,
                                    dims = 1:40)
-seurat_integrated
 ```
 
 We should now see two graphs in the `@graphs` slot of `seurat_integrated`. The first in the list is the KNN graph (`integrated_nn`) and the second is the shared nearest neighbor (SNN) graph (`integrated_snn`).
@@ -296,6 +301,7 @@ kNN are calculate in one step with the `sc.pp.neighbors()` function. Importantly
 
 ```{python}
 #| label: calc_neighbors
+#| eval: false
 # Calculate neighbors
 sc.pp.neighbors(adata_integrated, 
                 use_rep="X_scvi", 
@@ -346,6 +352,7 @@ First we compute the
 
 ```{r}
 #| label: RunUMAP
+#| eval: false
 # Calculation of UMAP
 seurat_integrated <- RunUMAP(seurat_integrated,
                              reduction = "pca",
@@ -379,13 +386,13 @@ sc.tl.umap(adata_integrated,
 ```{python}
 #| label: instructor_save_load
 #| echo: false
+#| eval: false
 # Python and R collision for calculating UMAP
 # adata_integrated.write_h5ad("intermediate/10_adata_integrated_umap.h5ad")
-adata_integrated = sc.read_h5ad("intermediate/10_adata_integrated_umap.h5ad")
+# adata_integrated = sc.read_h5ad("intermediate/10_adata_integrated_umap.h5ad")
 ```
 
 We are supplying the neighbors computed from the scVI latent space. Therefore, when we color cells, there should not be a strong bias by batch (sample) as we have already run integration.
-
 ```{python}
 #| label: fig-umap_sample_py
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
@@ -398,6 +405,14 @@ sc.pl.embedding(adata_integrated,
 :::
 
 Effectively, we are summarizing the information accross multiple PCs into 2D space for this representation.
+
+::: {.callout-note collapse="true"}
+# My UMAP plot looks rotated!
+
+As with PCA, the values on the UMAP axes are not meaningful. What actually matters is the **distance and relative arrangement of points** in the UMAP space. Rotations or reflections of the plot do not change these relationships, as the distance will be preserved. This is why many figures omit axis tick labels entirely.
+
+So if you got different UMAP coordinates, that is to be expected as long as the overall structure and patterns are preserved.
+:::
 
 ## Clustering
 
@@ -417,12 +432,6 @@ _Image source: [Traag et al. (2019)](https://www.nature.com/articles/s41598-019-
 
 Another key parameter is `resolution`, which controls the **granularity of the clustering** and must be tuned for each experiment. **Higher resolution values produce more clusters**. For a first-pass look at the data, a lower resolution is sufficient to see broad patterns and communities. Typically, we recommend that for datasets on the order of 30,000–50,000 cells, setting a `resolution` between `0.4` and `1.4` typically yields reasonable clustering. So for a much larger dataset, such as this one, we will be setting a low resolution parameter to start.
 
-
-::: callout-note
-# Testing different resolution values
-We would typically recommend using a variety of different resolutions and select a resolution that best suits your dataset. However, for the sake of time, we will proceed with a `resolution = 0.65`. We have more [detailed explanations](https://hbctraining.github.io/Intro-to-scRNAseq-Quarto/lessons/10_clustering_cells_SCT.html#find-clusters) of how to test a variety of resolutions at one time.
-:::
-
 ::: {.panel-tabset group="language"}
 ## R
 
@@ -430,6 +439,7 @@ By default, the `FindClusters()` function using Louvain clustering. So, we will 
 
 ```{r}
 #| label: FindClusters
+#| eval: false
 # Determine the clusters for various resolutions
 seurat_integrated <- FindClusters(seurat_integrated,
                                   algorithm = 4,
@@ -448,7 +458,7 @@ View(seurat_integrated@meta.data)
 ```{r}
 #| label: tbl-head_meta_data_clusters_kable
 #| tbl-cap: Updated `@meta.data` with Leiden clusters.
-#| eval: true
+#| eval: false
 #| echo: false
 seurat_integrated@meta.data %>% 
   head() %>% 
@@ -466,6 +476,7 @@ TODO: explain parameters
 
 ```{python}
 #| label: cluster_res
+#| eval: false
 # List of resolution values to test
 resolutions = [0.4, 0.6, 0.8, 1.0, 1.4]
 
@@ -497,6 +508,20 @@ print(adata_integrated.obs.head().to_markdown())
 
 :::
 
+```{r}
+#| label: instructor_additional_data
+#| echo: false
+#| eval: false
+saveRDS(seurat_integrated, "data/additional_data/seurat_integrated.rds")
+```
+
+```{python}
+#| label: instructor_additional_data_py
+#| echo: false
+#| eval: false
+adata_integrated.write_h5ad("data/additional_data/adata_integrated.h5ad")
+```
+
 ### Visualizing clusters
 
 There are a variety of different ways to visualize the clusters we have just computed. For example, we could simply count the number of cells that belong to each cluster.
@@ -507,12 +532,14 @@ To **choose a resolution to start with**, we often pick something in the middle 
 ## R
 
 ```{r}
+#| label: n_cells_cluster
 table(seurat_integrated$integrated_snn_res.0.8)
 ```
 
 ## Python
 
 ```{python}
+#| label: n_cells_cluster_py
 adata_integrated.obs["leiden_0.8"].value_counts()
 ```
 
@@ -550,14 +577,127 @@ sc.pl.embedding(adata_integrated,
 
 :::
 
+It can be useful to **explore other resolutions as well**. It will give you a quick idea about how the clusters would change based on the resolution parameter. For example, let's switch to a resolution of 0.4:
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: fig-integrated_DimPlot_0.4
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.4.
+# Plot the UMAP
+DimPlot(seurat_integrated,
+        group.by = "integrated_snn_res.0.4",
+        reduction = "umap",
+        label = TRUE,
+        label.size = 6)
+```
+
+## Python
+
+```{python}
+#| label: fig-integrated_DimPlot_0.4_py
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.4.
+# Plot the UMAP
+sc.pl.embedding(adata_integrated, 
+                color="leiden_0.4", 
+                basis="umap_scvi",
+                legend_loc='on data',
+                legend_fontsize=14,
+                legend_fontoutline=3)
+```
+
+:::
+
+:::{.callout-tip}
+# [**Exercise 1**](tmp-Answer_key.qmd#exercise-1)
+1. What differences do you notice between resolution `0.4` and `0.8`?
+
+:::
+
+
 **How does your UMAP plot compare to the one above?**
 
 It is possible that there is some variability in the way your clusters look compared to the image in this lesson. In particular **you may see a difference in the labeling of clusters**. This is an unfortunate consequence of slight variations in the versions of packages and randomness introduced.
 
+::: callout-important
+# Load dataset to follow along exactly
 
+**If your clusters do look different from what we have in the lesson**, please follow the instructions provided below. 
+
+Inside your `data` folder you will see a folder called `additional_data`. It contains the seurat_integrated object that we have created for the class. 
+
+**Load in the object to your session and overwrite the existing one**: 
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: load_data
+seurat_integrated <- readRDS("data/additional_data/seurat_integrated.rds")
+```
+
+## Python
+
+```{python}
+#| label: load_data_py
+adata_integrated = sc.read_h5ad("data/additional_data/adata_integrated.h5ad")
+```
+
+:::
+
+:::
+
+We will now continue with the 0.8 resolution to check the quality control metrics and known markers for the anticipated cell types.
+
+
+::: {.panel-tabset group="language"}
+## R
+
+In Seurat, each cell has a label which can be accessed using `Idents()`. These are the default labels used for each cell and are used internally by Seurat plotting functions.
+
+Common information set as the identity for cells include: clusters (as in our example dataset), celltype, sample, etc. You’ll notice that identities are automatically stored as factors, which means we can re-organize the levels at any point to change their order for plotting purposes.
+
+```{r}
+#| label: idents
+# Assign identity of clusters
+Idents(object = seurat_integrated) <- "integrated_snn_res.0.8"
+
+Idents(seurat_integrated) %>% head()
+```
+
+Plot the UMAP again to make sure your image now (or still) matches what you see in the lesson:
+
+```{r}
+#| label: fig-reassign_0.8_ident_and_DimPlot
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8 for the downloaded, processed data.
+# Plot the UMAP
+DimPlot(seurat_integrated,
+        reduction = "umap",
+        label = TRUE,
+        label.size = 6)
+```
+
+## Python
+
+Plot the UMAP again to make sure your image now (or still) matches what you see in the lesson:
+
+```{python}
+#| label: fig-reassign_0.8_ident_and_DimPlot_py
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8 for the downloaded, processed data.
+# Plot the UMAP
+sc.pl.embedding(adata_integrated, 
+                color="leiden_0.8", 
+                basis="umap_scvi",
+                legend_loc='on data',
+                legend_fontsize=14,
+                legend_fontoutline=3)
+```
+
+:::
 
 ***
 
-[Next Lesson >>](tmp.qmd)
+[Next Lesson >>](11_clustering_quality_control.qmd)
 
 [Back to Schedule](../schedule/schedule.qmd)
