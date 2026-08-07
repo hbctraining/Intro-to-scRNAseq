@@ -5,28 +5,27 @@ library(shinyjs)
 # Define User Interface
 
 User_Interface <- fluidPage(theme = shinytheme("cerulean"),
-                              titlePanel("Single-cell RNA-seq analysis Python Package Check"),
-                              
-                              fluidRow(
-                                # Sidebar
-                                column(
-                                  width = 4,
-                                  class = "col-xs-4",  # keep 4/12 width even on extra-small screens
-                                  h3("Paste your session_Info below"),
-                                  textAreaInput("session_info", NULL, width = "100%", height = "300px"),
-                                  actionButton("check", "Check my session_Info"),
-                                  actionButton("clear", "Clear Input")
-                                ),
-                                
-                                # Main panel (Missing Packages)
-                                column(
-                                  width = 8,
-                                  class = "col-xs-8",
-                                  h3("Missing Packages"),
-                                  tableOutput("missing_pkgs")
-                                )
-                              )
+                            useShinyjs(),
+                            navbarPage("HBC Training",
+                                       tabPanel("scRNA-seq",
+                                                tags$h1("Single-cell RNA-seq analysis Python Package Check"),
+                                                sidebarPanel( 
+                                                  width = 6,
+                                                  div(
+                                                    id = "side-panel",
+                                                    h3("Paste your session_info() below"),                        
+                                                    textAreaInput("session_info", "", height = 250)),
+                                                  actionButton("run", "Check my session_info()"), 
+                                                  actionButton("reset", "Clear Input")
+                                                ),
+                                                mainPanel(
+                                                  width = 6,
+                                                  h3("Missing Packages"),
+                                                  textOutput("txtout"),
+                                                )
+                                       )
                             )
+)
 
 Server <- function(input, output){
   session_info_check <- eventReactive(
@@ -42,8 +41,10 @@ Server <- function(input, output){
     pandas_logical <- any(grepl("pandas", session_info_check()))
     seaborn_logical <- any(grepl("seaborn", session_info_check()))
     sklearn_logical <- any(grepl("scikit-learn", session_info_check()))
+    skmisc_logical <- any(grepl("scikit-misc", session_info_check()))
     scanpy_logical <- any(grepl("scanpy", session_info_check()))
-    if ( all(matplotlib_logical, numpy_logical, pandas_logical, seaborn_logical, sklearn_logical, scanpy_logical)){
+    scvi_logical <- any(grepl("scvi-tools", session_info_check()))
+    if ( all(matplotlib_logical, numpy_logical, pandas_logical, seaborn_logical, sklearn_logical, skmisc_logical, scanpy_logical, scvi_logical)){
       print("You are not missing any packages and you are ready for the workshop! Please take a screenshot or picture of this message and e-mail it to hbctraining@hsph.harvard.edu.")
     } 
     else {
@@ -62,8 +63,14 @@ Server <- function(input, output){
       if ( sklearn_logical == FALSE){
         failed_packages <- c(failed_packages, "scikit-learn")
       }
+      if ( skmisc_logical == FALSE){
+        failed_packages <- c(failed_packages, "scikit-misc")
+      }
       if ( scanpy_logical == FALSE){
         failed_packages <- c(failed_packages, "scanpy")
+      }
+      if ( scvi_logical == FALSE){
+        failed_packages <- c(failed_packages, "scvi-tools")
       }
       failed_packages
     }
