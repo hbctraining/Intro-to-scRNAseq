@@ -12,45 +12,51 @@ execute:
 :----------|:----------|:----------|
 | Biologists | [Introduction to R](https://hbctraining.github.io/Intro-to-R-flipped/) / [Introduction to Python](https://hbctraining.github.io/Intro-to-Python/) | 3-session online workshop (~7.5 hours of trainer-led time)|
 
-### Description
+## Description
 
 This repository has teaching materials for a hands-on **Introduction to single-cell RNA-seq** workshop. This workshop will instruct participants on how to design a single-cell RNA-seq experiment, and how to efficiently manage and analyze the data starting from count matrices. This will be a hands-on workshop in which we will focus on using the Seurat package using R/RStudio or Scanpy using Python/JupyterLab. Working knowledge of R/Python is required or completion of the [Introduction to R workshop](https://hbctraining.github.io/Intro-to-R-flipped/)/[Introduction to Python workshop](https://hbctraining.github.io/Intro-to-Python/). 
 
-**Note for Trainers:** Please note that the schedule linked below assumes that learners will spend between 3-4 hours on reading through, and completing exercises from selected lessons between classes. The online component of the workshop focuses on more exercises and discussion/Q & A.
-
 ::: callout-note
+# Length of workshop
+Please note that the schedule linked below assumes that learners will spend between 3-4 hours on reading through, and completing exercises from selected lessons between classes. The online component of the workshop focuses on more exercises and discussion/Q & A.
+
 These materials were developed for a trainer-led workshop, but are also amenable to self-guided learning.
 :::
 
-### Learning Objectives
+## Learning Objectives
 
 - Describe best practices for designing a single-cell RNA-seq experiment
 - Describe steps in a single-cell RNA-seq analysis workflow
-- Use Seurat and associated tools to perform analysis of single-cell expression data, including data filtering, QC, integration, clustering, and marker identification
+- Use Seurat/Scanpy and associated tools to perform analysis of single-cell expression data, including:
+   - Data filtering, 
+   - QC
+   - Integration
+   - Clustering
+   - Marker identification
 - Understand practical considerations for performing scRNA-seq, rather than in-depth exploration of algorithm theory
 
 
-### Lessons
-* [Workshop schedule (trainer-led learning)](schedule/schedule.qmd)
-* [Self-learning](schedule/links-to-lessons.qmd)
+## Lessons
+- [Workshop schedule (trainer-led learning)](schedule/schedule.qmd)
+- [Self-learning](schedule/links-to-lessons.qmd)
 
-### Installation Requirements
+## Installation Requirements
 
 ::: {.panel-tabset group="language"}
 
-### R
+## R
 
-#### Applications
+### Applications
 
 Download the most recent versions of R and RStudio for your laptop:
 
  - [R](http://lib.stat.cmu.edu/R/CRAN/) **(version 4.0.0 or above)**
  - [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
 
-#### Packages
+### Packages
 
 ::: callout-note
-# Notes
+# R Installation notes
 
 **Note 1: Install the packages in the order listed below.**
 
@@ -64,7 +70,7 @@ Download the most recent versions of R and RStudio for your laptop:
 
 :::
 
-**(1)** Install the 10 packages listed below from **CRAN** using the `install.packages()` function. 
+**(1)** Install the packages listed below from **CRAN** and **Bioconductor**. 
 
 1. `tidyverse`
 2. `Matrix`
@@ -77,12 +83,18 @@ Download the most recent versions of R and RStudio for your laptop:
 9. `reshape2`
 10. `plyr`
 11. `devtools`
+12. `AnnotationHub`
+13. `ensembldb`
+14. `multtest`
+15. `glmGamPoi`
+
 
 **Please install them one-by-one as follows:**
 
 ```{r}
 #| label: install_cran
 #| eval: false
+# CRAN installation
 install.packages("tidyverse")
 install.packages("Matrix")
 install.packages("RCurl")
@@ -94,20 +106,8 @@ install.packages("metap")
 install.packages("reshape2")
 install.packages("plyr")
 install.packages("devtools")
-```
 
-**(2)** Install the 4 packages listed below from **Bioconductor** using the the `BiocManager::install()` function.
-
-1. `AnnotationHub`
-2. `ensembldb`
-3. `multtest`
-4. `glmGamPoi`
-
-**Please install them one-by-one as follows:**
-
-```{r}
-#| label: install_bioconductor
-#| eval: false
+# Bioconductor installation
 library(BiocManager)
 BiocManager::install("AnnotationHub")
 BiocManager::install("ensembldb")
@@ -115,16 +115,17 @@ BiocManager::install("multtest")
 BiocManager::install("glmGamPoi")
 ```
 
-**(3)** Install Presto from GitHub using the `devtools::install_github()` function:
+**(2)** Install Presto from GitHub using the `devtools::install_github()` function:
 
 ```{r}
-#| label: instal_github
+#| label: install_github
 #| eval: false
 library(devtools)
 devtools::install_github("immunogenomics/presto")
 ```
 
-:::{.callout-note}
+::: {.callout-warning collapse=true}
+# `cmath` error
 If you are on a Mac and getting errors about `fatal error: 'cmath' file not found` - Ensure that Xcode is installed. It can be downloaded from the App Store or via the command line with:
 
 ```{r}
@@ -136,9 +137,11 @@ xcode-select --install
 If you are getting errors about `ld: library 'emutls_w' not found” or “clang++: error: linker command failed with exit code 1` - You can try installing the appropriate gfortran compiler. More information on both of these steps can be found on the [R website](https://mac.r-project.org/tools/).
 :::
 
-**(4)** Finally, please check that all the packages were installed successfully by **loading them one at a time** using the `library()` function.  
+**(3)** Finally, please check that all the packages were installed successfully by **loading them one at a time** using the `library()` function.  
 
-```{r, eval=FALSE}
+```{r}
+#| label: load_libraries
+#| eval: false
 library(Seurat)
 library(tidyverse)
 library(Matrix)
@@ -157,9 +160,11 @@ library(glmGamPoi)
 library(presto)
 ```
 
-**(4)** Once all packages have been loaded, run sessionInfo().  
+**(4)** Once all packages have been loaded, run `sessionInfo()`.
 
 ```{r}
+#| label: sessionInfo
+#| eval: false
 sessionInfo()
 ```
 
@@ -173,33 +178,76 @@ You can copy and paste the output into the app below to ensure that all of the p
   ></iframe>
 </div>
 
-### Python
+## Python
 
-#### Applications
+### Applications
 
-Download the most recent version of Anaconda Navigator (Anaconda Distribution) for your laptop:
+Download the most recent version of Anaconda Navigator (Anaconda Distribution) for your laptop. **Do NOT install Miniconda:** [Anaconda Navigator](https://www.anaconda.com/download/success)
 
- - [Anaconda Navigator](https://www.anaconda.com/download/success)
 
 ::: callout-note
-If you are at MGH, you will need to download the Anaconda Navigator from a non-MGH network.
+# MGH download instructions
+If you are at MGH, you will need to download the Anaconda Navigator from a non-MGH network. This may require you to disconnect from your VPN or use a non-MGH affliated WiFi network.
 :::
 
-#### Check Channel Priority
+### Check Channel Priority
 
-Open Anaconda Navigator and from the toolbar at the top of the screen, select "python" and then "Preferences". Within the pop-up left-click the button for "Configure Conda". Ensure that the `channel_priority` is set to `channel_priority: disabled`. It may be set to `channel_priority: strict` as default. Then left-click "Save and Restart".
+1. Open Anaconda Navigator and from the toolbar at the top of the screen, select "python" and then "Preferences".
 
-#### Creating an Environment
+::: {#fig-sc-workflow .figure}
+![](img/conda_priority_settings.png){width=200}
+
+Open the Preferences menu from Anaconda Navigator.
+:::
+
+2. Within the pop-up left-click the button for "Configure Conda". 
+
+::: {#fig-sc-workflow .figure}
+![](img/conda_priority_preferences.png){width=500}
+
+Select "Configure Conda" to customize package installation settings.
+:::
+
+3. Ensure that the configuration file looks like so:
+
+::: {#fig-sc-workflow .figure}
+![](img/conda_priority_condaarc.png){width=630}
+
+Packing installation setting, emphasizing the addition of `channel_priority` changes.
+:::
+
+You can copy paste the following text into the console:
+
+```{python}
+#| label: channel_priority
+#| eval: false
+channels:
+  - bioconda
+  - conda-forge
+  - r
+  - defaults
+channel_priority: disabled
+```
+
+4. Then left-click "Save and Restart".
+
+### Creating an Environment
 
 Within Anaconda Navigator, select the **Environments** tab on the left-side. Then left-click the **Create** button to create a new environment. You will be prompted name your environment and select a version of Python. **Please name your environment "intro_scRNAseq" and select Python version 3.12.13 (likely not the default option).**
 
-::: callout-note
-You may run into installation issues with a more current version of Python, so please select Python version 3.12.13.
+::: callout-important
+# Python version 3.12.13
+You may run into installation issues with a more current version of Python, so **please select Python version 3.12.13**.
 :::
 
-#### Packages
+### Packages
 
-**(1)** Next, we will need to install the packages that we will use in the workshop. Search for and install the following packages by marking the checkbox next to the desired package and clicking "Apply" and then selecting "Apply" in the pop-up window:
+**(1)** Next, we will need to install the packages that we will use in the workshop. Search for and install the following packages (_install with the exact same names listed here_) by marking the checkbox next to the desired package and clicking "Apply" and then selecting "Apply" in the pop-up window:
+
+::: callout-note
+# View all available packages
+You may need to toggle the dropdown menu from "Installed" to "All" in order to view all packages available to you (installed or uninstalled).
+:::
 
 ```{r}
 #| label: package_Python
@@ -218,11 +266,9 @@ scikit-misc
 session-info2
 ```
 
-::: callout-note
-You may need to toggle the dropdown menu from "Installed" to "All" in order to view all packages available to you (installed or uninstalled).
-:::
 
 ::: callout-note
+# Dependencies
 Some packages may install dependency packages as well. For example, `scanpy` will likely install many dependency packages like `numpy`, `pandas`, `matplotlib`, `seaborn`, `scikit-learn` and `session-info2`.
 :::
 
@@ -246,6 +292,8 @@ from session_info2 import session_info
 session_info(dependencies=True)
 ```
 
+_The first time importing all these packages may take a little while._
+
 **(3)** Left-click on "Click to view session information", then copy and paste the output into the app below and left-click "Check my session_info" to ensure that all of the packages were installed correctly:
 
 <div style="width: 100%; max-width: 750px; margin: 0 auto;">
@@ -257,8 +305,6 @@ session_info(dependencies=True)
 </div>
 
 :::
-
-
 
 ---
 
