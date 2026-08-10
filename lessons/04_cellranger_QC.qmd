@@ -1,5 +1,5 @@
 ---
-title: "Quality Control of Cell Ranger Output"
+title: "Cell Ranger Quality Summaries"
 description: |
   This lesson introduces participants to evaluating the quality of Cell Ranger output for single-cell RNA‑seq experiments. Participants will learn how Cell Ranger processes data, how to interpret the generated QC reports and how to examine key metrics to assess sample quality. The lesson also guides participants through understanding the various output files produced by Cell Ranger and how these results inform the downstream single‑cell analysis.
 author:
@@ -60,7 +60,7 @@ The algorithm for the single-cell RNA-seq (scRNA) version of cellranger is descr
 ::: {#fig-cellranger-algorithm .figure}
 ![](../img/SC3pGEX-algo-diagram.png){width=350}
 
-Overview of the Cell Ranger gene expression workflow.
+Overview of the Cell Ranger gene expression workflow.<br>
 _Image credit: [10x](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-gex-algorithm)_
 :::
 
@@ -364,8 +364,8 @@ df %>% ggplot() +
 
 ```{python}
 #| label: load_metrics_data_py
-## Cellranger metrics evaluation (Python)
-
+# Cellranger metrics evaluation
+# Load packages
 import os
 import pandas as pd
 import numpy as np
@@ -377,34 +377,14 @@ samples = ["ctrl", "stim"]
 # Loop over each sample and read the metrics summary in
 metrics_list = []
 for sample in samples:
-    path_csv = f"data/{sample}_metrics_summary.csv"
+    path_csv = f"data/cellranger_outs/{sample}_metrics_summary.csv"
     df = pd.read_csv(path_csv)
-    # Add a sample column (analogous to df$sample <- sample)
+    # Add a sample column
     df["sample"] = sample
-    # Optional: set row index to sample name
-    df.index = [sample] * len(df)
     metrics_list.append(df)
 
 # Concatenate each sample's metrics together
 metrics = pd.concat(metrics_list, axis=0, ignore_index=False)
-
-# Remove commas and percentages to make the values numeric where possible
-def clean_numeric_columns(df):
-    out = df.copy()
-    for col in out.columns:
-        if out[col].dtype == "object":
-            # Remove commas and percent signs
-            cleaned = (
-                out[col]
-                .astype(str)
-                .str.replace(",", "", regex=False)
-                .str.replace("%", "", regex=False)
-            )
-            # Try converting to numeric; if fails, keep as strings
-            out[col] = pd.to_numeric(cleaned, errors="ignore")
-    return out
-
-metrics = clean_numeric_columns(metrics)
 ```
 
 The information available in this file include: 
@@ -415,7 +395,7 @@ The information available in this file include:
 metrics.columns
 ```
 
-With all of this information available as a dataframe, we can use ggplot to visualize these values. As an example of how this information can be used, we can display what percentage of reads map to the various parts of the genome (Intergentic, Intronic, and Exonic).
+With all of this information available as a dataframe, we can use pandas to visualize these values. As an example of how this information can be used, we can display what percentage of reads map to the various parts of the genome (Intergentic, Intronic, and Exonic).
 
 ```{python}
 #| label: fig-mapping_reads_to_regions_plot_py
@@ -430,24 +410,25 @@ cols = [
     "sample",
 ]
 
-# Subset and reshape to a "tidy" dataframe (long format)
+# Grab columns of interest
 df = metrics[cols].copy()
 
+# Melt dataframe
 df_long = df.melt(
     id_vars="sample",
     var_name="variable",
     value_name="value"
 )
 
-# Clean up the variable names to match the R version
+# Only keep genomic region name
 df_long["variable"] = (
     df_long["variable"]
-    .str.replace("Reads.Mapped.Confidently.to.", "", regex=False)
-    .str.replace(".Regions", "", regex=False)
+    .str.replace("Reads Mapped Confidently to ", "", regex=False)
+    .str.replace("Regions", "", regex=False)
 )
 
-# Ensure the values are numeric (in case they were still strings)
-df_long["value"] = pd.to_numeric(df_long["value"], errors="coerce")
+# Remove "%" from percentage column
+df_long["value"] = df_long["value"].str.rstrip("%").astype(float)
 
 # Pivot for stacked horizontal bar plot
 df_pivot = df_long.pivot(index="sample", columns="variable", values="value")
