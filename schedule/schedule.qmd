@@ -110,7 +110,7 @@ There are no exercises from this lesson, but please add any questions to [this G
 | Time |  Topic  | Instructor |
 |:-----------:|:----------:|:--------:|
 | 09:30 - 10:00 | Self-learning lessons discussion | Noor |
-| 10:00 - 11:00 | [Clustering](../lessons/10_clustering_cells_SCT.qmd) | Elizabeth |
+| 10:00 - 11:00 | [Clustering](../lessons/10_clustering.qmd) | Elizabeth |
 | 11:00 - 11:05 | Break |
 | 11:05 - 12:00 | [Clustering quality control](../lessons/11_clustering_quality_control.qmd) | Will |
 

@@ -59,7 +59,7 @@ website:
           
       - section: "Day 3:"
         contents:
-          - lessons/10_clustering_cells_SCT.qmd
+          - lessons/10_clustering.qmd
           - lessons/11_clustering_quality_control.qmd
       - section: "Day 3 Self-learning"
         contents:

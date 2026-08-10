@@ -34,9 +34,10 @@ editor_options:
 #| label: load_libraries_data_R
 #| echo: false
 # Load libraries and data
-# Load libraries
 library(Seurat)
 library(tidyverse)
+library(dplyr)
+library(cowplot)
 
 # Load data
 # seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
@@ -108,6 +109,7 @@ Create a new script titled `clustering.R`.
 # Load libraries
 library(Seurat)
 library(tidyverse)
+library(dplyr)
 
 # Load data
 seurat_integrated <- readRDS("data/seurat_integrated.rds")
@@ -131,6 +133,8 @@ Create a new notebook titled `clustering.ipynb`
 # Load libraries
 import scanpy as sc
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Load data
 adata_integrated = sc.read_h5ad("data/adata_integrated.h5ad")
@@ -612,7 +616,6 @@ sc.pl.embedding(adata_integrated,
 :::{.callout-tip}
 # [**Exercise 1**](tmp-Answer_key.qmd#exercise-1)
 1. What differences do you notice between resolution `0.4` and `0.8`?
-
 :::
 
 
@@ -694,6 +697,11 @@ sc.pl.embedding(adata_integrated,
                 legend_fontoutline=3)
 ```
 
+:::
+
+:::{.callout-tip}
+# [**Exercise 2**](tmp-Answer_key.qmd#exercise-2)
+2. check the object clusters with different resolution (0.4, 0.6, 0.8, 1.0, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe.
 :::
 
 ***
