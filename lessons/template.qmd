@@ -57,7 +57,12 @@ When doing XYZ...
 ::: {.panel-tabset group="language"}
 ## R
 
+
 ## Python
+
+```{python}
+
+```
 
 :::
 
