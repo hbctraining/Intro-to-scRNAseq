@@ -1,7 +1,7 @@
 ---
 title: "Generation of the Count Matrix"
 description: |
-    This lesson explains how raw single-cell RNA-seq sequencing data are processed into a cell-by-gene count matrix. This includes descriptions of how UMIs are used to identify PCR duplicates and the overall structure of reads to quantify gene expression per cell. The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix.
+    This lesson explains how raw single-cell RNA-seq sequencing data is processed into a cell-by-gene count matrix. This includes descriptions of how UMIs are used to identify PCR duplicates and the overall structure of reads to quantify gene expression per cell. The lesson then outlines the standard preprocessing workflow: formatting reads and filtering noisy barcodes, demultiplexing samples, mapping or pseudo-mapping to the transcriptome, collapsing UMIs and quantifying reads to produce the count matrix.
 author:
   - Mary Piper
   - Meeta Mistry
@@ -54,7 +54,7 @@ In this lesson, we will:
 
 ## Library preparation
 
-Depending on the library preparation method used, the RNA sequences (also referred to as reads or tags), will be derived either from the 3' ends (or 5' ends) of the transcripts (10X Genomics, CEL-seq2, Drop-seq, inDrops) or from full-length transcripts (Smart-seq). 
+Depending on the library preparation method used, the RNA sequences (also referred to as reads or tags) will be derived either from the 3' ends (or 5' ends) of the transcripts (10X Genomics, CEL-seq2, Drop-seq, inDrops) or from full-length transcripts (Smart-seq). 
 
 ::: {#fig-sc_library .figure}
 ![](../img/sc_library_overviews.png){width=800}
@@ -63,19 +63,19 @@ Schematic of different library preparation methods for single-cell RNA-sequencin
 _Image credit:_ [Papalexi et al. (2018)](https://doi.org/10.1038/nri.2017.76)
 :::
 
-The choice of method involves the biological question of interest. The following advantages are listed below for the methods:
+The choice of method depends on the biological question of interest. The following advantages are listed for each approach:
 
 - **3' (or 5')-end sequencing:** 
 	- More accurate quantification through the use of unique molecular identifiers distinguishing biological duplicates from amplification (PCR) duplicates
 	- Larger number of cells sequenced allows better identity of cell type populations
 	- Cheaper per cell cost
-	- Best results with > 10,000 cells
+	- Best results for experiments with > 10,000 cells
 
 - **Full length sequencing:**
 	- Detection of isoform-level differences in expression
 	- Identification of allele-specific differences in expression
 	- Deeper sequencing of a smaller number of cells 
-	- Best for samples with low number of cells
+	- Best for samples with few cells
 
 Many of the same analysis steps need to occur for 3'-end sequencing as for full-length, but 3' protocols have been increasing in popularity and consist of a few more steps in the analysis. Therefore, our materials are going to detail the analysis of data from these 3' protocols with a focus on the droplet-based methods (inDrops, Drop-seq, 10X Genomics).
 
@@ -86,8 +86,8 @@ For the analysis of scRNA-seq data, it is helpful to understand **what informati
 For the 3'-end sequencing methods, reads originating from different molecules of the same transcript would have originated only from the 3' end of the transcripts, so would have a high likelihood of having the same sequence. However, the PCR step during library preparation could also generate read duplicates. To determine whether a read is a biological or technical duplicate, these methods use unique molecular identifiers, or UMIs. 
 
 - Reads with **different UMIs** mapping to the same transcript were derived from **different molecules** and are biological duplicates - each read should be counted.
-- Reads with the **same UMI** originated from the **same molecule** and are technical duplicates - the UMIs should be collapsed to be counted as a single read.
-- In image below, the reads for ACTB should be collapsed and counted as a single read, while the reads for ARL1 should each be counted.
+- Reads with the **same UMI + cell barcode** and map to the same gene originated from the **same molecule**. These are technical duplicates (PCR duplicates) and should be collapse and counted as a single read.
+- In the image below, the reads for ACTB should be collapsed and counted as a single read, while the reads for ARL1 should each be counted.
 
 ::: {#fig-sc_umis .figure}
 ![](../img/umis.png){width=600}
@@ -127,7 +127,7 @@ _Image credit:_ [Luecken et al. (2019)](https://doi.org/10.15252/msb.20188746)
 
 The steps of the workflow are:
 
-- **Generation of the count matrix (method-specific steps):** formating reads, demultiplexing samples, mapping and quantification
+- **Generation of the count matrix (method-specific steps):** formatting reads, demultiplexing samples, mapping and quantification
 - **Quality control of the raw counts:** filtering of poor quality cells 
 - **Clustering of filtered counts:** clustering cells based on similarities in transcriptional activity (cell types = different clusters)
 - **Marker identification and cluster annotation:** identifying gene markers for each cluster and annotating known cell type clusters
@@ -156,7 +156,7 @@ The generation of the count matrix from the raw sequencing data will go through 
 
 ### Standard steps
 
-::: {#fig-sc_umis .figure}
+::: {#fig-sc_count_gen_schematic .figure}
 ![](../img/sc_pre-QC_workflow_updated.png){width=800}
 
 Overview of count generation steps.
@@ -186,13 +186,13 @@ These excess barcodes need to be filtered out of the sequence data prior to read
 ```{bash}
 #| label: fastq_format
 #| eval: false
-    @HWI-ST808:130:H0B8YADXX:1:1101:2088:2222:CELL_GGTCCA:UMI_CCCT
-    AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN
-    +
-    @@@DDBD>=AFCF+<CAFHDECII:DGGGHGIGGIIIEHGIIIGIIDHII#
+@HWI-ST808:130:H0B8YADXX:1:1101:2088:2222:CELL_GGTCCA:UMI_CCCT
+AGGAAGATGGAGGAGAGAAGGCGGTGAAAGAGACCTGTAAAAAGCCACCGN
++
+@@@DDBD>=AFCF+<CAFHDECII:DGGGHGIGGIIIEHGIIIGIIDHII#
 ```
 
-Known cellular barcodes used in the library preparation method should be known, and unknown barcodes would be dropped, while allowing for an acceptable number of mismatches to the known cellular barcodes.
+The cellular barcodes are known values from the kit being used. Therefore, any read that does not match this whitelist after correction (allowing for acceptable mismatches due to sequencing mistakes) are removed.
 
 2. **Demultiplexing sample reads**
 
