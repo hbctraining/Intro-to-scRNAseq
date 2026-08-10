@@ -1,7 +1,7 @@
 ---
 title: "Loading Single-cell RNA-seq Data"
 description: |
-  In this lesson, participants learn how to load single‑cell RNA‑seq count data. The lesson introduces the structure of typical 10X Genomics output files, demonstrates how to import these files efficiently and shows how to generate objects for one or multiple samples. Participants also practice using loops to streamline data loading and explore the metadata. By the end, participants will be able to prepare their data for downstream quality control and analysis.
+  In this lesson, participants learn how to load single‑cell RNA‑seq count data. The lesson introduces the structure of typical 10X Genomics output files and how to import these files for multiple samples into R/Python. Participants explore the structure of the single-cell object. By the end, participants will be able to prepare their data for downstream quality control and analysis.
 author:
   - Mary Piper
   - Meeta Mistry
@@ -31,10 +31,14 @@ editor_options:
 #| label: load_libraries_data_R
 #| echo: false
 # Load libraries and data
-
+# Seurat v5.5.1 broke something in Read10X() for me
+# data.table::fread() does not work as intended anymore
+# Putting these options in allows the page to render
+data.table::setDTthreads(1)
+options(datatable.fread.datatable = FALSE)
 ```
 
-```{r}
+```{python}
 #| label: load_libraries_data_py
 #| echo: false
 # Load libraries and data
@@ -47,10 +51,9 @@ Approximate time: 90 minutes
 
 In this lesson, we will:
 
-- Setup the environment for a single-cell analysis.
-- Establish good data managements and metadata practices.
+- Set-up the environment for a single-cell analysis.
+- Establish good data management and metadata practices.
 - Demonstrate how to import data and set up a project for upcoming quality control analysis.
-
 
 ## Overview of lesson
 
@@ -64,9 +67,9 @@ Overview of the single-cell RNA-seq workflow.
 
 ## Exploring the example dataset
 
-For this workshop we will be working with a single-cell RNA-seq dataset which is part of a larger study from [Kang et al. (2017)](https://www.nature.com/articles/nbt.4042). In this paper, the authors present a computational algorithm that harnesses genetic variation (eQTL) to determine the genetic identity of each droplet containing a single cell (singlet) and identify droplets containing two cells from different individuals (doublets).
+For this workshop, we will be working with a single-cell RNA-seq dataset which is part of a larger study from [Kang et al. (2017)](https://www.nature.com/articles/nbt.4042). In this paper, the authors present a computational algorithm that harnesses genetic variation (eQTL) to determine the genetic identity of each droplet containing a single cell (singlet) and identify droplets containing two cells from different individuals (doublets).
 
-The data used to test their algorithm is comprised of pooled Peripheral Blood Mononuclear Cells (PBMCs) taken from eight lupus patients, split into control and interferon beta-treated (stimulated) conditions. 
+The data used to test their algorithm consists of pooled Peripheral Blood Mononuclear Cells (PBMCs) taken from eight lupus patients, split into control and interferon beta-treated (stimulated) conditions. 
 
 ::: {#fig-kang-2017 .figure}
 ![](../img/kangetal_image.png){width=700}
@@ -85,7 +88,7 @@ The count data for this dataset is also freely available from 10X Genomics and i
 
 ### Metadata
 
-In addition to the raw data, we also need to collect **information about the data**; this is known as **metadata**. There is often a temptation to just start exploring the data, but it is not very meaningful if we know nothing about the samples that this data originated from.
+In addition to the raw data, we also need to collect **information about the data**; this is known as **metadata**. There is often a temptation to just start exploring the data, but it is not very meaningful if we know nothing about the samples the data originated from.
 
 Some relevant experimental metadata for our dataset is provided below:
 
@@ -128,44 +131,43 @@ For this workshop, we will be working with the files and folders that have been 
 
 ::: callout-important
 # Download data
-If you haven't done this already, the project can be accessed using [this link](https://www.dropbox.com/scl/fi/uoro3sbex3tj1e6m61z16/single_cell_rnaseq.zip?rlkey=cfay7tqm3ta5qlh2gph7h2wko&dl=1).
+If you haven't done this already, the project can be accessed using [this link](https://www.dropbox.com/scl/fi/pnnlp0pyaqbrqbfyfoidu/scrna_python_r_update.zip?rlkey=gz03gsqvg0l74fsxnwalw86mm&dl=1).
 :::
 
-Once downloaded, you should see a file called `single_cell_rnaseq.zip` on your computer (likely, in your `Downloads` folder). 
+Once downloaded, you should see a file called `scrna_python_r_update.zip` on your computer (likely, in your `Downloads` folder). 
 
 1. Unzip this file. It will result in a folder of the same name. 
-2. **Move the folder to the location on your computer where you would like to perform the analysis.**
-3. Unzip the `single_cell_rnaseq` folder and open it.
+2. **Move the folder to the location on your computer where you would like to perform the analysis.** We typically recommend putting it in the `Desktop` folder.
+3. Unzip the `scrna_python_r_update` folder and open it.
 
 ::: {#fig-project-structure .figure}
 ![](../img/proj_screenshot.png){width=600}
 
-
-TODO: make this without the Rproj file
 Project directory structure for the `single_cell_rnaseq` workshop materials.
 :::
 
+The `data/` folder is already populated with the input files that will be used throughout the workshop.
+
 ::: callout-important
 # Note for Windows OS users
-When you open the project folder after unzipping, please check if you have a `data` folder with a sub folder also called `data`. If this is the case, please move all the files from the subfolder into the parent `data` folder.
+When you open the project folder after unzipping, please check if you have a `data` folder with a subfolder also called `data`. If this is the case, please move all the files from the subfolder into the parent `data` folder.
 :::
 
 ### Project organization
 
-One of the most important parts of research that involves large amounts of data, is how best to manage it. We tend to prioritize the analysis, but there are many other important aspects of **data management that are often overlooked** in the excitement to get a first look at new data. The [HMS Data Management Working Group](https://datamanagement.hms.harvard.edu/), discusses in-depth some things to consider beyond the data creation and analysis.
+One of the most important parts of research that involves large amounts of data is how best to manage it. We tend to prioritize the analysis, but there are many other important aspects of **data management that are often overlooked** in the excitement to get a first look at new data. The [HMS Data Management Working Group](https://datamanagement.hms.harvard.edu/), discusses in-depth some things to consider beyond the data creation and analysis.
 
 One important aspect of data management is organization. For each experiment you work on and analyze data for, it is considered best practice to get organized by creating **a planned storage space (directory structure)**. We will do that for our single-cell analysis. 
 
-Look inside your project space and you will find that a directory structure has been setup for you:
+Look inside your project space and you will find that a directory structure has been set-up for you:
 
 ```{r}
 #| label: data_structure
 #| eval: false
-single_cell_rnaseq/
+scrna_python_r_update/
 ├── data
 ├── figures
-├── results
-└── scripts 
+└── results
 ```
 
 ### New script and loading libraries
@@ -204,11 +206,54 @@ library(tidyverse)
 
 ## Python
 
-Open a new Jupyter Notebook.
+Open Anaconda Navigator and set the environment to the `intro_scRNAseq` environment that we installed all our packages into. Then hit the "Launch" button under Jupyter Lab to open the notebook interface.
 
-TODO: flush out instructions on opening Anaconda and creating a Jupyter Notebook
+::: {#fig-anaconda_nav .figure}
+![](../img/py_anaconda_nav.png){width=600}
 
-```{r}
+Anaconda Navigator, with conda environment and launch button for Jupyter Lab highlighted.
+:::
+
+In the File Explorer of Jupyter Lab, navigate to where you downloaded and unzipped the files in the previous step. In the screenshot here, you can see that we navigated to "Desktop" -> "scrna_python_r_update":
+
+::: {#fig-anaconda_file_explorer .figure}
+![](../img/anaconda_file_explorer.png){width=400}
+
+File explorer with Jupyter Lab, navigating to where the downloaded `scrna_python_r_update` folder is stored. 
+:::
+
+::: callout-note
+# The `single_cell_rnaseq.Rproj` file
+For the Python version of this workshop, we will **ignore** the `single_cell_rnaseq.Rproj` file. This is meant to be used with the R based workflow and is not applicable for the python instructions.
+:::
+
+Now that we are in the correct project directory, we can create a new Jupyter Lab notebook to begin programming.
+
+::: {#fig-anaconda_notebook .figure}
+![](../img/anaconda_new_notebook.png){width=400}
+
+Create a new "Notebook" from the "File" tab of Jupyter Lab.
+:::
+
+A pop-up will appear to `Select Kernel`. We are going to select the `intro_scRNA` kernel in order to use all the packages we installed previously.
+
+::: {#fig-anaconda_kernel .figure}
+![](../img/anaconda_kernel.png){width=400}
+
+Select the `intro_scRNA` kernel for the Jupyter Notebook.
+:::
+
+Rename the notebook to be `quality_control.ipynb`.
+
+::: {#fig-anaconda_rename .figure}
+![](../img/anaconda_rename.png){width=800}
+
+Rename the new `Untitled.ipynb` file to `quality_control.ipynb`.
+:::
+
+In the first cell, we are going to add some comments to indicate what this file is going to contain:
+
+```{python}
 #| label: script_metadata_py
 #| eval: false
 # Load 10x single-cell data
@@ -217,11 +262,7 @@ TODO: flush out instructions on opening Anaconda and creating a Jupyter Notebook
 # June 2026
 ```
 
-Save the file as `quality_control.ipynb`. Your working directory should look something like this:
-
-TODO: picture of jupyter notebook setup
-
-Now, we can import the necessary packages:
+Next, we can import the necessary packages:
 
 ```{python}
 #| label: load_libraries_py
@@ -233,6 +274,14 @@ import seaborn as sns
 import anndata
 import matplotlib.pyplot as plt
 ```
+
+Which should give a Jupyter Notebook that looks like this:
+
+::: {#fig-anaconda_notebook_setup .figure}
+![](../img/anaconda_notebook_setup.png){width=800}
+
+Final set-up of Jupyter Notebook for the scRNA-seq workshop.
+:::
 
 :::
 
@@ -246,10 +295,10 @@ After processing 10X data using its proprietary software Cell Ranger, you will h
 | BAM alignment files         | Files used for visualization of the mapped reads and for re-creation of FASTQ files, if needed                                                                                                                                  |
 | `filtered_feature_bc_matrix`| Folder containing all files needed to construct the count matrix using data filtered by Cell Ranger                                                                                                                             |
 | `raw_feature_bc_matrix`     | Folder containing all files needed to construct the count matrix using the raw unfiltered data                                                                                                                                  |
-While Cell Ranger performs filtering on the expression counts (see note below), we wish to perform our own QC and filtering because we want to account for the biology of our experiment/biological system. Given this **we are only interested in the `raw_feature_bc_matrix` folder** in the Cell Ranger output. 
+While Cell Ranger performs filtering on the expression counts (see note below), we wish to perform our own QC and filtering because we want to account for the biology of our experiment/biological system. Given this, **we are only interested in the `raw_feature_bc_matrix` folder** in the Cell Ranger output. 
 
 ::: {.callout-note collapse="true"}
-# Why do we not use the `filtered_feature_bc_matrix` folder?
+# Why don't we use the `filtered_feature_bc_matrix` folder?
 
 The `filtered_feature_bc_matrix` uses [internal filtering criteria by Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/algorithms/overview), and we do not have control of what cells to keep or abandon.
  
@@ -307,8 +356,8 @@ Loading this data requires us to **use functions that allow us to efficiently co
 
 Different methods for reading in data include:
 
-- Reading into the `matrix.mtx` file directly to manually create our single-cell object (AnnData or Seurat). This requires also reading in the `features.tsv` and `barcodes.tsv` as tables to supply the barcodes and gene names. For specific code and instructions on how to do this in _R_ please see [these additional material](Aside_readMM_loadData.qmd).
-- Many packages have built-in function to load a CellRanger directory as input directly. With this method individual files do not need to be loaded in, instead the function will load and combine them into a sparse matrix.
+- Reading into the `matrix.mtx` file directly to manually create our single-cell object (AnnData or Seurat). This requires also reading in the `features.tsv` and `barcodes.tsv` as tables to supply the barcodes and gene names. For specific code and instructions on how to do this in **R** please see [these additional material](Aside_readMM_loadData.qmd).
+- Many packages have built-in functions to load a CellRanger directory as input directly. With this method individual files do not need to be loaded in, instead the function will load and combine them into a sparse matrix.
   - **`Read10X()`** for Seurat
   - **`read_10x_mtx()`** for scanpy
 
@@ -350,29 +399,44 @@ head(ctrl@meta.data)
 
 ```{r}
 #| label: tbl-ctrl_metadata_r
-#| tbl-cap: First several rows of a the `ctr@meta.data`
+#| tbl-cap: First several rows of a the `ctrl@meta.data`
 #| echo: false
 ctrl@meta.data %>% head() %>% knitr::kable()
 ```
 
 ## Python
 
-TODO: introduction to the AnnData object
+[Scanpy](https://scanpy.scverse.org/en/stable/) is the Python package that we will be using. It is built upon an `AnnData` object, which is a data structure that can efficiently store our single-cell information. It has has slots that are meant to contain very specific pieces of information, shown here:
 
-With a single sample, we can generate an AnnData object:
+::: {#fig-anndata .figure}
+![](../img/anndata.svg){width=600}
+
+Schematic of the AnnData object with main components `.X` counts matrix, `.obs` metadata dataframe, and `.var` gene dataframe.<br>
+_Image source:_ [Scanpy Usage Principles](https://scanpy.scverse.org/en/stable/usage-principles.html)
+:::
+
+The 3 main slots in the scanpy object correspond with the 3 files used as input:
+
+- `.X` is the counts matrix (`matrix.mtx`)
+- `.obs` is the metadata for each cell (`barcodes.tsv`)
+- `.var` is the metadata for each gene (`features.tsv`)
+
+So let us start by loading in one of our samples, starting with the `ctrl` condition:
 
 ```{python}
 #| label: read_in_single_dataset_py
+# Create scanpy object from ctrl sample
 ctrl = sc.read_10x_mtx("data/ctrl_raw_feature_bc_matrix/")
 ctrl
 ```
 
-We can see from this callout that we have 737,280 cells and 33,538 genes which is clearly too many cells! So we can do some very low level filtration to remove any cells that we know are "empty". 
+We can see from this callout that we have 737,280 cells (`n_obs`) and 33,538 genes (`n_vars`) which is clearly **too many cells**! So we can do some very low level filtration to remove any cells that we know are "empty". 
 
 The `pp.filter_cells()` function specifies the minimum number of genes that need to be detected per cell. This argument will filter out poor quality cells that likely just have random barcodes encapsulated without any cell present. Usually, cells with less than 100 genes detected are not considered for analysis.
 
 ```{python}
 #| label: filter_cells_py
+# Filter cells with less than 100 genes expressed
 sc.pp.filter_cells(ctrl, min_genes = 100)
 ctrl
 ```
@@ -384,6 +448,7 @@ At this point we do not have any information stored in our metadata, which is st
 ```{python}
 #| label: calc_qc_metrics_py
 #| eval: false
+# Calculate QC metrics for each cell
 sc.pp.calculate_qc_metrics(ctrl,
                            percent_top = None,
                            log1p = False,
@@ -396,6 +461,7 @@ ctrl.obs.head()
 #| tbl-cap: First several rows of `ctrl.obs`
 #| echo: false
 #| results: asis
+# Calculate QC metrics for each cell
 sc.pp.calculate_qc_metrics(ctrl,
                            percent_top = None,
                            log1p = False,
@@ -409,17 +475,17 @@ What do the columns of metadata mean?
 
 - Sample or identity:
     - In Seurat: stored in `orig.ident` (defaults to `"SeuratProject"` unless set).
-    - In scanpy/AnnData: can be stored in `obs["sample"]` or another column you define.
+    - In scanpy: can be stored in `obs["sample"]` or another column you define.
 - Number of UMIs per cell:
     - In Seurat: `nCount_RNA`
-    - In scanpy/AnnData: `total_counts`
+    - In scanpy: `total_counts`
 - Number of genes detected per cell:
     - In Seurat: `nFeature_RNA`
-    - In scanpy/AnnData: `n_genes`
+    - In scanpy: `n_genes`
 
 ## Reading in multiple samples with a `for loop`
 
-In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. So, to make the data import into more efficient we can use a `for` loop, which will iterate over a series of commands for each of the inputs given and create scanpy/seurat objects for each of our samples. 
+In practice, you will likely have several samples that you will need to read in data for, and that can get tedious and error-prone if you do it one at a time. To import the data more efficiently, we can use a `for` loop. So instead, we will iterate over a series of commands for each of the inputs (samples) given and create scanpy/seurat objects.
 
 ::: {.callout-note collapse="true"}
 # `for` loop syntax
@@ -432,9 +498,9 @@ In practice, you will likely have several samples that you will need to read in 
 #| eval: false
 ## DO NOT RUN
 for (variable in input){
-	command1
-	command2
-	command3
+  command1
+  command2
+  command3
 }
 ```
 
@@ -528,7 +594,7 @@ We can continue our `for loop` by adding a line to read in data with `Read10X()`
 
 ### Step 3: Create Seurat object from the 10X count data
 
-Now, we can create the Seurat object by using the `CreateSeuratObject()` nction, adding in the argument `project`, where we can add the sample name.
+Now, we can create the Seurat object by using the `CreateSeuratObject()` function, adding in the argument `project`, where we can add the sample name.
 
 ```{r}
 #| label: assign_data_to_object
@@ -539,9 +605,9 @@ Now, we can create the Seurat object by using the `CreateSeuratObject()` nction,
                                          project = sample)        
 ```
 
-### Step 4: Assign Seurat object to a new variable based on sample
+### Step 4: Assign Seurat object to the list
 
-The last command assignts the Seurat object created (`seurat_obj`) to the empty list that was initialized before the for loop. In this way, when we iterate and move on to the next sample in our `input` we will not overwrite the Seurat object created in the previous iteration:
+The last command assigns the Seurat object created (`seurat_obj`) to the empty list that was initialized before the for loop. In this way, when we iterate and move on to the next sample in our `input` we will not overwrite the Seurat object created in the previous iteration:
 
 ```{r}
 #| label: add_seurat_object_to_list
@@ -556,7 +622,7 @@ The last command assignts the Seurat object created (`seurat_obj`) to the empty 
 ## Python
 
 1. Generate list of sample names
-2. Read in the count data (`read_10x_mtx()`)
+2. Read in the count data (`sc.read_10x_mtx()`)
 3. Filter out the very low quality data
 4. Add the sample information to the metadata
 5. Store AnnData to a dictionary (for later merging)
@@ -565,38 +631,103 @@ Go ahead and copy and paste the code below into your script and then run it.
 
 ```{python}
 #| label: load_datasets_py
+# Create list of samples
 sample_names = ["ctrl", "stim"]
+# Initialize empty dictionary
 dict_ad = dict()
 
+# Loop over all the samples
 for sample in sample_names:
     # Get the path for each sample
     path_data = f"data/{sample}_raw_feature_bc_matrix"
     print(path_data)
 
-    # Load AnnData object
-    # Filter and add sample metadata
+    # Load scanpy object
     ad = sc.read_10x_mtx(path_data)
+    # Filter and add sample metadata
     sc.pp.filter_cells(ad, min_genes=100)
     ad.obs["sample"] = sample
 
+    # Store scanpy object in the dictionary
     dict_ad[sample] = ad
 ```
 
 
 ::: {.callout-note collapse=true}
 # Breaking down the `for` loop
-TODO: breakdown of loop for scanpy
-:::
+
+### Step 1: Specify inputs
+
+For this dataset, we have two samples and two associated folders that we would like to use as input to create the two scanpy objects:
+
+- `ctrl_raw_feature_bc_matrix` 
+- `stim_raw_feature_bc_matrix`
+
+We can specify these sample names in the *input* part for our `for loop` as elements of a list. We are assigning these to a *variable* and we can call that variable anything we would like (try to give it a name that makes sense). In this example, we called the *variable* `sample`. 
+
+During the execution of the above loop, `sample` will first contain the value *"ctrl"*, run through the commands all the way through to storing the scanpy object as a list. Next, it will contain the value *"stim"* and once again run through all the commands. If you had 15 folders as input, instead of 2, the above code will run through 15 times, for each of your data folders.
+
+```{python}
+#| label: for_path_data_py
+# DO NOT RUN
+## Loop over all the samples
+for sample in sample_names:
+    # Get the path for each sample
+    path_data = f"data/{sample}_raw_feature_bc_matrix"
+    print(path_data)
+```
+
+In our console, we saw that the `path_data` variable that was printed out twice corresponds with the location of where the sample input lives on our computer.
+
+### Step 2: Read in data for the input
+
+We can continue our `for loop` by adding a line to read in data with `sc.read_10x_mtx`:
+
+```{python}
+#| label: for_read_in_scanpy
+#| eval: false
+## DO NOT RUN
+    # Load scanpy object
+    ad = sc.read_10x_mtx(path_data)
+```
+
+### Step 3: Filter cells and add `sample` column
+
+We want to remove those low-quality cells (fewer than 100 genes expressed) and add a `sample` column to the metadata. Doing so will ensure that we can keep track of which cells originates from which sample.
+
+```{python}
+#| label: for_filter_sample
+#| eval: false
+## DO NOT RUN
+    # Filter and add sample metadata
+    sc.pp.filter_cells(ad, min_genes=100)
+    ad.obs["sample"] = sample
+```
+
+### Step 4: Assign scanpy object to the dictionary
+
+The last command assignts the scanpy object created (`ad`) to the empty dictionary that was initialized before the for loop. In this way, when we iterate and move on to the next sample in our `input` we will not overwrite the scanpy object created in the previous iteration:
+
+```{python}
+#| label: for_dict
+#| eval: false
+## DO NOT RUN
+    # Store scanpy object in the dictionary
+    dict_ad[sample] = ad
+```
 
 :::
 
-Now that we have created two objects for each of the samples, let's take a quick look at the list. We should see that there are two Seurat/scanpy objects in our list that correspond to each sample.
+:::
+
+Now that we have created two objects for each of the samples, let's take a quick look at the list. We should see that there are two single-cell objects in our list that correspond to each sample.
 
 ::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
 #| label: list_seurat_objects
+# List that contains ctrl and stim seurat objects
 list_seurat
 ```
 
@@ -604,6 +735,7 @@ list_seurat
 
 ```{python}
 #| label: show_dict_anndata_py
+# Dictionary that contains ctrl and stim scanpy objects
 dict_ad
 ```
 
@@ -619,8 +751,8 @@ We can use the `merge()` function from the Seurat package to do this. Here, we a
 ```{r}
 #| label: merge_seurat_objects
 # Create a merged Seurat object
-merged_seurat <- merge(x = list_seurat[["ctrl"]], 
-                       y = list_seurat[["stim"]], 
+merged_seurat <- merge(x = list_seurat[["ctrl"]],
+                       y = list_seurat[["stim"]],
                        add.cell.id = c("ctrl", "stim"))
 
 merged_seurat
@@ -628,23 +760,24 @@ merged_seurat
 
 ::: {.callout-note collapse="true"}
 # What if I am merging more than two samples?
-Seurat now has functionality to merge many samples together. You can do this quite easily by adding all sample objects to the `y` argument in a vector format. An example is provided below: 
+Seurat has the functionality to merge many samples together. You can do this quite easily by adding all sample objects to the `y` argument in a vector format. An example is provided below: 
 
 ```{r}
 #| label: merging_multiple_objects
 #| eval: false
 ## DO NOT RUN
- merged_seurat <- merge(x = seurat_list[[1]], 
-                        y = seurat_list[[2:length(seurat_list)]],
+ merged_seurat <- merge(x = seurat_list[[1]],
+                        y = seurat_list[2:length(seurat_list)],
                         add.cell.id = names(seurat_list))
 ```
+
 :::
 
 However you may notice that when we look at our seurat object that we have 2 `layers` (count matrices) when it says:
 
 `2 layers present: counts.ctrl, counts.stim`
 
-This indicates that the matrices for each sample are being stored separately. Instead, we want to concatenate these together so that in the future when we run normalization, it is run on the entire dataset collectively. So to create one `counts` matrix, that is not sample/batch specific, we run the `JoinLayers()` function.
+This indicates that the matrices for each sample are being stored separately. Instead, we want to concatenate these together so that in the future when we run normalization, it is run on the entire dataset collectively. So, to create one `counts` matrix, that is not sample/batch specific, we run the `JoinLayers()` function.
 
 ```{r}
 #| label: JoinLayers
@@ -667,7 +800,9 @@ head(merged_seurat@meta.data)
 #| label: tbl-merged_seurat_metadata_head
 #| tbl-cap: First several rows of a the `merged_seurat@meta.data`
 #| echo: false
-merged_seurat@meta.data %>% head() %>% knitr::kable()
+merged_seurat@meta.data %>% 
+  head() %>% 
+  knitr::kable()
 ```
 
 ```{r}
@@ -681,30 +816,33 @@ tail(merged_seurat@meta.data)
 #| label: tbl-merged_seurat_metadata_tail
 #| tbl-cap: Last several rows of a the `merged_seurat@meta.data`
 #| echo: false
-merged_seurat@meta.data %>% tail() %>% knitr::kable()
+merged_seurat@meta.data %>% 
+  tail() %>% 
+  knitr::kable()
 ```
 
 ## Python
 
-TODO: more description of concat function
+We can use the `anndata.concat()` function to join both samples together. We specify that that we want the `.values()` of our dictionary - the actual scanpy object as the input for concatenating. Additionally, we want specify several arguments to ensure the merge is done correctly with:
 
-We can use the `concatenate()` function to do this. We also specify several arguments to ensure the merge is done correctly with:
+| Argument      | Value        | Description                                                                                                                     |
+|---------------|-------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `join`        | `"outer"`   | Keep the union of all genes across Scanpy objects; genes missing from a sample get filled with 0/`NaN`s.                        |
+| `label`       | `"sample"`  | Create a new column in `.obs` called `"sample"` that records which input object each cell came from.                           |
+| `keys`        | `sample_names` | Values to put in the `"sample"` column, in the same order as the `sample_names` list.                                         |
+| `index_unique`| `"_"`       | If cell IDs are duplicated across samples, make them unique by appending `_{sample}` (e.g., `cell1_ctrl`, `cell1_stim`).       |
 
-- join
-- batch_key
-- batch_categories
-- index_unique
+
+Which we then store to a new variable named `merged_adata` that contains both `ctrl` and `stim` in one scanpy object.
 
 ```{python}
 #| label: concatenate_datasets_py
 # Pooling together the samples
-merged_adata = anndata.concat(
-    list(dict_ad.values()),
-    join="outer",
-    label="sample",
-    keys=sample_names,
-    index_unique="_"
-)
+merged_adata = anndata.concat(list(dict_ad.values()),
+                              join = "outer",
+                              label = "sample",
+                              keys = sample_names,
+                              index_unique = "_")
 
 merged_adata
 ```
@@ -736,6 +874,8 @@ print(merged_adata.obs.tail().to_markdown())
 ```
 
 :::
+
+Ultimately, we now have a merged object that contains all the cells from both `ctrl` and `stim`, as seen by looking at the first and last several cells. This means that we are all set to go for the next step, which is assessing the quality of our samples.
 
 ```{python}
 #| label: py_intructor_save
