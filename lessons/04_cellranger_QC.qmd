@@ -303,7 +303,7 @@ samples <- c("ctrl", "stim")
 # Loop over each sample and read the metrics summary in
 metrics <- list()
 for (sample in samples) {
-    path_csv <- paste0("data/", sample, "_metrics_summary.csv")
+    path_csv <- paste0("data/cellranger_outs/", sample, "_metrics_summary.csv")
     df <- read.csv(path_csv)
     rownames(df) <- sample
     df$sample <- sample

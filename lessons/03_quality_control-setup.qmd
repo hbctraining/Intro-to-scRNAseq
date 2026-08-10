@@ -230,6 +230,7 @@ Now, we can import the necessary packages:
 import scanpy as sc
 import numpy as np
 import seaborn as sns
+import anndata
 import matplotlib.pyplot as plt
 ```
 
@@ -697,12 +698,12 @@ We can use the `concatenate()` function to do this. We also specify several argu
 ```{python}
 #| label: concatenate_datasets_py
 # Pooling together the samples
-merged_adata = sc.AnnData.concatenate(
-    *list(dict_ad.values()), # the asterisk unpacks the list
-    join = 'outer', 
-    batch_key = 'sample', 
-    batch_categories = sample_names,
-    index_unique = '_'
+merged_adata = anndata.concat(
+    list(dict_ad.values()),
+    join="outer",
+    label="sample",
+    keys=sample_names,
+    index_unique="_"
 )
 
 merged_adata

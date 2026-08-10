@@ -1,7 +1,7 @@
 ---
 title: "Project set-up"
 description: |
-  This lesson introduces participants to the steps of setting up a single-cell RNA‑seq project in R. Participants will learn how to organize project files, understand the structure and source of the example dataset and apply good data management practices. The lesson also provides context on scRNA‑seq concepts, metadata and expected cell types to prepare participants for quality control and subsequent analytic steps.
+  This lesson introduces participants to the steps of setting up a single-cell RNA‑seq project. Participants will learn when to consider using scRNA-seq as well as the challenges that scRNA-seq provide. 
 author:
   - Mary Piper
   - Meeta Mistry
@@ -12,13 +12,13 @@ author:
   - Noor Sohail
 date: "2025-05-30"
 categories: 
-  - R Programming
+  - R
+  - Python
   - Single-cell RNA-seq
   - Data Management
 keywords:
-  - R
-  - project organization
-  - PBMC
+  - Experimental design
+  - Batch effects
 license: "CC-BY-4.0"
 editor_options: 
   markdown: 
