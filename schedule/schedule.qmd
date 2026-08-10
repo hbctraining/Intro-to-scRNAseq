@@ -4,9 +4,8 @@ sidebar: false
 toc: false
 execute: 
   eval: false
+page-layout: full
 ---
-
-# Schedule
 
 ## Pre-reading
 
