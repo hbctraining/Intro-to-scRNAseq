@@ -30,7 +30,8 @@ editor_options:
 #| echo: false
 # Load libraries
 library(Seurat)
-load("data/seurat_filtered.RData")
+# load("data/seurat_filtered.RData")
+filtered_seurat <- readRDS("intermediate/05_filtered_seurat.RDS")
 ```
 
 Approximate time: 45 minutes
