@@ -1,11 +1,12 @@
 ---
-title: Schedule - Introduction to Single-cell RNA-seq
 sidebar: false
 toc: false
 execute: 
   eval: false
-page-layout: full
+page-layout: custom
 ---
+
+# Schedule - Introduction to Single-cell RNA-seq
 
 ## Pre-reading
 

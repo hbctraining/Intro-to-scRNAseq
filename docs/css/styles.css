@@ -384,3 +384,14 @@ figure.quarto-float-tbl > div[aria-describedby] > table {
 .panel-tabset > .nav-tabs .nav-item {
   margin-bottom: 0.25rem; /* adds a bit more separation */
 }
+
+/* =========================
+   CUSTOM PAGE WIDTH
+   ========================= */
+
+.quarto-container.page-layout-custom {
+  max-width: 1000px !important;   /* pick your in‑between width */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 100%;                   /* let it shrink below max-width */
+}

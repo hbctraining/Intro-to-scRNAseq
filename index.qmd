@@ -3,7 +3,10 @@ sidebar: false
 toc: false
 execute: 
   eval: false
-page-layout: full
+format:
+  html:
+    page-layout: custom
+    css: styles.css
 ---
 
 
@@ -16,13 +19,6 @@ page-layout: full
 ## Description
 
 This repository has teaching materials for a hands-on **Introduction to single-cell RNA-seq** workshop. This workshop will instruct participants on how to design a single-cell RNA-seq experiment, and how to efficiently manage and analyze the data starting from count matrices. This will be a hands-on workshop in which we will focus on using the Seurat package using R/RStudio or Scanpy using Python/JupyterLab. Working knowledge of R/Python is required or completion of the [Introduction to R workshop](https://hbctraining.github.io/Intro-to-R-flipped/)/[Introduction to Python workshop](https://hbctraining.github.io/Intro-to-Python/). 
-
-::: callout-note
-# Length of workshop
-Please note that the schedule linked below assumes that learners will spend between 3-4 hours on reading through, and completing exercises from selected lessons between classes. The online component of the workshop focuses on more exercises and discussion/Q & A.
-
-These materials were developed for a trainer-led workshop, but are also amenable to self-guided learning.
-:::
 
 ## Learning Objectives
 
@@ -40,6 +36,13 @@ These materials were developed for a trainer-led workshop, but are also amenable
 ## Lessons
 - [Workshop schedule (trainer-led learning)](schedule/schedule.qmd)
 - [Self-learning](schedule/links-to-lessons.qmd)
+
+::: callout-note
+# Length of workshop
+Please note that the schedule linked below assumes that learners will spend between 3-4 hours on reading through, and completing exercises from selected lessons between classes. The online component of the workshop focuses on more exercises and discussion/Q & A.
+
+These materials were developed for a trainer-led workshop, but are also amenable to self-guided learning.
+:::
 
 ## Installation Requirements
 

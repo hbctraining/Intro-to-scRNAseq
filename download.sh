@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the URL and destination file name
-URL="https://www.dropbox.com/scl/fi/uoro3sbex3tj1e6m61z16/single_cell_rnaseq.zip?rlkey=cfay7tqm3ta5qlh2gph7h2wko&dl=1"
+URL="https://www.dropbox.com/scl/fo/eijp37x4wp3bdplj31d4r/ABtEXRUMxeK39bC1tGzy2IM?rlkey=kv6sqa0vgvgddr7j4b4f9kmm7&st=o432wvs9&dl=0"
 ZIPFILE="single_cell_rnaseq.zip"
 
 # Download the file
