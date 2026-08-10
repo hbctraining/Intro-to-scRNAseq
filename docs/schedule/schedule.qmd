@@ -12,7 +12,7 @@ execute:
 
 1. [Introduction to scRNA-seq](../lessons/01_intro_to_scRNA-seq.qmd)
 2. [Raw data to count matrix](../lessons/02_generation_of_count_matrix.qmd)
-3. [Download this project](https://www.dropbox.com/scl/fi/uoro3sbex3tj1e6m61z16/single_cell_rnaseq.zip?rlkey=cfay7tqm3ta5qlh2gph7h2wko&st=fcxgae45&dl=1)
+3. [Download this project](https://www.dropbox.com/scl/fi/pnnlp0pyaqbrqbfyfoidu/scrna_python_r_update.zip?rlkey=gz03gsqvg0l74fsxnwalw86mm&dl=1)
 
 ## Day 1
 
@@ -74,18 +74,18 @@ II. **Submit your work**:
 | 09:30 - 10:00 | Self-learning lessons discussion | All |
 | 10:00 - 10:45 | [Quality control with additional metrics](../lessons/05_quality_control.qmd) | Will |
 | 10:45 - 10:50 | Break |
-| 10:50 - 11:40 | [Normalization and regressing out unwanted variation](../lessons/07_SCT_normalization.qmd) | Noor |
-| 11:40 - 12:00| [A brief introduction to Integration](../lessons/08_integration_cca_theory.qmd) | Will |
+| 10:50 - 11:40 | [Normalization and regressing out unwanted variation](../lessons/07_normalization.qmd) | Noor |
+| 11:40 - 12:00| [A brief introduction to integration](../lessons/08_integration_theory.qmd) | Will |
 
 
 ### Before the next class:
 
 I. Please **study the contents** and **work through all the code** within the following lesson:
 
-**1. [Running CCA integration and complex integration tasks](../lessons/09_integration_code_harmony.qmd)**
+**1. [Running integration and complex integration tasks](../lessons/09_integration_code_harmony.qmd)**
    
 :::{.callout-note collapse="true"}
-# Running CCA integration and complex integration tasks - Preview
+# Running integration and complex integration tasks - Preview
 
 In class, we described the theory of integration and in what situations we would implement it.
    

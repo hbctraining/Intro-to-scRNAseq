@@ -16,6 +16,7 @@ categories:
   - Data Science 
 keywords:
   - R
+  - Python
   - PCA
   - covariance matrix
   - eigenvalues
@@ -28,7 +29,7 @@ editor_options:
 ---
 
 ```{r}
-#| label: load_libraries
+#| label: load_libraries_R
 #| echo: false
 library(tidyverse)
 # Create a vector for Cell IDs
@@ -42,37 +43,94 @@ Gene_B <- c(4, 30, 57, 18)
 expression_tibble <- tibble(cells, Gene_A, Gene_B)
 ```
 
+```{python}
+#| label: load_libraries_Python
+#| echo: false
+# Import libraries
+import numpy as np
+import pandas as pd
+from sklearn.decomposition import PCA
+
+# Create a list for Cell IDs
+cells = ["Cell_1", "Cell_2", "Cell_3", "Cell_4"]
+# Create a list to hold expression values for Gene A across all of the cells
+Gene_A = [0, 12, 65, 23]
+# Create a list to hold expression values for Gene B across all of the cells
+Gene_B = [4, 30, 57, 18]
+
+# Create a DataFrame to hold the cell names and expression values
+expression_df = pd.DataFrame({
+    "cells": cells,
+    "Gene_A": Gene_A,
+    "Gene_B": Gene_B
+}).set_index("cells") 
+```
+
 Approximate time: 45 minutes
 
-# Learning Objectives
+## Learning Objectives
 
 -   Derive the number of PCs for a PCA
 
-# Number of PCs
+## Number of PCs
 
-When doing a Principal Components Analysis (PCA), you will be reducing the dimensionality of your data into Principal Components (PCs). The maximum number of PCs, sometimes called rank of the PCA, for scRNA-seq analysis will at most either be the the number of genes or the number of cells, whichever is fewer. In other words, **the number of PCs ≤ minimum(number_of_genes, number_of_cells)**. In the sections below we will discuss the reasons for this. For this lesson we will need to load `tidyverse`.
+When doing a Principal Components Analysis (PCA), you will be reducing the dimensionality of your data into Principal Components (PCs). The maximum number of PCs, sometimes called rank of the PCA, for scRNA-seq analysis will at most either be the the number of genes or the number of cells, whichever is fewer. In other words, **the number of PCs ≤ minimum(number_of_genes, number_of_cells)**. In the sections below we will discuss the reasons for this. For this lesson we will need to load the following:
+
+::: {.panel-tabset group="language"}
+
+### R
 
 ```{r}
-#| label: load_tidyverse
+#| label: load_tidyverse_R
 # Load tidyverse
 library(tidyverse)
 ```
 
-# Creation of the Covariance Matrix
+### Python
 
-Let's consider the `expression_tibble` that we created in the [Theory of
+```{python}
+#| label: import_libraries_Python
+# Import libraries
+import numpy as np
+import pandas as pd
+from sklearn.decomposition import PCA
+```
+
+:::
+
+## Creation of the Covariance Matrix
+
+Let's consider the expression data that we created in the [Theory of
 PCA](06_theory_of_PCA.qmd#Creating-an-example-data-set) lesson.
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: print_expression_tibble
+#| label: print_expression_tibble_R
 # Print the expression_tibble
 expression_tibble
 ```
 
+### Python
+
+```{python}
+#| label: print_expression_dataframe_Python
+# Print the expression_df
+print(expression_df)
+```
+
+:::
+
 Next, we re-centered the data using:
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: center_of_data
+#| label: center_of_data_R
 # Determine the center of the data by:
 # Finding the average expression of gene A
 Gene_A_mean <- mean(expression_tibble$Gene_A)
@@ -90,10 +148,36 @@ recentered_expression_tibble <- expression_tibble %>%
 recentered_expression_tibble
 ```
 
+### Python
+
+```{python}
+#| label: recentered_data_Python
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean = expression_df["Gene_A"].mean()
+# Finding the average expression of gene B
+Gene_B_mean = expression_df["Gene_B"].mean()
+
+# Shift the data so it is centered on the origin
+recentered_expression_df = expression_df.assign(
+    Gene_A = expression_df["Gene_A"] - Gene_A_mean,
+    Gene_B = expression_df["Gene_B"] - Gene_B_mean,
+)
+
+# Print out the re-centered data
+print(recentered_expression_df)
+```
+
+:::
+
 We followed this up by creating a gene-wise covariance matrix:
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: create_gene_covariance_matrix
+#| label: create_gene_covariance_matrix_R
 # Move the cell IDs to the rownames and convert the tibble to a matrix
 recentered_expression_matrix <- recentered_expression_tibble %>% 
   column_to_rownames("cells") %>% 
@@ -106,15 +190,44 @@ cov_matrix <- cov(recentered_expression_matrix)
 cov_matrix
 ```
 
-From this we can see that it is a **2x2 gene-wise** covariance matrix. However, we could have alternatively created a **4x4 cell-wise** covariance matrix using. Unfortunately, we will need to do this using some for loops. One small note before we start, since we re-centered the data on based on gene, the mean of Gene_A and Gene_B are both 0, so those gene mean terms can drop out of the covariance equation. We can confirm that with:
+### Python
+
+```{python}
+#| label: create_covariance_matrix_Python
+# Create a covariance matrix
+cov_matrix = recentered_expression_df.cov()
+
+# Print out the covariance matrix
+print(cov_matrix)
+```
+
+:::
+
+From this we can see that it is a **2x2 gene-wise** covariance matrix. However, we could have alternatively created a **4x4 cell-wise** covariance matrix using. Unfortunately, we will need to do this using some for loops. One small note before we start, since we re-centered the data on based on gene, the mean of `Gene_A` and `Gene_B` are both 0, so those gene mean terms can drop out of the covariance equation. We can confirm that with:
+
+::: {.panel-tabset group="language"}
+
+### R
 
 ```{r}
-#| label: confirm_recented_means
+#| label: confirm_recented_means_R
 # Print the mean for Gene_A once it has been re-centered
 mean(recentered_expression_matrix[,"Gene_A"])
 # Print the mean for Gene_B once it has been re-centered
 mean(recentered_expression_matrix[,"Gene_B"])
 ```
+
+### Python
+
+```{python}
+#| label: confirm_recented_means_Python
+# Print the mean for Gene_A once it has been re-centered
+print(recentered_expression_df["Gene_A"].mean())
+# Print the mean for Gene_B once it has been re-centered
+print(recentered_expression_df["Gene_B"].mean())
+```
+
+:::
 
 So now our covariance formula will look like:
 
@@ -123,8 +236,12 @@ $$
 = \frac{1}{n_\text{cells}-1}\sum_{i=1}^{n_\text{cells}} x_i y_i
 $$
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: create_cell_covariance_matrix
+#| label: create_cell_covariance_matrix_R
 # Obtain the number of cells
 n_cells <- nrow(recentered_expression_matrix)
 # Obtain the number of genes
@@ -148,31 +265,116 @@ for (i in 1:n_cells) {
 cov_matrix_cells
 ```
 
+### Python
+
+```{python}
+#| label: create_cell_covariance_matrix_Python
+# Obtain the cell names
+cell_names = recentered_expression_df.index
+
+# Retrieve the number of cells
+n_cells = recentered_expression_df.shape[0]
+
+# Create empty n_cells x n_cells matrix
+cov_matrix_cells = np.empty((n_cells, n_cells))
+
+# Populate each cell in the cell-wise covariance matrix
+for i in range(n_cells):
+    for j in range(n_cells):
+        cov_matrix_cells[i, j] = (1 / (n_cells - 1)) * np.sum(recentered_expression_df.iloc[i, :] * recentered_expression_df.iloc[j, :])
+
+# Convert the matrix to a Pandas DataFrame
+cov_matrix_cells_df = pd.DataFrame(
+    cov_matrix_cells,
+    index = cell_names,
+    columns = cell_names
+)
+
+# Print out the cell-wise covariance dataframe
+print(cov_matrix_cells_df)
+```
+
+:::
+
 In order to avoid confusion, let's go ahead and rename our gene-wise covariance matrix:
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: relabel_gene_covariance_matrix
+#| label: relabel_gene_covariance_matrix_R
 # Rename the gene-wise covariance matrix to avoid confusion
 cov_matrix_genes <- cov_matrix
 ```
 
-# Comparing the gene-wise and cell-wise covariance matrices 
+### Python
+
+```{python}
+#| label: relabel_gene_covariance_matrix_Python
+# Rename the gene-wise covariance matrix to avoid confusion
+cov_matrix_genes = cov_matrix
+```
+
+:::
+
+## Comparing the gene-wise and cell-wise covariance matrices 
 
 Let's remind ourselves of the eigenvalues returned by our gene-wise covariance matrix:
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: gene-wise_eigenvalues
+#| label: gene-wise_eigenvalues_R
 # Obtain the eigenvalues for the gene-wise covariance matrix
 round(eigen(cov_matrix_genes)$values, digits = 3)
 ```
 
+### Python
+
+```{python}
+#| label: gene-wise_eigenvalues_Python
+# Find the eigenvalues and eigenvectors of the covariance matrix
+eig_values_genes, eig_vectors_genes = np.linalg.eigh(cov_matrix_genes)
+
+# Sort descending for nicer comparison
+eig_values_genes_sorted = np.sort(eig_values_genes)[::-1]
+
+# Print the cell-wise eigenvalues
+print(np.round(eig_values_genes_sorted, 3))
+```
+
+:::
+
 And we can compare those eigenvalues to the eigenvalues returned by our cell-wise covariance matrix: 
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: cell-wise_eigenvalues
+#| label: cell-wise_eigenvalues_R
 # Obtain the eigenvalues for the cell-wise covariance matrix and compare them to the eigenvalues for the gene-wise covariance matrix
 round(eigen(cov_matrix_cells)$values, digits = 3)
 ```
+
+### Python
+
+```{python}
+#| label: cell-wise_eigenvalues_Python
+# Eigenvalues of the 4x4 cell-wise covariance matrix
+eig_values_cells, eig_vectors_cells = np.linalg.eigh(cov_matrix_cells)
+
+# Sort descending for nicer comparison
+eig_values_cells_sorted = np.sort(eig_values_cells)[::-1]
+
+# Print the cell-wise eigenvalues
+print(np.round(eig_values_cells_sorted, 3))
+```
+
+:::
 
 The eigenvalues are the same except the cell-wise covariance matrix returns two additonal zero value eigenvalues. We can remind ourselves that eigenvalues can be though of as influence, so eigenvalues with a value of zero have no influence and are not considered Principal Components. We can solve the `cov_matrix_cells`'s $\lambda$ values by hand and it will be a bit more clear why zero terms emerge.
 
@@ -202,13 +404,13 @@ $$
 
 Therefore, the values, which satisfy $\lambda$ would be `0`, `1255.54` and `50.04`. 
 
-If we go back to our number of genes, `r n_genes`, and numbers of cells, `r n_cells`, we can see that the number of PCs was equal to the whichever was fewer, `n_cells` or `n_genes`. However, we stated that the number of PCs ≤ minimum(number_of_genes, number_of_cells), not just equal to it. In the next section we will explore why this is the case.
+If we go back to our number of genes, `r n_genes`, and numbers of cells, `r n_cells`, we can see that the number of PCs was equal to the whichever was fewer, number of cells or number of genes. However, we stated that the number of PCs ≤ minimum(number_of_genes, number_of_cells), not just equal to it. In the next section we will explore why this is the case.
 
 :::callout-note
 In practice, we usually use gene-wise covariance in scRNA-seq PCA, but the cell-wise perspective helps us see why zeros eigenvalues emerge and how the PCA is fundamentally about the geometry of the data rather than its orientation.
 :::
 
-# Sources of Reducing the Number of PCs for a PCA
+## Sources of Reducing the Number of PCs for a PCA
 
 Now that we have demonstrated how number of PCs = minimum(number_of_genes, number_of_cells), let's understand sources of data that reduce the number of PCs so that the number of PCs ≤ minimum(number_of_genes, number_of_cells). Four major sources of this come from:
 
@@ -217,23 +419,24 @@ Now that we have demonstrated how number of PCs = minimum(number_of_genes, numbe
 - [Linear Combinations of Data](#linear-combinations-of-data)
 - [Constants](#constants)
 
-We will provide examples of each below, but first let's make the expression matrix that we will be using:
+We will provide examples of each below:
+
+### Duplicated Data
+
+In the first case we will duplicate `Gene B` and create a new column called `Gene_C` and run our PCA:
+
+::: {.panel-tabset group="language"}
+
+### R
 
 ```{r}
-#| label: create_expression_matrix_for_reduced_rank
+#| label: duplicated_data_R
 # Create an expression matrix to use
 expression_matrix <- expression_tibble %>% 
   as.data.frame() %>% 
   column_to_rownames("cells") %>% 
   as.matrix()
-```
 
-## Duplicated Data
-
-In the first case we will duplicate `Gene B` and create a new column called `Gene_C`. We will use the `prcomp()` function to expedite our PCA:
-
-```{r}
-#| label: duplicated_data
 # Modify the expression matrix to have duplicated data in it
 expression_matrix_duplicate <- expression_matrix %>% 
   cbind(Gene_C = expression_matrix[,"Gene_B"])
@@ -245,14 +448,40 @@ duplicate_PCA <- prcomp(expression_matrix_duplicate)
 round(duplicate_PCA$sdev ** 2, digits = 3)
 ```
 
-We note that we are returned 2 non-zero eigenvalues and an eigenvalue with the value of 0. We started with 4 rows (cells) and 3 columns (genes), but we were only returned a PCA with rank 2, because the third column was a duplicate of the second column.
+### Python
 
-## Scaled Data
+```{python}
+#| label: duplicated_data_Python
+# Create a dataframe to hold a column of duplicated data
+expression_df_duplicate = expression_df.copy()
 
-Another method of reduction is if a column of our data is scaled from data in another column. Let's go ahead and see an example of this by adding a column for Gene_C that is double the value of Gene_B.
+# Create a column for Gene_C that is a duplicate of Gene_B
+expression_df_duplicate["Gene_C"] = expression_df_duplicate["Gene_B"]
+
+# Create PCA object
+pca_duplicate = PCA()
+
+# Run PCA on our expression data with our duplicated column
+pc_scores_duplicate = pca_duplicate.fit(expression_df_duplicate)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with duplicated data
+print(pc_scores_duplicate.explained_variance_.round(3))
+```
+
+:::
+
+We note that we are returned two non-zero eigenvalues and an eigenvalue with the value of 0. We started with 4 rows (cells) and 3 columns (genes), but we were only returned a PCA with rank two, because the third column was a duplicate of the second column.
+
+### Scaled Data
+
+Another method of reduction is if a column of our data is scaled from data in another column. Let's go ahead and see an example of this by adding a column for `Gene_C` that is double the value of `Gene_B`.
+
+::: {.panel-tabset group="language"}
+
+### R
 
 ```{r}
-#| label: scaled_data
+#| label: scaled_data_R
 # Modify the expression matrix to have scaled data in it
 expression_matrix_scaled <- expression_matrix %>% 
   cbind(Gene_C = expression_matrix[,"Gene_B"] * 2)
@@ -264,14 +493,40 @@ scaled_PCA <- prcomp(expression_matrix_scaled)
 round(scaled_PCA$sdev ** 2, digits = 3)
 ```
 
-Once again, we can see that we are returned 2 non-zero eigenvalues and one eigenvalue that has a value of 0. Thus, the rank of the PCA is less than the minimum(number_of_genes, number_of_cells).
+### Python
 
-## Linear Combinations of Data
+```{python}
+#| label: scaled_data_Python
+# Create a dataframe to hold a column of scaled data
+expression_df_scaled = expression_df.copy()
 
-Linear combinations of the data can also reduce the rank of a PCA. Now let's consider a case where Gene_C is the sum of Gene_A and two times Gene_B.
+# Create a column for Gene_C that is scaled by two-fold of Gene_B
+expression_df_scaled["Gene_C"] = expression_df_scaled["Gene_B"] * 2
+
+# Create PCA object
+pca_scaled = PCA()
+
+# Run PCA on our expression data with our scaled data column
+pc_scores_scaled = pca_scaled.fit(expression_df_scaled)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with scaled data
+print(pc_scores_scaled.explained_variance_.round(3))
+```
+
+:::
+
+Once again, we can see that we are returned two non-zero eigenvalues and one eigenvalue that has a value of 0. Thus, the rank of the PCA is two.
+
+### Linear Combinations of Data
+
+Linear combinations of the data can also reduce the rank of a PCA. Now let's consider a case where `Gene_C` is the sum of `Gene_A` and two times `Gene_B`.
+
+::: {.panel-tabset group="language"}
+
+### R
 
 ```{r}
-#| label: linear_combinations_data
+#| label: linear_combinations_data_R
 # Modify the expression matrix to have data that is linear combinations of Gene_A and Gene_B in it
 expression_matrix_linear_combinations <- expression_matrix %>% 
   cbind(Gene_C = expression_matrix[,"Gene_A"] + expression_matrix[,"Gene_B"] * 2)
@@ -283,14 +538,40 @@ linear_combinations_PCA <- prcomp(expression_matrix_linear_combinations)
 round(linear_combinations_PCA$sdev ** 2, digits = 3)
 ```
 
+### Python
+
+```{python}
+#| label: linear_combinations_data_Python
+# Create a dataframe to hold a column of linear combination data
+expression_df_linear_comb = expression_df.copy()
+
+# Create a column for Gene_C that is a linear combination of Gene_A plus two times Gene_B
+expression_df_linear_comb["Gene_C"] = expression_df_linear_comb["Gene_A"] + 2 * expression_df_linear_comb["Gene_B"]
+
+# Create PCA object
+pca_linear_comb = PCA()
+
+# Run PCA on our expression data with our linear combination of data column
+pc_scores_linear_comb = pca_linear_comb.fit(expression_df_linear_comb)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with data containing linear combinations of Gene_A and Gene_B
+print(pc_scores_linear_comb.explained_variance_.round(3))
+```
+
+:::
+
 Again, we see a case where we have two non-zero eigenvalues and an eigenvalue with the value of 0.
 
-## Constants 
+### Constants 
 
 The last case we will consider is a column of constants. Let's consider the case where `Gene_C` has the value of 16 in every cell.
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: constants_data
+#| label: constants_data_R
 # Modify the expression matrix to have constant data in it
 expression_matrix_constant <- expression_matrix %>% 
   cbind(Gene_C = c(16, 16, 16, 16))
@@ -302,10 +583,36 @@ constant_PCA <- prcomp(expression_matrix_constant)
 round(constant_PCA$sdev ** 2, digits = 3)
 ```
 
+### Python
+
+```{python}
+#| label: constants_data_Python
+# Create a dataframe to hold a column of constant data
+expression_df_constant = expression_df.copy()
+
+# Create a column for Gene_C that is a constant value
+expression_df_constant["Gene_C"] = [16, 16, 16, 16]
+
+# Create PCA object
+pca_constant = PCA()
+
+# Run PCA on our expression data with our dataset with a constant column
+pc_scores_constant = pca_constant.fit(expression_df_constant)
+
+# Print the eigenvalues from the PCA derived from the expression matrix with constant data
+print(pc_scores_constant.explained_variance_.round(3))
+```
+
+:::
+
 This result can be a quite intuitive because let's reflect on the process that got us here. First, we recentered our expression matrix:
 
+::: {.panel-tabset group="language"}
+
+### R
+
 ```{r}
-#| label: constant_center_of_data
+#| label: constant_center_of_data_R
 # Determine the center of the data by:
 # Finding the average expression of gene A
 Gene_A_mean_constant <- mean(expression_matrix_constant[, "Gene_A"])
@@ -328,8 +635,33 @@ recentered_expression_matrix_constant <- expression_matrix_constant %>%
 recentered_expression_matrix_constant
 ```
 
+### Python
+
+```{python}
+#| label: constant_center_of_data_Python
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean_constant = expression_df_constant["Gene_A"].mean()
+# Finding the average expression of gene B
+Gene_B_mean_constant = expression_df_constant["Gene_B"].mean()
+# Finding the average expression of gene C
+Gene_C_mean_constant = expression_df_constant["Gene_C"].mean()
+
+# Create a dataframe to hold our re-centered data
+recentered_expression_df_constant = expression_df_constant.assign(
+    Gene_A = expression_df_constant["Gene_A"] - Gene_A_mean_constant,
+    Gene_B = expression_df_constant["Gene_B"] - Gene_B_mean_constant,
+    Gene_C = expression_df_constant["Gene_C"] - Gene_C_mean_constant
+)
+
+# Print the recentered expression dataframe
+print(recentered_expression_df_constant)
+```
+
+:::
+
 From here, we can see that the re-centered value of `Gene_C` is just 0 for all cells and thus it offers no variance. 
 
-# Conclusion
+## Conclusion
 
 The number of PCs, or rank, of a PCA is at most the fewer of the number of cells or the number of genes.

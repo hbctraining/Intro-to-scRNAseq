@@ -1,0 +1,10 @@
+::: {.panel-tabset group="language"}
+## R
+
+```{python}
+#| label: tbl-py_show_metadata_head
+#| tbl-cap: First several rows of a the `adata.obs`
+#| echo: false
+#| results: asis
+print(adata.obs.head().to_markdown())
+```

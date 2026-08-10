@@ -1,22 +1,34 @@
-/* Alternative rows in tables are gray */
+/* ============================================================
+   GENERAL TABLE + QUARTO STYLING
+   ============================================================ */
+
+/* Alternative rows in Bootstrap-styled tables are gray */
 .table tr:nth-child(even) {
   background-color: #f5f5f5;
 }
 
-
-/* For Quarto code output blocks */
-.cell-output, 
-.cell-output-stdout, 
+/* For Quarto code output blocks (including Pandas tables) */
+.cell-output,
+.cell-output-stdout,
 .cell-output-stderr,
 .cell-output-display {
-  background-color: #f5f5f5 !important;  /* Light gray */
+  background-color: #f5f5f5 !important; /* Light gray background for code blocks */
   padding: 0.5em 1em;
   border-radius: 5px;
   margin-bottom: 1em;
 }
 
+/* But tables INSIDE cell-output-display should NOT inherit that gray —
+   they have their own row coloring. */
+.cell-output-display table,
+.cell-output-display table tr {
+  background-color: transparent !important;
+}
 
-/* Stretch left footer across all columns for Quarto footers */
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
 footer.footer .nav-footer {
   display: block !important;
   max-width: 100vw;
@@ -28,6 +40,7 @@ footer.footer .nav-footer {
   padding: 1em 0.5em 1em 1.5em;
   box-sizing: border-box;
 }
+
 footer.footer .nav-footer-center {
   max-width: 100vw !important;
   padding: 0.5em;
@@ -38,19 +51,23 @@ footer.footer .nav-footer-center {
   font-size: 1em;
   text-align: left;
 }
+
 footer.footer .nav-footer-left,
 footer.footer .nav-footer-right {
   display: none !important;
 }
 
+/* ============================================================
+   NAVBAR (HARVARD CRIMSON THEME)
+   ============================================================ */
 
 /* Harvard Crimson: #A51C30 */
-/* For Quarto Bootstrap dark navbars: */
-.navbar, .navbar-dark {
+.navbar,
+.navbar-dark {
   background-color: #a51c30 !important;
 }
 
-/* For navbar items and hover/focus states */
+/* Navbar items and hover/focus states */
 .navbar .nav-link,
 .navbar .navbar-brand {
   color: #fff !important;
@@ -58,28 +75,30 @@ footer.footer .nav-footer-right {
 
 .navbar .nav-link:hover,
 .navbar .nav-link:focus {
-  color: #ffd700 !important;   /* gold/yellow hover, optional */
+  color: #ffd700 !important; /* gold/yellow hover */
 }
 
-/* If your navbar is light/white by default, also force text to white: */
+/* If navbar is light by default, also force text to white */
 .navbar-light .navbar-nav .nav-link,
 .navbar-light .navbar-brand {
   color: #fff !important;
 }
 
+/* ============================================================
+   IMAGES & TITLE BLOCK
+   ============================================================ */
 
-/* Center all images that are direct children of the main content (not inside tables or callouts) */
+/* Center images that are direct children of main content / Quarto figures */
 main img,
 .quarto-figure img {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  /* Optional: vertical space above/below */
   margin-top: 1em;
   margin-bottom: 1em;
 }
 
-/* Remove the box styling */
+/* Remove box styling from title block */
 .quarto-title-block {
   background: none !important;
   box-shadow: none !important;
@@ -89,7 +108,7 @@ main img,
   text-align: left !important;
 }
 
-/* Hide only the author, affiliation, date, subtitle, etc */
+/* Hide author, affiliation, date, subtitle, etc. */
 .quarto-title-author,
 .quarto-title-affiliation,
 .quarto-title-date,
@@ -97,35 +116,35 @@ main img,
 .quarto-title-lang,
 .quarto-title-abstract,
 .quarto-title-meta,
-#quarto-article-details
-{
+#quarto-article-details {
   display: none !important;
 }
 
 /* Make sure images aren't larger than window size */
-
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* Hide breadcrumbs for both possible classnames */
+/* Hide breadcrumbs */
 .quarto-breadcrumbs,
 .quarto-page-breadcrumbs {
   display: none !important;
 }
 
-/* --- Refined, crimson-themed Quarto Tabsets --- */
+/* ============================================================
+   TABSETS
+   ============================================================ */
 
 .panel-tabset {
-  border: 1px solid #e0e0e0;        /* lighter outline */
+  border: 1px solid #e0e0e0; /* lighter outline */
   border-radius: 8px;
   padding: 0.75em 1em;
   margin-top: 1.5em;
   margin-bottom: 2em;
   background: #fafafa;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);   /* soft shadow */
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1); /* soft shadow */
 }
 
 /* Tab bar */
@@ -136,11 +155,11 @@ img {
 
 /* Tab labels: shorter, rounded, crimson */
 .panel-tabset .nav-tabs .nav-link {
-  padding: 0.25em 0.75em;              /* shorter tabs */
-  border-radius: 6px 6px 0 0;          /* rounded top */
+  padding: 0.25em 0.75em; /* shorter tabs */
+  border-radius: 6px 6px 0 0; /* rounded top */
   border: 1px solid #a51c30 !important;
   border-bottom: none !important;
-  background-color: #a51c30 !important;  /* crimson */
+  background-color: #a51c30 !important; /* crimson */
   color: #fff !important;
   margin-right: 4px;
 }
@@ -156,7 +175,7 @@ img {
 
 /* Inner content box */
 .panel-tabset .tab-content {
-  border: 1px solid #e0e0e0;    /* softer border */
+  border: 1px solid #e0e0e0; /* softer border */
   border-radius: 6px;
   padding: 1em;
   background: #fff;
@@ -167,62 +186,83 @@ img {
   width: 100%;
 }
 
-/* Remove Quarto’s built‑in max-width constraints inside tab content */
+/* Remove Quarto's built-in max-width constraints inside tab content */
 .panel-tabset .tab-content,
 .panel-tabset .tab-pane {
   max-width: 100%;
   width: 100%;
 }
 
-/* --- Styled Markdown Tables --- */
+/* ============================================================
+   TABLES: AESTHETICS
+   ============================================================ */
 
+/* Alternating row shading — applies to ALL tables including pandas output */
+table tr:nth-child(even) {
+  background-color: #f5f5f5 !important;
+}
+
+table tr:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+
+/* Cell padding and borders */
+table th,
+table td {
+  padding: 0.55em 0.75em;
+  border: 1px solid #e5e5e5;
+  text-align: left;
+}
+
+/* Table base styling: aesthetics only, NO width:max-content or table-layout override */
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #d0d0d0;      /* outer border */
+  border: 1px solid #d0d0d0;
   border-radius: 6px;
-  overflow: hidden;               /* ensures rounded corners render */
-  margin: 1.2em 0;
+  overflow: hidden; /* clips corners cleanly */
   background: #fff;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.08);   /* subtle lift */
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.08);
+  margin: 1.2em 0;
 }
 
-table th,
-table td {
-  border: 1px solid #e5e5e5;      /* internal grid lines */
-  padding: 0.55em 0.75em;
-}
-
-table th {
-  background: #f8f8f8;            /* header band */
-  font-weight: 600;
-  color: #333;
-}
-
-/* --- Crimson-Themed Table Headers (Markdown + kable + DT) --- */
-
+/* Crimson header */
 table thead th {
-  background: #a51c30 !important;     /* crimson */
-  color: #ffffff !important;          /* white text */
-  font-weight: 700 !important;        /* bold */
-  border: 1px solid #8b1628 !important;  /* darker crimson border */
+  background-color: #a51c30 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-color: #8b1628 !important;
 }
 
-/* Left align table captions generated by Quarto */
-.quarto-float-tbl .quarto-float-caption {
+/* ============================================================
+   TABLE CAPTIONS
+   ============================================================ */
+
+.quarto-float-caption,
+[id*="-caption-"] {
   text-align: left !important;
+  margin-bottom: 0.5em;
 }
 
-/* Center Quarto figures and their contents */
-.quarto-figure,
-.figure,          /* your custom .figure block */
-figure {
+/* ============================================================
+   FIGURES
+   ============================================================ */
+
+/*
+  Do NOT apply flex to figure.quarto-float-tbl — that is the wrapper
+  Quarto uses for captioned tables, and flex on it breaks left-scroll.
+*/
+.quarto-figure:not(.quarto-float-tbl),
+.figure,
+figure:not(.quarto-float-tbl) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
   text-align: center !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
-/* Center the image inside figure blocks */
 .quarto-figure img,
 .figure img {
   display: block;
@@ -230,9 +270,117 @@ figure {
   margin-right: auto;
 }
 
-/* Center captions */
 .quarto-figure .figure-caption,
 .figure .figure-caption,
 figure figcaption {
   text-align: left !important;
+  align-self: flex-start !important;
+}
+
+.quarto-figure .figure-caption,
+.figure .figure-caption {
+  max-width: 100% !important;
+}
+
+.column .quarto-figure .figure-caption,
+.column .figure .figure-caption {
+  text-align: center !important;
+  align-self: center !important;
+}
+
+/* ============================================================
+   COLUMNS LAYOUT
+   ============================================================ */
+
+.columns {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.columns .column {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* ============================================================
+   TABLE SCROLLING
+   ============================================================ */
+
+/*
+  Strategy:
+  - Tables use width:100% and browser-default table-layout so columns
+    size naturally to their content without being crushed.
+  - Scroll containers wrap the table when content overflows.
+  - We do NOT set width:max-content on the table itself — that caused
+    layout pressure that shrunk unrelated columns.
+  - For very wide tables the scroll container handles overflow-x.
+*/
+
+/* Scroll containers for Quarto captioned tables (#tbl-*)
+   Structure:
+     div.quarto-float          <- display:block
+       figure.quarto-float-tbl <- display:block (NOT flex)
+         figcaption
+         div[aria-describedby] <- overflow-x:auto lives here
+           table               <- width:100% within that scroll box */
+
+div.quarto-float:has(figure.quarto-float-tbl) {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+figure.quarto-float-tbl {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+figure.quarto-float-tbl > div[aria-describedby] {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+figure.quarto-float-tbl > div[aria-describedby] > table {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Scroll container for Pandas DataFrames (cell output) */
+.cell-output-display {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cell-output-display > div {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* Pandas dataframe tables: let them scroll naturally */
+.cell-output-display table.dataframe,
+.cell-output-display > div > table.dataframe {
+  width: auto !important;
+  max-width: none !important;
+  display: table !important;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+/* Extra vertical space between wrapped rows of tabs */
+.panel-tabset > .nav-tabs {
+  row-gap: 0.5rem;        /* space between rows (Bootstrap 5) */
+}
+
+.panel-tabset > .nav-tabs .nav-item {
+  margin-bottom: 0.25rem; /* adds a bit more separation */
 }

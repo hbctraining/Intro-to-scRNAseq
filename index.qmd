@@ -10,11 +10,11 @@ execute:
 
 | Audience | Computational skills required| Duration |
 :----------|:----------|:----------|
-| Biologists | [Introduction to R](https://hbctraining.github.io/Intro-to-R-flipped/) | 3-session online workshop (~7.5 hours of trainer-led time)|
+| Biologists | [Introduction to R](https://hbctraining.github.io/Intro-to-R-flipped/) / [Introduction to Python](https://hbctraining.github.io/Intro-to-Python/) | 3-session online workshop (~7.5 hours of trainer-led time)|
 
 ### Description
 
-This repository has teaching materials for a hands-on **Introduction to single-cell RNA-seq** workshop. This workshop will instruct participants on how to design a single-cell RNA-seq experiment, and how to efficiently manage and analyze the data starting from count matrices. This will be a hands-on workshop in which we will focus on using the Seurat package using R/RStudio. Working knowledge of R is required or completion of the [Introduction to R workshop](https://hbctraining.github.io/Intro-to-R-flipped/). 
+This repository has teaching materials for a hands-on **Introduction to single-cell RNA-seq** workshop. This workshop will instruct participants on how to design a single-cell RNA-seq experiment, and how to efficiently manage and analyze the data starting from count matrices. This will be a hands-on workshop in which we will focus on using the Seurat package using R/RStudio or Scanpy using Python/JupyterLab. Working knowledge of R/Python is required or completion of the [Introduction to R workshop](https://hbctraining.github.io/Intro-to-R-flipped/)/[Introduction to Python workshop](https://hbctraining.github.io/Intro-to-Python/). 
 
 **Note for Trainers:** Please note that the schedule linked below assumes that learners will spend between 3-4 hours on reading through, and completing exercises from selected lessons between classes. The online component of the workshop focuses on more exercises and discussion/Q & A.
 
@@ -36,13 +36,18 @@ These materials were developed for a trainer-led workshop, but are also amenable
 
 ### Installation Requirements
 
+::: {.panel-tabset group="language"}
+
+### R
+
 #### Applications
+
 Download the most recent versions of R and RStudio for your laptop:
 
  - [R](http://lib.stat.cmu.edu/R/CRAN/) **(version 4.0.0 or above)**
  - [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
 
-#### Packages for R
+#### Packages
 
 ::: callout-note
 # Notes
@@ -158,7 +163,102 @@ library(presto)
 sessionInfo()
 ```
 
-You can copy and paste the output into [this app](https://hcbc.connect.hms.harvard.edu/scRNA_sessionInfo_checks/) to ensure that all of the packages were installed correctly.
+You can copy and paste the output into the app below to ensure that all of the packages were installed correctly.
+
+<div style="width: 100%; max-width: 750px; margin: 0 auto;">
+  <iframe
+    id="session_info_R"
+    src="apps/scRNA_sessionInfo_checks_R/index.html"
+    style="width: 100%; border: 1px solid #ccc; border-radius: 6px;"
+  ></iframe>
+</div>
+
+### Python
+
+#### Applications
+
+Download the most recent version of Anaconda Navigator (Anaconda Distribution) for your laptop:
+
+ - [Anaconda Navigator](https://www.anaconda.com/download/success)
+
+::: callout-note
+If you are at MGH, you will need to download the Anaconda Navigator from a non-MGH network.
+:::
+
+#### Check Channel Priority
+
+Open Anaconda Navigator and from the toolbar at the top of the screen, select "python" and then "Preferences". Within the pop-up left-click the button for "Configure Conda". Ensure that the `channel_priority` is set to `channel_priority: disabled`. It may be set to `channel_priority: strict` as default. Then left-click "Save and Restart".
+
+#### Creating an Environment
+
+Within Anaconda Navigator, select the **Environments** tab on the left-side. Then left-click the **Create** button to create a new environment. You will be prompted name your environment and select a version of Python. **Please name your environment "intro_scRNAseq" and select Python version 3.12.13 (likely not the default option).**
+
+::: callout-note
+You may run into installation issues with a more current version of Python, so please select Python version 3.12.13.
+:::
+
+#### Packages
+
+**(1)** Next, we will need to install the packages that we will use in the workshop. Search for and install the following packages by marking the checkbox next to the desired package and clicking "Apply" and then selecting "Apply" in the pop-up window:
+
+```{r}
+#| label: package_Python
+#| eval: false
+scanpy
+scvi-tools
+ipywidgets
+nb_conda_kernels
+jupyterlab
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+scikit-misc
+session-info2
+```
+
+::: callout-note
+You may need to toggle the dropdown menu from "Installed" to "All" in order to view all packages available to you (installed or uninstalled).
+:::
+
+::: callout-note
+Some packages may install dependency packages as well. For example, `scanpy` will likely install many dependency packages like `numpy`, `pandas`, `matplotlib`, `seaborn`, `scikit-learn` and `session-info2`.
+:::
+
+**(2)** After you have installed each of the following packages, select the "Home" tab in the Anaconda Navigator and left-click "Launch" under JupyterLab. This should open up JupyterLab within your web browser. Open a notebook within from the "intro_scRNAseq" environment. It should be the one named "Python [conda env:intro_scRNAseq]\*". When you open this notebook, it should have "Python [conda env:intro_scRNAseq]\*" in the top-right of the notebook. Create a cell then run the code below:
+
+```{python}
+#| label: import_packages
+#| eval: false
+# Import libraries
+import scanpy
+import scvi
+import numpy
+import pandas
+import matplotlib.pyplot
+import seaborn
+from sklearn.decomposition import PCA
+import skmisc
+from session_info2 import session_info
+
+# Show imported packages
+session_info(dependencies=True)
+```
+
+**(3)** Left-click on "Click to view session information", then copy and paste the output into the app below and left-click "Check my session_info" to ensure that all of the packages were installed correctly:
+
+<div style="width: 100%; max-width: 750px; margin: 0 auto;">
+  <iframe
+    id="session_info_Python"
+    src="apps/scRNA_sessionInfo_checks_Python/index.html"
+    style="width: 100%; border: 1px solid #ccc; border-radius: 6px;"
+  ></iframe>
+</div>
+
+:::
+
+
 
 ---
 
@@ -172,3 +272,18 @@ Mary Piper, Meeta Mistry, Jihe Liu, William Gammerdinger, & Radhika Khetani. (20
 :::
 
 A lot of time and effort went into the preparation of these materials. Citations help us understand the needs of the community, gain recognition for our work, and attract further funding to support our teaching activities. Thank you for citing this material if it helped you in your data analysis.
+
+<style>
+  /* Heights only for the apps on this page */
+
+  #session_info_R {
+    height: 800px !important;
+    max-height: 800px !important;
+  }
+  
+  #session_info_Python {
+    height: 800px !important;
+    max-height: 800px !important;
+  }
+  
+</style>

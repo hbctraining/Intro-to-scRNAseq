@@ -5,3 +5,8 @@ docs/data
 *.RDS
 *.RData
 *.rds
+lessons/intermediate
+**/*.quarto_ipynb
+lessons/.quarto/
+data_clean
+docs/schedule/schedule.qmd

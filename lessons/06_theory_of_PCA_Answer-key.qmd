@@ -7,7 +7,7 @@ date: "2025-09-05"
 ---
 
 ```{r}
-#| label: load_data
+#| label: load_data_R
 #| echo: false
 # Items to pre-load
 library(tidyverse)
@@ -78,8 +78,96 @@ prcomp_eigenvalues <- prcomp_PCA$sdev ** 2
 names(prcomp_eigenvalues) <- c("PC_1", "PC_2")
 ```
 
+```{python}
+#| label: load_data_Python
+#| echo: false
+# Import libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.decomposition import PCA
 
-# Exercise 1
+# Create a list for Cell IDs
+cells = ["Cell_1", "Cell_2", "Cell_3", "Cell_4"]
+# Create a list to hold expression values for Gene A across all of the cells
+Gene_A = [0, 12, 65, 23]
+# Create a list to hold expression values for Gene B across all of the cells
+Gene_B = [4, 30, 57, 18]
+
+# Create a DataFrame to hold the cell names and expression values
+expression_df = pd.DataFrame({
+    "cells": cells,
+    "Gene_A": Gene_A,
+    "Gene_B": Gene_B
+}).set_index("cells") 
+
+# Determine the center of the data by:
+# Finding the average expression of gene A
+Gene_A_mean = expression_df["Gene_A"].mean()
+# Finding the average expression of gene B
+Gene_B_mean = expression_df["Gene_B"].mean()
+
+center_of_data = {
+    "Gene_A": Gene_A_mean,
+    "Gene_B": Gene_B_mean,
+}
+
+# Shift the data so it is centered on the origin
+recentered_expression_df = expression_df.assign(
+    Gene_A = expression_df["Gene_A"] - Gene_A_mean,
+    Gene_B = expression_df["Gene_B"] - Gene_B_mean,
+)
+
+# Create a covariance matrix
+cov_matrix = recentered_expression_df.cov()
+
+# Find the eigenvalues and eigenvectors of the covariance matrix
+eig_values, eig_vectors = np.linalg.eigh(cov_matrix)
+
+# Sort the eigenvalues and eigenvectors by descending variance explained
+# Indices for descending order
+idx = np.argsort(eig_values)[::-1]
+# Reordered eigenvalues
+eig_values = eig_values[idx]
+# Reordered eigenvectors
+eig_vectors = eig_vectors[:, idx] 
+
+# Place the eigenvectors into a dataframe
+eig_vectors_df = pd.DataFrame(
+    eig_vectors
+)
+
+pc_scores = recentered_expression_df.values.dot(eig_vectors)
+
+pc_scores_df = pd.DataFrame(
+    pc_scores,
+    index = recentered_expression_df.index,
+    columns = ["PC_1", "PC_2"]
+)
+
+# Calculate the percent of variance explained by each PC using the eigenvalues
+pct_var_explained = (eig_values / eig_values.sum()) * 100
+
+# Create PCA object
+pca_sklearn = PCA()
+
+# Run PCA on our expression data
+pc_scores_sklearn = pca_sklearn.fit_transform(expression_df)
+
+# Print the eigenvectors found by scikit-learn
+eigenvector_sklearn = pd.DataFrame(
+    pca_sklearn.components_.T
+)
+
+pc_scores_sklearn_df = pd.DataFrame(
+    pc_scores_sklearn,
+    index = expression_df.index,
+    columns = ["PC_1", "PC_2"]
+)
+```
+
+## Exercise 1
 
 There are a couple properties of variance and co-variance that we can verify:
 
@@ -105,24 +193,69 @@ $$
 
 1. Confirm this property by estimating the variance for Gene A.
 
-```{r covariance_check_1}
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label: covariance_check_1_R
 # Estimate the variance for Gene A
 var(recentered_expression_matrix[, "Gene_A"])
 ```
 
+### Python
+
+```{python}
+#| label: covariance_check_1_Python
+# Estimate the variance for Gene A
+print(recentered_expression_df["Gene_A"].var())
+```
+
+:::
+
 2. Now estimate the covariance for Gene A and Gene A
 
-```{r covariance_check_2}
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label: covariance_check_2_R
 # Estimate the covariance for Gene A and Gene A
 cov(recentered_expression_matrix[, "Gene_A"], recentered_expression_matrix[, "Gene_A"])
 ```
 
+### Python
+
+```{python}
+#| label: covariance_check_2_Python
+# Estimate the covariance for Gene A and Gene A
+print(recentered_expression_df["Gene_A"].cov(recentered_expression_df["Gene_A"]))
+```
+
+:::
+
 3. Is the value the same? Does it match the value in the covariance matrix for Gene A and Gene A?
 
-```{r covariance_matrix_check}
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label: covariance_matrix_check_R
 # Extract the covariance estimate of Gene A and Gene A from the covariance matrix
 cov_matrix["Gene_A", "Gene_A"]
 ```
+
+### Python
+
+```{python}
+#| label: covariance_matrix_check_Python
+# Extract the covariance estimate of Gene A and Gene A from the covariance matrix
+print(cov_matrix.loc["Gene_A", "Gene_A"])
+```
+
+:::
 
 4. *cov(X,Y)* is equal to *cov(Y,X)*. We can observe this is mathematically below:
 
@@ -135,30 +268,67 @@ $$
 
 Estimate the covariance of Gene B and Gene A.
 
-```{r covariance_check_3}
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label:  covariance_check_3_R
 # Estimate the covariance of Gene B and Gene A
 cov(recentered_expression_tibble[, "Gene_B"], recentered_expression_tibble[, "Gene_A"])
 ```
+
+### Python
+
+```{python}
+#| label:  covariance_check_3_Python
+# Estimate the covariance of Gene B and Gene A
+print(recentered_expression_df["Gene_B"].cov(recentered_expression_df["Gene_A"]))
+```
+
+:::
 
 5. How does this compare to the covariance that we estimated by hand?
 
 It is the same.
 
-# Exercise 2
+## Exercise 2
 
 When looking at the percent explained by each principal component, the first principal component should explain the most and each of the following principal components should explain less than the previous principal component. Let's have a look at our `pct_var_explained` object, are our results congruent with this expectation?
 
-```{r pct_explained}
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label: pct_explained_R
+# Print the percent variance explained
 pct_var_explained
 ```
 
-Yes, `PC_1` explains `r pct_var_explained[1]` and `PC_2` explains `r pct_var_explained[2]`
+### Python
 
-# Exercise 3
+```{python}
+#| label: pct_explained_Python
+# Print the percent variance explained
+print(pct_var_explained)
+```
 
-Create a plot of the Principal Components Analysis derived from `prcomp()`. Is it the same as the plot we derived except only rotated 180&deg;?
+:::
 
-```{r plotting_PCA_prcomp}
+Yes, `PC_1` explains `python pct_var_explained[0]` and `PC_2` explains `python pct_var_explained[1]`
+
+## Exercise 3
+
+Create a plot of the Principal Components Analysis derived from `prcomp()`/`PCA()`. Is it the same as the plot we derived except only reflected over the x-axis (R)/rotated 180&deg;(Python)?
+
+::: {.panel-tabset group="language"}
+
+### R
+
+```{r}
+#| label: fig-plotting_PCA_prcomp_R
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` from `prcomp()`."
 # Create a tibble to hold the PC scores prcomp() found and also make the Cell IDs into a column
 prcomp_pc_scores_tibble <- prcomp_PCA$x %>% 
   as.data.frame() %>% 
@@ -178,4 +348,107 @@ ggplot(prcomp_pc_scores_tibble, aes(x = PC1, y = PC2, label = cells)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+Yes, it is the same plot just reflected over the x-axis.
+
+### Python
+
+```{python}
+#| label: plotting_PCA_PCA_Python_show
+#| eval: false
+#| echo: true
+sns.set(style="whitegrid")
+
+# Initialize a plot with a specific size
+plt.figure(figsize = (8, 6))
+
+# Add a scatterplot layer to the plot, coloring points by genotype
+PCA_sklearn_plot = sns.scatterplot(data = pc_scores_sklearn_df,
+                x = "PC_1", 
+                y = "PC_2")
+
+# Set x-axis limits
+plt.xlim(left = -55,
+         right = 55)
+
+# Set y-axis limits
+plt.ylim(bottom = -15,
+         top = 15)
+
+# Add cell labels at PC coordinates
+for cell_id, row in pc_scores_sklearn_df.iterrows():
+    PCA_sklearn_plot.text(
+        x = row["PC_1"] + 1,
+        y = row["PC_2"] + 1,
+        s = cell_id,
+        fontsize = 9,
+        ha = "left",
+        va = "bottom"
+    )
+
+# Change the text of the x-axis label
+plt.xlabel(xlabel = f"PC 1 (Variance Explained {pca_sklearn.explained_variance_ratio_[0].round(4) * 100}%)")
+
+# Change the text of the y-axis label
+plt.ylabel(ylabel = f"PC 2 (Variance Explained {pca_sklearn.explained_variance_ratio_[1].round(4) * 100}%)")
+
+# Add plot title
+plt.title(label = "PCA of Expression Values from Four Cells")
+
+# Render the plot
+plt.show()
+```
+
+```{python}
+#| label: fig-plotting_PCA_PCA_Python_hidden
+#| fig-cap: "Scatterplot of `PC_1` vs. `PC_2` from scikit-learn."
+#| echo: false
+
+def plot_pca_sklearn(pc_scores_sklearn_df, pca_sklearn):
+    sns.set(style="whitegrid")
+
+    # Initialize a plot with a specific size
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Add a scatterplot layer to the plot
+    sns.scatterplot(
+        data=pc_scores_sklearn_df,
+        x="PC_1",
+        y="PC_2",
+        ax=ax
+    )
+
+    # Set axis limits via the Axes object
+    ax.set_xlim(-55, 55)
+    ax.set_ylim(-15, 15)
+
+    # Add cell labels at PC coordinates
+    for cell_id, row in pc_scores_sklearn_df.iterrows():
+        ax.text(
+            x=row["PC_1"] + 1,
+            y=row["PC_2"] + 1,
+            s=cell_id,
+            fontsize=9,
+            ha="left",
+            va="bottom"
+        )
+
+    # Axis labels with variance explained from sklearn PCA
+    ax.set_xlabel(
+        f"PC 1 (Variance Explained {pca_sklearn.explained_variance_ratio_[0].round(4) * 100}%)"
+    )
+    ax.set_ylabel(
+        f"PC 2 (Variance Explained {pca_sklearn.explained_variance_ratio_[1].round(4) * 100}%)"
+    )
+
+    # Title
+    ax.set_title("PCA of Expression Values from Four Cells")
+
+    return fig, ax
+
+fig, ax = plot_pca_sklearn(pc_scores_sklearn_df, pca_sklearn)
+plt.show()
+```
+
 Yes, it is the same plot just rotated 180&deg;.
+
+:::

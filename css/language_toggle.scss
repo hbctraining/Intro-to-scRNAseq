@@ -1,0 +1,57 @@
+/*-- scss:defaults --*/
+
+// Add any Bootstrap variable overrides here
+// (fonts, colors, spacing, etc.)
+// Example:
+// $font-size-base: 1rem;
+
+
+/*-- scss:rules --*/
+
+// ── Floating language toggle ──────────────────────────────────────────────
+#lang-toggle-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1050;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .lang-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .lang-btn {
+    border: 1px solid #0d6efd;
+    background: white;
+    color: #0d6efd;
+    padding: 4px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all .15s ease;
+
+    &.active {
+      background: #0d6efd;
+      color: white;
+    }
+    &:hover:not(.active) {
+      background: #e8f0fe;
+    }
+  }
+}
+
+// ── Tabset styling ────────────────────────────────────────────────────────
+.panel-tabset > .nav-tabs .nav-link {
+  font-weight: 500;
+}

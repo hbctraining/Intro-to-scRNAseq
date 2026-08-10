@@ -1,7 +1,7 @@
 ---
 title: "Performing Integration"
 description: |
-  This lesson guides participants through performing data integration in Seurat using both canonical correlation analysis (CCA) and alternative approaches suitable for more complex integration tasks. Participants will learn how to identify integration features, prepare SCTransform-normalized data, compute integration anchors and generate integrated datasets. They will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.
+  his lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.
 author:
   - Mary Piper
   - Lorena Pantano
@@ -11,15 +11,18 @@ author:
   - Amélie Julé
   - Will Gammerdinger
   - Noor Sohail
-date: "2025-05-30"
+date: "2026-08-03"
 categories: 
   - R Programming
+  - Python
   - Single-cell RNA-seq
 keywords:
   - R
   - Seurat
+  - Scanpy
   - Integration
   - CCA
+  - scVI
   - UMAP
   - PCA
   - Harmony
@@ -29,60 +32,91 @@ editor_options:
     wrap: 72
 ---
 
-Approximate time: 30 minutes
-
 ```{r}
-#| label: load_libraries
+#| label: load_libraries_data_R
 #| echo: false
+# Load libraries and data
 library(Seurat)
 library(tidyverse)
-load(bzfile("data/seurat_integrated.RData.bz2"))
+
+# Load data
+split_seurat <- readRDS("intermediate/07_split_seurat.RDS")
+seurat_phase <- readRDS("intermediate/07_seurat_phase.RDS")
+seurat_integrated <- readRDS("intermediate/09_seurat_integrated.RDS")
 ```
 
-## Learning Objectives:
+```{python}
+#| label: load_libraries_data_py
+#| echo: false
+# Load libraries and data
+import scanpy as sc
+import scvi
+import matplotlib.pyplot as plt
 
-- Perform integration of cells across conditions to identify cells that are similar to each other
-- Describe complex integration tasks and alternative tools for integration
+adata_phase = sc.read_h5ad("intermediate/07_adata_phase.h5ad")
+```
 
+Approximate time: 30 minutes
 
-# Integration code
+## Learning objectives 
+
+In this lesson, we will:
+
+- Perform integration of cells across conditions to identify cells with similar gene expression patterns.
+- Describe complex integration tasks and alternative tools for integration.
+
+## Overview of lesson
+
+In the last lesson we described in detail the steps of integration. **Now, we need to run the code to integrate our data.** 
 
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
 
-Overview of the single-cell RNA-seq workflow.  
-_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
+Overview of the single-cell RNA-seq workflow.
 :::
 
-***
+## Running integration code
 
-## Running CCA
+The R, Seurat workflow uses CCA while the Python, scanpy workflow uses scVI.
 
-In the last lesson we described in detail the steps of integration. **Now, we need to run the code to inetgrate our data.** We will start by using our SCTransform object as input, let's perform the integration across conditions (ctrl and stim).
+::: {.panel-tabset group="language"}
+## R
 
-First, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2000 genes. In this step Seuart performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3000 genes for the size of the intersect set.
- 
-```{r}
-#| label: integration_example
-#| eval: false
-# Select the most variable features to use for integration
-integ_features <- SelectIntegrationFeatures(object.list = split_seurat, 
-                                            nfeatures = 3000) 
-```
+We will start by using our SCTransform object as input, let's perform the integration across conditions (ctrl and stim).
 
 ::: callout-note
 # Loading `split_seurat`
-If you are missing the `split_seurat` object, you can first load it from your `data` folder:
+If you are missing the `split_seurat` object in your environment, you can first load it from your `data` folder:
 
 ```{r}
 #| label: load_split_seurat
 #| eval: false
 # Load the split seurat object into the environment
-split_seurat <- readRDS("data/split_seurat.rds")
+split_seurat <- readRDS("intermediate/07_split_seurat.RDS")
 ```
 
-If you do not have the `split_seurat.rds` file in your `data` folder, you can right-click [here](https://www.dropbox.com/scl/fi/7ion5yarjsko7rwfojzom/split_seurat.rds?rlkey=9x2b5t82y7hf805szneb6rnt2&st=knozf4r6&dl=1) to download it to the `data` folder (it may take a bit of time to download). 
+If you do not have the `split_seurat.rds` file in your `data` folder, you can right-click [here](https://www.dropbox.com/scl/fi/7ion5yarjsko7rwfojzom/split_seurat.rds?rlkey=9x2b5t82y7hf805szneb6rnt2&st=knozf4r6&dl=1) to download it to the `data` folder (it may take a bit of time to download).
+
+TODO: double check this link
+
 :::
+
+Let's recall where we left off. We created a new object called `split_seurat` which is a named list containing two seurat object - corresponding with our two samples. After splitting the dataset, we applied the SCTransform normalization to each sample individually.
+
+```{r}
+#| label: print_split_seurat
+split_seurat
+```
+
+Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seuart performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.
+
+```{r}
+#| label: integration_example
+#| eval: false
+# Select the most variable features to use for integration
+integ_features <- SelectIntegrationFeatures(object.list = split_seurat,
+                                            nfeatures = 3000)
+```
 
 Now, we need to **prepare the SCTransform object** for integration. This function basically prepares for integration analysis by ensuring all necessary data (specifically the SCTransform residuals) are present for the features chosen as anchors between datasets.
 
@@ -114,85 +148,149 @@ Finally, we can **integrate across conditions**.
 # Integrate across conditions
 seurat_integrated <- IntegrateData(anchorset = integ_anchors, 
                                    normalization.method = "SCT")
+```
 
+In the process of splitting our seurat object, we also split the counts matrices in our `RNA` assay. So we will run the `JoinLayers()` function to ensure that all our matrices are combined correctly.
+
+```{r}
+#| label: JoinLayers_RNA
+#| eval: false
 # Rejoin the layers in the RNA assay that we split earlier
 seurat_integrated[["RNA"]] <- JoinLayers(seurat_integrated[["RNA"]])
 ```
 
-### UMAP visualization
+## Python
 
-After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). While PCA will determine all PCs, we can only plot two at a time. In contrast, UMAP will take the information from any number of top PCs to arrange the cells in this multidimensional space. It will take those distances in multidimensional space and plot them in two dimensions working to preserve local and global structure. In this way, the distances between cells represent similarity in expression. If you wish to explore UMAP in more detail, [this post](https://pair-code.github.io/understanding-umap/) is a nice introduction to UMAP theory.
+TODO: text on what SCVI does - to represent cells and can also do batch correction
 
-To generate these visualizations we need to first run PCA and UMAP methods. Let's start with PCA.
+SCVI makes use of Variational Auto-Encoders in order to construct a model that best fits the data according to the parameters set. We can see the basic informatin about the model before running the train step.
+
+```{python}
+#| label: scvi_model
+# Create new anndata for integration
+adata_integrated = adata_phase.copy()
+
+# Set parameters for the scVI model
+scvi.model.SCVI.setup_anndata(adata_integrated, 
+                              layer = "counts", 
+                              batch_key = "sample", 
+                              categorical_covariate_keys =[ "phase", "mitoFr"])
+
+model = scvi.model.SCVI(adata_integrated, 
+                        n_layers=2, 
+                        n_latent=30, 
+                        gene_likelihood="nb")
+model
+```
+
+::: callout-note
+# Epochs
+The number of epochs specifies how many iterations of the model training will be done. The more epochs will improve the results of the training. Here we have set it to 100 to _reduce the amount of time_ this step takes to run while retaining the accuracy of the results. 
+
+By default the number of epochs is typically greater than 200.
+:::
+
+```{python}
+#| label: train_model
+#| eval: false
+# Train encoder and decoder neural networks
+# This step will take several minutes
+model.train(max_epochs=100)
+```
+
+We use the `get_latent_representation()` function to generate a new latent space (like PCA) that reduces the dimensionality of our dataset while taking into consideration the batch variable we specified earlier. This new latent space, which we store as `X_scvi` can later be used to calculate our nearest neighbors and UMAP coordinates.
+
+```{python}
+#| label: x_scvi
+#| eval: false
+# Store resultant latent space
+adata_integrated.obsm["X_scvi"] = model.get_latent_representation()
+```
+
+We now have our new scVI values stores in our `adata_integrated` object, just like we did for PCA.
+
+```{python}
+#| label: instructor_scVI
+#| echo: false
+# adata_integrated.write_h5ad("intermediate/09_adata_integrated.h5ad")
+adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
+```
+
+:::
+
+## Dimensionality reduction assessment
+
+After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch variables overlay nicely in the reduced dimensions. 
+
+::: {.panel-tabset group="language"}
+## R
+
+With CCA, we have created a new `integrated` assay with our modified expression matrix. Therefore, we need to once again run our PCA calculation using these updates values. 
 
 ```{r}
 #| label: integrated_PCA
 # Run PCA
 seurat_integrated <- RunPCA(object = seurat_integrated)
-
-# Plot PCA
-PCAPlot(seurat_integrated,
-        group.by = "sample",
-        split.by = "sample")  
 ```
-
-
-We can see with the PCA mapping that we have a good overlay of both conditions by PCA. 
-
-Now, we can also **visualize with UMAP**. Let's run the method and plot. UMAP is a stochastic algorithm – this means that
-it makes use of randomness both to speed up approximation steps, and to aid in solving hard optimization problems. Due to the stochastic nature, different runs of UMAP can produce different results. **We can set the seed to a specific (but random) number**, and this avoids the creation of a slightly different UMAP each time re-run our code.
-
-::: callout-note
-# Reproducible randomness
-Typically, the `set.seed()` would be placed at the beginning of your script. In this way the selected random number would be applied to any function that uses pseudorandom numbers in its algorithm.
-:::
 
 ```{r}
-#| label: fig-integrated_UMAP
-#| fig-cap: UMAP of dataset after integration with CCA.
-# Set seed
-set.seed(123456)
-
-# Run UMAP
-seurat_integrated <- RunUMAP(seurat_integrated, 
-                             dims = 1:40,
-			                       reduction = "pca")
-
-# Plot UMAP                             
-DimPlot(seurat_integrated,
-        group.by = "sample")                             
+#| label: instructor_save_load
+#| echo: false
+#| eval: false
+saveRDS(seurat_integrated, "intermediate/09_seurat_integrated.RDS")
 ```
 
-
-::: callout-note
-# Did integration improve our results?
-When we compare the similarity between the ctrl and stim clusters in the above plot with what we see using the the unintegrated dataset, **it is clear that this dataset benefitted from the integration!**
-
-::: {#fig-unintegrated-umap .figure}
-![](../img/unintegrated_umap.png){width=400}
-
-UMAP visualization of the unintegrated dataset, showing separation of ctrl and stim conditions.
-:::
-
-:::
-
-#### Side-by-side comparison of clusters
-
-Sometimes it's easier to see whether all of the cells align well if we **split the plotting between conditions**, which we can do by adding the `split.by` argument to the `DimPlot()` function:
+Using the `seurat_phase` object, we can direcly compare the before and after integration PCA representation.
 
 ```{r}
-#| label: fig-integrated_DimPlot
-#| fig-cap: UMAP `split.by` sample to see if there are regions unique to one condition.
-# Plot UMAP split by sample
-DimPlot(seurat_integrated,
-        group.by = "sample",
-        split.by = "sample")  
+#| label: fig-pca_integration
+#| fig-cap: Contrast the latent representation after CCA integration vs. unintegrated PCA.
+#| fig-width: 8
+
+# Plot unintegrated PCA
+p_unint <- PCAPlot(seurat_phase,
+                   group.by = "sample")
+
+# Plot integrated PCA
+p_int <- PCAPlot(seurat_integrated,
+                 group.by = "sample")
+
+p_unint + p_int
 ```
 
+## Python
 
-### Save the "integrated" object!
+Now we can compare and contrast the latent representation that was calculated with PCA and the new SCVI representation. This allows us to see what batch correction has been accomplished.
 
-Since it can take a while to integrate, it's often a good idea to **save the integrated seurat object**.
+```{python}
+#| label: fig-plot_pca_scvi
+#| fig-cap: Contrast the latent representation after scVI integration vs. unintegrated PCA.
+# Create plot with the correct dimensions
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+
+# Plot unintegrated PCA
+sc.pl.embedding(adata_integrated, basis='X_pca', 
+                color='sample', ax=axes[0], 
+                title="PCA", show=False)
+# Plot integrated scVI latent space
+sc.pl.embedding(adata_integrated, basis='X_scvi', 
+                color='sample', ax=axes[1], 
+                title="SCVI", show=False)
+
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
+We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subject, so we will use several different ways to confirm whether or not the integration was succesful in future lessons.
+
+## Save
+
+Since integration requires a lot of compute resources and can take a lot of time to run, it is a to **save the integrated object** so that you do not have to re-run this step many times.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: save_integrated_object
@@ -200,6 +298,17 @@ Since it can take a while to integrate, it's often a good idea to **save the int
 # Save integrated Seurat object
 saveRDS(seurat_integrated, "data/integrated_seurat.rds")
 ```
+
+## Python
+
+```{python}
+#| label: save_integrated_object_py
+#| eval: false
+# Save integrated adata object
+adata_integrated.write_h5ad("data/adata_integrated.h5ad")
+```
+
+:::
 
 
 ## Complex Integration Tasks
@@ -217,42 +326,39 @@ In their benchmarking study, [Luecken et al. (2022)](https://doi.org/10.1038/s41
 
 Examples of complex single-cell integration scenarios across donors, technologies, tissues, and conditions.
 :::
-In these **more complex scenarios**, you want to select a data integration approach that successfully balances out the following challenges:
 
-| Case for integration                                                                                                              | Example                                                                                                                                                   |
-|-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Correcting for inter-sample variability due to source samples from different donors                                               | Integrating PBMC scRNA-seq from 20 healthy donors to identify shared immune cell populations while removing donor-specific batch effects                 |
-| Correcting for variability across protocols/technologies         | Integrating 10x Genomics single-cell data with SMART-Seq2 and single-nucleus RNA-seq from brain tissue to obtain a unified atlas of neuronal cell types  |
-| Identifying consistent cell types across different tissues and/or locations  | Integrating immune cell datasets from blood, bone marrow, and lung to find shared T cell and B cell populations across tissues and anatomical locations   |
-| Keeping apart cell subtypes (or states) with similar transcriptomes                      | Integrating multiple immune datasets to reliably separate CD4 naïve and memory T cells or NK and NKT cells despite their highly similar transcriptomes    |
-| Keeping apart cell subtypes that are unique to a tissue/condition                                                                 | Integrating healthy and disease (e.g., tumor vs. normal) datasets to distinguish tumor-specific T cell subsets from shared circulating T cells           |
-| Conserving the developmental trajectory, if applicable                                                                            | Integrating fetal and adult hematopoietic datasets to reconstruct a continuous developmental trajectory of blood cell differentiation across life stages |
+In these **more complex scenarios**, you want to select a data integration approach that successfully balances out the challenges
 
 Not all tools may perform as well on every task, and complex datasets may require testing several data integration approaches. You might want to analyze independently each of the batches you consider to integrate across, in order to define cell identities at this level before integrating and checking that the initially annotated cell types are mixed as expected.
 
-## Harmonizing as a method of integration
+### Harmony integration
 
-[Harmony](https://www.nature.com/articles/s41592-019-0619-0) was devleoped in 2019, and is an example of **a tool that can work with complex integration tasks**. It is available as an [R package on GitHub](https://github.com/immunogenomics/harmony), and it has functions for standalone and Seurat pipeline analyses. It has been shown to perform incredibly well from recent benchmarking studies [[1]](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1850-9). 
+[Harmony](https://www.nature.com/articles/s41592-019-0619-0) was developed in 2019 and is an example of **a tool that can handle complex integration tasks**. From [benchmarking studies](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1850-9), it has been shown to perform well for single-cell datasets at integrating datasets with strong batch effects. 
 
-
-### Overview of Harmony
-
-In this section, we illustrate the use of [`Harmony`](https://portals.broadinstitute.org/harmony/articles/quickstart.html) as a possible alternative to the `Seurat` integration workflow. Compared to other algorithms, `Harmony` notably presents the following advantages ([Korsunsky et al. 2019](https://www.nature.com/articles/s41592-019-0619-0), [Tran et al. 2020](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1850-9)): 
-
-1. Possibility to integrate data across several variables (for example, by experimental batch and by condition)
-2. Significant gain in speed and lower memory requirements for integration of large datasets
-3. Interoperability with the `Seurat` workflow
-
-Instead of using CCA, `Harmony` applies a transformation to the principal component (PCs) values, using all available PCs, e.g. as pre-computed within the `Seurat` workflow. In this space of transformed PCs, `Harmony` uses k-means clustering to delineate clusters, seeking to define clusters with maximum "diversity". The diversity of each cluster reflects whether it contains balanced amounts of cells from each of the batches (donor, condition, tissue, technolgy...) we seek to integrate on, as should be observed in a well-integrated dataset. After defining diverse clusters, `Harmony` determines how much a cell's batch identity impacts on its PC coordinates, and applies a correction to "shift" the cell towards the centroid of the cluster it belongs to. Cells are projected again using these corrected PCs, and the process is repeated iteratively until convergence. 
+`Harmony` applies a series of iterative corrections to our PCA space. 
 
 ::: {#fig-harmony-overview .figure}
-![](../img/harmony_overview.jpeg){width=600}
+![](../img/harmony_overview.jpeg){width=800}
 
-Overview of the Harmony algorithm for batch correction and integration of single-cell datasets.
-_Source: [Korsunsky et al., 2019](https://doi.org/10.1038/s41592-019-0619_
+Overview of the Harmony algorithm for batch correction and integration of single-cell datasets.<br>
+_Image Source: [Korsunsky et al. (2019)](https://www.nature.com/articles/s41592-019-0619-0)_
 :::
 
-For a more detailed breakdown of the `Harmony` algorithm, we recommend checking [this advanced vignette](http://htmlpreview.github.io/?https://github.com/immunogenomics/harmony/blob/master/docs/advanced.html) from the package developers.
+The following steps are taken:
+
+1. k-means clustering to identify clusters in PCA space.
+2. Calculate a "diversity" score for each cluster, reflecting if it contains a balanced amounts of cells from each of the batches (donor, condition, tissue, technology, etc.)
+3. `Harmony` determines how much a cell's batch identity impacts its PC coordinates and applies a correction to "shift" the cell towards the centroid of the cluster it belongs to.
+4. Cells are projected again using these corrected PCs and the process is repeated iteratively until convergence. 
+
+
+`Harmony` notably presents the following advantages ([Korsunsky et al. 2019](https://www.nature.com/articles/s41592-019-0619-0), [Tran et al. (2020)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1850-9)): 
+
+- Possibility to integrate data across several variables (for example, by experimental batch and by condition)
+- Significant gain in speed and lower memory requirements for integration of large datasets
+- Interoperability with the `Seurat` workflow
+
+`Harmony` is available within the Seurat workflow with the `RunHarmony()` function, but is also a stand-alone package. For a more detailed breakdown of the `Harmony` algorithm, we recommend checking [this advanced vignette](https://htmlpreview.github.io/?https://github.com/immunogenomics/harmony/blob/master/doc/detailedWalkthrough.html) from the package developers.
 
 ::: {.callout-note collapse="true"}
 # Implementing Harmony within the Seurat workflow
@@ -318,7 +424,6 @@ One last thing we need to do before running `Harmony` is to make sure that the m
 
 We're then ready to run `Harmony`!
 
-
 ```{r}
 #| label: run_harmony
 #| eval: false
@@ -351,6 +456,12 @@ harmonized_seurat <- FindNeighbors(object = harmonized_seurat, reduction = "harm
 harmonized_seurat <- FindClusters(harmonized_seurat, resolution = c(0.2, 0.4, 0.6, 0.8, 1.0, 1.2))
 ```
 
-The rest of the `Seurat` workflow and downstream analyses after integration using `Harmony` can then proceed without further amendments.
+The rest of the `Seurat` and `scanpy` workflow and downstream analyses after integration using `Harmony` can then proceed without further amendments.
 
 :::
+
+***
+
+[Next Lesson >>](10_clustering.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)

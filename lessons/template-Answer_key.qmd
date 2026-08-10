@@ -1,0 +1,48 @@
+---
+title: "Tmp - Answer Key"
+author:
+  - author_1
+  - author_2
+date: "YYYY-MM-DD"
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load_libraries_data
+#| echo: false
+# Load libraries and data
+
+```
+
+# Exercise 1
+
+1. A question to evaluate Learning Objective 1
+
+2. A followup question to question #1
+
+3. ...
+
+# Exercise 2
+
+1. A question to evaluate Learning Objective 2
+
+2. A followup question to question #1
+
+3. ...
+
+# Exercise 3
+
+1. A question to evaluate Learning Objective 3
+
+2. A followup question to question #1
+
+3. ...
+
+***
+
+[Back to Lesson >>](tmp.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)

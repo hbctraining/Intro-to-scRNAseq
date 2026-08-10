@@ -1,0 +1,127 @@
+---
+title: "Normalization and exploring data for unwanted variation - Answer Key"
+author:
+  - Noor Sohail
+  - Will Gammerdinger
+date: "2025-07-01"
+---
+
+```{r}
+#| label: load_libraries
+#| echo: false
+library(Seurat)
+library(tidyverse)
+
+seurat_phase <- readRDS("intermediate/07_seurat_phase.RDS")
+split_seurat <- readRDS("intermediate/07_split_seurat.RDS")
+```
+
+```{python}
+#| label: load_libraries_py
+#| echo: false
+import scanpy as sc
+import matplotlib.pyplot as plt
+adata_phase = sc.read_h5ad("intermediate/07_adata_phase.h5ad")
+```
+
+# Exercise 1
+
+
+1. Plot the PCA similar to how we did with cell cycle regression. *Hint: use the new `mitoFr`variable to split cells and color them accordingly.*
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: plot_pca
+# Plot the PCA colored by mitoFr
+DimPlot(seurat_phase,
+        reduction = "pca",
+        group.by= "mitoFr")
+```
+
+```{r}
+#| fig-width: 9
+#| label: plot_pca_split
+# Plot the PCA colored and split by mitoFr
+DimPlot(seurat_phase,
+        reduction = "pca",
+        group.by= "mitoFr",
+        split.by="mitoFr")
+```
+
+## Python
+
+TODO: legend is cut off
+
+```{python}
+#| label: plot_pca_mitoFr
+#| fig-width: 7
+sc.pl.pca(adata_phase, 
+          color="mitoFr")
+```
+
+```{python}
+#| label: plot_pca_mitoFr_split
+#| fig-width: 12
+# Create plot with the correct dimensions
+mito_groups = adata_phase.obs["mitoFr"].unique()
+fig, axes = plt.subplots(1, len(mito_groups), 
+                        figsize=(15, 5))
+
+for idx, group in enumerate(mito_groups):
+  # Plot the PCA colored and split by mitoFr
+  sc.pl.pca(adata_phase, color="mitoFr", 
+            groups=group, ax=axes[idx], 
+            show=False, title=group)
+
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
+2. Evaluate the PCA plot generated above
+	
+	- Determine whether or not you observe an effect.
+	
+	Yes, there is an effect. 
+	
+	- Describe what you see. 
+	
+	Based on this plot, we can see that there is a different pattern of scatter for the plot containing cells with "High" mitochondrial expression. We observe that the lobe of cells one side of plot is where most of the cells with high mitochondrial expression are. For all other levels of mitochondrial expression we see a more even distribution of cells across the PCA plot.
+	
+	- Would you regress out mitochondrial fraction as a source of unwanted variation?
+	
+	Since we see this clear difference, we will regress out the 'mitoRatio' when we identify the most variant genes.
+
+# Exercise 2
+
+::: {.panel-tabset group="language"}
+## R
+
+
+3. Are the same assays available for the "stim" samples within the `split_seurat` object? What is the code you used to check that?
+
+Yes they are available. The code use is:
+
+```{r}
+#| label: check_assays
+split_seurat$stim@assays
+```
+
+4. Any observations for the genes or features listed under "First 10 features:" and the "Top 10 variable features:" for "ctrl" versus "stim"?
+
+For the first 10 features, it appears that the same genes are present in both "ctrl" and "stim"
+
+For the top 10 variable features, these are different in the the 2 conditions with some overlap between them.
+
+## Python
+
+:::
+
+***
+
+[Back to Lesson >>](07_normalization.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)

@@ -13,7 +13,6 @@ website:
   google-analytics: G-68JBPLLNLG
   page-footer: >
       This lesson has been developed by members of the teaching team at the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). <br>
-      These are open access materials distributed under the terms of the [Creative Commons Attribution license](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited. <br>
       A portion of these materials and hands-on activities were adapted from the [Satija Lab's](https://satijalab.org/) [Seurat - Guided Clustering Tutorial](https://satijalab.org/seurat/pbmc3k_tutorial.html)
 
   
@@ -52,15 +51,15 @@ website:
       - section: "Day 2:"
         contents:
           - lessons/05_quality_control.qmd
-          - lessons/07_SCT_normalization.qmd
-          - lessons/08_integration_cca_theory.qmd
+          - lessons/07_normalization.qmd
+          - lessons/08_integration_theory.qmd
       - section: "Day 2 Self-learning"
         contents:
           - lessons/09_integration_code_harmony.qmd
           
       - section: "Day 3:"
         contents:
-          - lessons/10_clustering_cells_SCT.qmd
+          - lessons/10_clustering.qmd
           - lessons/11_clustering_quality_control.qmd
       - section: "Day 3 Self-learning"
         contents:
@@ -74,7 +73,8 @@ website:
 
 format:
   html:
-    theme: simplex
+    theme: [simplex, css/language_toggle.scss]
+    include-after-body: css/language_toggle.html
     css: css/styles.css
     fig-align: "center"
     toc: true
@@ -86,6 +86,7 @@ format:
     google-analytics: G-68JBPLLNLG
     prompt: true         
     self-contained: true
+    lightbox: true
 
 # Global Execution Defaults
 execute:
