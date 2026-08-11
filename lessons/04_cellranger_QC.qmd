@@ -91,7 +91,7 @@ Note that prior to this step, **you must have a cellranger compatible reference 
 
 Here we are showing an example of how to run `cellranger count` on Harvard's O2 HPC using SLURM. To run this script, you will have to add additional information, such as:
 
-- The name of the project (the results will be placed in a -older of the same name)
+- The name of the project (the results will be placed in a folder of the same name)
 - Path to the FASTQ files from your experiment
 - Path to the reference genome 
 
