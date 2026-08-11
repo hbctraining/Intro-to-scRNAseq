@@ -5461,10 +5461,11 @@ Seurat Cheatsheet - Preview
 </table>
 <hr>
 </section>
-<section id="downstream-analyses" class="level2">
-<h2 data-anchor-id="downstream-analyses">Downstream analyses</h2>
+<section id="other-relevant-hbc-workshops" class="level2">
+<h2 data-anchor-id="other-relevant-hbc-workshops">Other Relevant HBC Workshops</h2>
 <ul>
-<li><a href="https://hbctraining.github.io/Pseudobulk-for-scRNAseq/">Differential expression between conditions</a></li>
+<li><a href="https://hbctraining.github.io/Pseudobulk-for-scRNAseq-Quarto/">Differential Expression with scRNA-seq</a></li>
+<li><a href="https://hbctraining.github.io/Intro-to-spatial-transcriptomics/">Introduction to Spatial Transcriptomics</a></li>
 </ul>
 <hr>
 </section>
@@ -5691,57 +5692,58 @@ Seurat Cheatsheet - Preview
 <span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>***</span>
 <span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="fu">## Downstream analyses</span></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other Relevant HBC Workshops</span></span>
 <span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Differential expression between conditions</span><span class="co">](https://hbctraining.github.io/Pseudobulk-for-scRNAseq/)</span></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>***</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resources</span></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>We have covered the analysis steps in quite a bit of detail for scRNA-seq exploration of cellular heterogeneity using the Seurat package. For more information on topics covered, we encourage you to take a look at the following resources:</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="fu">### Seurat-focused</span></span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Seurat vignettes</span><span class="co">](https://satijalab.org/seurat/vignettes.html)</span></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Seurat cheatsheet</span><span class="co">](https://satijalab.org/seurat/essential_commands.html)</span></span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Satija Lab: Single Cell Genomics Day</span><span class="co">](https://satijalab.org/scgd21/)</span></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Additional information about cell cycle scoring</span><span class="co">](../lessons/Aside_cell_cycle_scoring.qmd)</span></span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">A nice explanation on CCA and cell label transfer in Seurat</span><span class="co">](https://divingintogeneticsandgenomics.com/post/cca-alignment/)</span></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### Scaling up: scRNA-seq analysis on HPC  </span></span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Using RStudio on O2</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="co">[</span><span class="ot">HMSRC wiki page</span><span class="co">](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1623425967/RStudio+on+O2)</span></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="co">[</span><span class="ot">HBC RStudio on O2 tutorial</span><span class="co">](https://hbctraining.github.io/Intro-to-Unix-QMB/lessons/R_studio_on_02.html)</span></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cell type annotation</span></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Databases with markers for manual annotation</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">CellMarker 2.0</span><span class="co">](http://bio-bigdata.hrbmu.edu.cn/CellMarker/)</span></span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Cell type signature gene sets from <span class="co">[</span><span class="ot">MSigDb</span><span class="co">](https://www.gsea-msigdb.org/gsea/msigdb/human/genesets.jsp?collection=C8)</span></span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">CELL x GENE from CZI</span><span class="co">](https://cellxgene.cziscience.com/gene-expression)</span></span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reference-based automated celltype annotation</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Azimuth</span><span class="co">](https://azimuth.hubmapconsortium.org/)</span></span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Celltypist</span><span class="co">](https://www.celltypist.org/)</span></span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a><span class="fu">### Highlighted papers</span></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Sampling time-dependent artifacts in single-cell genomics studies.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02032-0)</span> *Massoni-Badosa et al.* 2019</span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Dissociation of solid tumor tissues with cold active protease for single-cell RNA-seq minimizes conserved collagenase-associated stress responses.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1830-0)</span> *O&#39;Flanagan et al.* 2020</span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Systematic assessment of tissue dissociation and storage biases in single-cell and single-nucleus RNA-seq workflows.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02048-6)</span> *Denisenko et al.* 2020</span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Confronting false discoveries in single-cell differential expression&quot;, _Nature Communications_ 2021</span><span class="co">](https://www.nature.com/articles/s41467-021-25960-2)</span></span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Single-nucleus and single-cell transcriptomes compared in matched cortical cell types</span><span class="co">](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6306246/)</span></span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">A single-cell and single-nucleus RNA-Seq toolbox for fresh and frozen human tumors</span><span class="co">](https://www.nature.com/articles/s41591-020-0844-1)</span></span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Ligand-receptor analysis with CellphoneDB</span><span class="co">](https://www.nature.com/articles/s41576-020-00292-x)</span></span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Best practices for single-cell analysis across modalities</span><span class="co">](https://www.nature.com/articles/s41576-023-00586-w)</span></span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Differential Expression with scRNA-seq</span><span class="co">](https://hbctraining.github.io/Pseudobulk-for-scRNAseq-Quarto/)</span></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Introduction to Spatial Transcriptomics</span><span class="co">](https://hbctraining.github.io/Intro-to-spatial-transcriptomics/)</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>***</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resources</span></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>We have covered the analysis steps in quite a bit of detail for scRNA-seq exploration of cellular heterogeneity using the Seurat package. For more information on topics covered, we encourage you to take a look at the following resources:</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="fu">### Seurat-focused</span></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Seurat vignettes</span><span class="co">](https://satijalab.org/seurat/vignettes.html)</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Seurat cheatsheet</span><span class="co">](https://satijalab.org/seurat/essential_commands.html)</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Satija Lab: Single Cell Genomics Day</span><span class="co">](https://satijalab.org/scgd21/)</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Additional information about cell cycle scoring</span><span class="co">](../lessons/Aside_cell_cycle_scoring.qmd)</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">A nice explanation on CCA and cell label transfer in Seurat</span><span class="co">](https://divingintogeneticsandgenomics.com/post/cca-alignment/)</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="fu">### Scaling up: scRNA-seq analysis on HPC  </span></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Using RStudio on O2</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="co">[</span><span class="ot">HMSRC wiki page</span><span class="co">](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1623425967/RStudio+on+O2)</span></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="co">[</span><span class="ot">HBC RStudio on O2 tutorial</span><span class="co">](https://hbctraining.github.io/Intro-to-Unix-QMB/lessons/R_studio_on_02.html)</span></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cell type annotation</span></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Databases with markers for manual annotation</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">CellMarker 2.0</span><span class="co">](http://bio-bigdata.hrbmu.edu.cn/CellMarker/)</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Cell type signature gene sets from <span class="co">[</span><span class="ot">MSigDb</span><span class="co">](https://www.gsea-msigdb.org/gsea/msigdb/human/genesets.jsp?collection=C8)</span></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">CELL x GENE from CZI</span><span class="co">](https://cellxgene.cziscience.com/gene-expression)</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reference-based automated celltype annotation</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Azimuth</span><span class="co">](https://azimuth.hubmapconsortium.org/)</span></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Celltypist</span><span class="co">](https://www.celltypist.org/)</span></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### Highlighted papers</span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Sampling time-dependent artifacts in single-cell genomics studies.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02032-0)</span> *Massoni-Badosa et al.* 2019</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Dissociation of solid tumor tissues with cold active protease for single-cell RNA-seq minimizes conserved collagenase-associated stress responses.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1830-0)</span> *O&#39;Flanagan et al.* 2020</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Systematic assessment of tissue dissociation and storage biases in single-cell and single-nucleus RNA-seq workflows.&quot;</span><span class="co">](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02048-6)</span> *Denisenko et al.* 2020</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">&quot;Confronting false discoveries in single-cell differential expression&quot;, _Nature Communications_ 2021</span><span class="co">](https://www.nature.com/articles/s41467-021-25960-2)</span></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Single-nucleus and single-cell transcriptomes compared in matched cortical cell types</span><span class="co">](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6306246/)</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">A single-cell and single-nucleus RNA-Seq toolbox for fresh and frozen human tumors</span><span class="co">](https://www.nature.com/articles/s41591-020-0844-1)</span></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Ligand-receptor analysis with CellphoneDB</span><span class="co">](https://www.nature.com/articles/s41576-020-00292-x)</span></span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Best practices for single-cell analysis across modalities</span><span class="co">](https://www.nature.com/articles/s41576-023-00586-w)</span></span>
 <span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a><span class="fu">### Other online scRNA-seq courses:</span></span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">OSCA with Bioconductor</span><span class="co">](http://bioconductor.org/books/release/OSCA/)</span></span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">DFCI/Shirley Liu</span><span class="co">](https://liulab-dfci.github.io/bioinfo-combio/)</span></span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Wellcome Sanger Institute/Hemmberg Lab</span><span class="co">](https://www.singlecellcourse.org/)</span></span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">ISCB Workshop</span><span class="co">](https://github.com/SingleCellTranscriptomics)</span></span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Broad workshop</span><span class="co">](https://broadinstitute.github.io/2020_scWorkshop/)</span></span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">SciLifeLab workshop</span><span class="co">](https://nbisweden.github.io/workshop-scRNAseq/)</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a><span class="fu">### Other online scRNA-seq courses:</span></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">OSCA with Bioconductor</span><span class="co">](http://bioconductor.org/books/release/OSCA/)</span></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">DFCI/Shirley Liu</span><span class="co">](https://liulab-dfci.github.io/bioinfo-combio/)</span></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Wellcome Sanger Institute/Hemmberg Lab</span><span class="co">](https://www.singlecellcourse.org/)</span></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">ISCB Workshop</span><span class="co">](https://github.com/SingleCellTranscriptomics)</span></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">Broad workshop</span><span class="co">](https://broadinstitute.github.io/2020_scWorkshop/)</span></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="co">[</span><span class="ot">SciLifeLab workshop</span><span class="co">](https://nbisweden.github.io/workshop-scRNAseq/)</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </section>
 </section>

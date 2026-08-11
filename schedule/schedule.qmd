@@ -155,9 +155,10 @@ II. **Submit your work**:
 
 ***
 
-## Downstream analyses
+## Other Relevant HBC Workshops
 
-- [Differential expression between conditions](https://hbctraining.github.io/Pseudobulk-for-scRNAseq/)
+- [Differential Expression with scRNA-seq](https://hbctraining.github.io/Pseudobulk-for-scRNAseq-Quarto/)
+- [Introduction to Spatial Transcriptomics](https://hbctraining.github.io/Intro-to-spatial-transcriptomics/)
 
 ***
 

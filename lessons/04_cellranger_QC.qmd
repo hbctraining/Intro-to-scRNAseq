@@ -467,6 +467,6 @@ In the **next lesson, we will use `raw_feature_bc_matrix`** to load the counts i
 
 ***
 
-[Next Lesson >>](05_quality_control.qmd)
+[Next Lesson >>](06_theory_of_PCA.qmd)
 
 [Back to Schedule](../schedule/schedule.qmd)
