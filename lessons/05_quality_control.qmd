@@ -66,9 +66,7 @@ In this lesson, we will:
 
 ## Overview of lesson
 
-TODO: flush out this text
-
-At this point, we have loaded our dataset into our programming language. So the next step is to assess the quality of our cells. In doing so, we will clean up the data and _filter cells using quality metrics._
+At this point, we have loaded our dataset into our programming language. We saw in the metadata, that there are several columns that will help us evaluate the quality of our cells. In single-cell experiments, it is common to have some cells that are dead/dying or are generally low quality. Therefore, we want to remove these noisy cells before we run downstream analyses. This next step uses our metadata columns to _filter cells using quality metrics_ and clean up the dataset.
 
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
@@ -121,9 +119,9 @@ merged_adata.obs.head()
 #| echo: false
 #| results: asis
 sc.pp.calculate_qc_metrics(merged_adata,
-                           percent_top=None,
-                           log1p=False,
-                           inplace=True)
+                           percent_top = None,
+                           log1p = False,
+                           inplace = True)
 print(merged_adata.obs.head().to_markdown())
 ```
 
@@ -237,11 +235,11 @@ The cell numbers can also vary by protocol, **producing cell numbers that are mu
 #| fig-cap: Barplot of the number of cells per sample.
 # Visualize the number of cell counts per sample
 merged_seurat@meta.data %>% 
-  	ggplot(aes(x=sample, fill=sample)) + 
+  	ggplot(aes(x = sample, fill = sample)) + 
   	geom_bar() +
   	theme_classic() +
   	theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
-  	theme(plot.title = element_text(hjust=0.5, face="bold")) +
+  	theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
   	ggtitle("NCells")
 ```
 
@@ -251,8 +249,8 @@ merged_seurat@meta.data %>%
 #| label: fig-plot_ncells_py
 #| fig-cap: Barplot of the number of cells per sample.
 fig, ax = plt.subplots()
-ax = sns.countplot(data=merged_adata.obs, 
-                   x="sample", hue="sample",
+ax = sns.countplot(data = merged_adata.obs, 
+                   x = "sample", hue = "sample",
                    ax = ax)
 ax.set_title("Number of Cells per Sample")
 
@@ -279,9 +277,9 @@ The UMI counts per cell should generally be above 500, that is the low end of wh
 #| fig-cap: Density plot showing the distribution of UMI counts per cell for each sample
 # Visualize the number UMIs/transcripts per cell
 merged_seurat@meta.data %>% 
-    ggplot(aes(color=sample, 
-                x=nCount_RNA, 
-                fill= sample)) + 
+    ggplot(aes(color = sample, 
+                x = nCount_RNA, 
+                fill = sample)) + 
     geom_density(alpha = 0.2) + 
     scale_x_log10() + 
     theme_classic() +
@@ -297,10 +295,10 @@ merged_seurat@meta.data %>%
 # Visualize the number UMIs/transcripts per cell
 fig, ax = plt.subplots()
 ax = sns.histplot(merged_adata.obs, 
-                  x="total_counts", 
-                  hue="sample",
-                  log_scale=True, # apply log scale to counts
-                  alpha=0.2, ax=ax)
+                  x = "total_counts", 
+                  hue = "sample",
+                  log_scale = True, # apply log scale to counts
+                  alpha = 0.2, ax = ax)
 ax.set_title("Total Counts")
 
 # Add line showing potential threshold
@@ -323,13 +321,13 @@ We have similar expectations for gene detection as for UMI detection, although i
 #| label: fig-genes_detected
 #| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
 # Visualize the distribution of genes detected per cell via histogram
-merged_seurat@meta.data %>% 
-  	ggplot(aes(color=sample, 
-               x=nFeature_RNA, 
-               fill= sample)) + 
-  	geom_density(alpha = 0.2) + 
+merged_seurat@meta.data %>%
+  	ggplot(aes(color = sample,
+               x = nFeature_RNA,
+               fill = sample)) +
+  	geom_density(alpha = 0.2) +
   	theme_classic() +
-  	scale_x_log10() + 
+  	scale_x_log10() +
   	geom_vline(xintercept = 300)
 ```
 
@@ -340,14 +338,14 @@ merged_seurat@meta.data %>%
 #| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
 # Visualize the distribution of genes detected per cell via histogram
 ax = sns.histplot(merged_adata.obs, 
-                  x="n_genes", 
-                  hue="sample",
-                  log_scale=True, # apply log scale to counts
-                  alpha=0.2)
+                  x = "n_genes", 
+                  hue = "sample",
+                  log_scale = True, # apply log scale to counts
+                  alpha = 0.2)
 ax.set_title("Genes per Cell")
 
 # Add line showing potential threshold
-ax.axvline(300, color="black")
+ax.axvline(300, color = "black")
 plt.show()
 ```
 
@@ -384,7 +382,8 @@ After calculating the complexity score, we can now visualize the distribution of
 # Visualize the overall complexity of the gene expression by visualizing 
 # the genes detected per UMI (novelty score)
 merged_seurat@meta.data %>%
-  	ggplot(aes(x=log10GenesPerUMI, color = sample, fill=sample)) +
+  	ggplot(aes(x = log10GenesPerUMI,
+               color = sample, fill = sample)) +
   	geom_density(alpha = 0.2) +
   	theme_classic() +
   	geom_vline(xintercept = 0.8)
@@ -402,13 +401,13 @@ After calculating the complexity score, we can now visualize the distribution of
 ```{python}
 #| label: fig-complexity_score_plot_py
 #| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
-ax = sns.histplot(merged_adata.obs, x="log10GenesPerUMI", hue="sample",
-                  # kde=True, # adds line showing general trend
-                  alpha=0.2)
+ax = sns.histplot(merged_adata.obs, 
+                  x = "log10GenesPerUMI", hue = "sample",
+                  alpha = 0.2)
 ax.set_title("Complexity")
 
 # Add line showing potential threshold
-ax.axvline(0.8, color="black")
+ax.axvline(0.8, color = "black")
 plt.show()
 ```
 
@@ -455,7 +454,7 @@ We can once again visualize this metric for each sample:
 #| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
 # Visualize the distribution of mitochondrial gene expression detected per cell
 merged_seurat@meta.data %>% 
-  	ggplot(aes(color=sample, x=mitoRatio, fill=sample)) + 
+  	ggplot(aes(color = sample, x = mitoRatio, fill = sample)) + 
   	geom_density(alpha = 0.2) + 
   	scale_x_log10() + 
   	theme_classic() +
@@ -464,18 +463,38 @@ merged_seurat@meta.data %>%
 
 ## Python
 
-TODO: explain how this works
+The first step is to identify which genes are mitochondrial. We do this my identify any genes (from the `.var`) that starts with the character `MT-` and assign `True`/`False` values to genes that fit that criteria.
 
 ```{python}
 #| label: label_mito
+#| eval: false
 # Identify mitochondrial genes
 mito_genes = merged_adata.var_names.str.startswith('MT-')
 merged_adata.var['mito'] = mito_genes
 
+metadata_adata.var.head()
+```
+
+```{python}
+#| label: tbl-show_var_head_py
+#| tbl-cap: "Inspecting our gene metadata table to see our mitochondrial information."
+#| echo: false
+#| results: asis
+mito_genes = merged_adata.var_names.str.startswith('MT-')
+merged_adata.var['mito'] = mito_genes
+
+print(merged_adata.var.head().to_markdown())
+```
+
+We then use the `qc_vars` parameter in `pp.calculate_qc_metrics()` to tell the function to calculate metrics (including number of counts) that belong to genes that have `True` set in the `mito` column.
+
+```{python}
+#| label: calc_mito_ratio
 # Calculate number of counts coming from mito_genes
 sc.pp.calculate_qc_metrics(merged_adata, 
-                           qc_vars=("mito"), 
-                           inplace=True)
+                           qc_vars = ("mito"), 
+                           inplace = True)
+
 # We want the value as a ratio
 merged_adata.obs["mito_ratio"] = merged_adata.obs["pct_counts_mito"] / 100
 ```
@@ -485,14 +504,14 @@ We can once again visualize this metric for each sample:
 ```{python}
 #| label: fig-mito_ratio_plot_py
 #| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
-
-ax = sns.histplot(merged_adata.obs, x="mito_ratio", hue="sample",
-                  # kde=True, # adds line showing general trend
-                  alpha=0.2)
+# Histogram of mitochondrial ration
+ax = sns.histplot(merged_adata.obs, 
+                  x = "mito_ratio", hue = "sample",
+                  alpha = 0.2)
 ax.set_title("Mitochondrial Ratio")
 
 # Add line showing potential threshold
-ax.axvline(0.2, color="black")
+ax.axvline(0.2, color = "black")
 plt.show()
 ```
 
@@ -519,12 +538,12 @@ Two metrics that are often evaluated together are the number of UMIs and the num
 # Visualize the correlation between genes detected and number of UMIs and 
 # determine whether strong presence of cells with low numbers of genes/UMIs
 merged_seurat@meta.data %>% 
-  	ggplot(aes(x=nCount_RNA, 
-               y=nFeature_RNA, 
-               color=mitoRatio)) + 
+  	ggplot(aes(x = nCount_RNA, 
+               y = nFeature_RNA, 
+               color = mitoRatio)) + 
   	geom_point() + 
 	  scale_colour_gradient(low = "gray90", high = "black") +
-  	stat_smooth(method=lm) +
+  	stat_smooth(method = lm) +
   	scale_x_log10() + 
   	scale_y_log10() + 
   	theme_classic() +
@@ -534,7 +553,6 @@ merged_seurat@meta.data %>%
 ```
 
 ## Python
-
 
 ```{python}
 #| label: fig-joint_effects_plot_code_py
@@ -547,22 +565,22 @@ meta = merged_adata.obs.sort_values('mito_ratio', ascending=True)
 
 g = sns.FacetGrid(meta, col="sample", height=5)
 g.map_dataframe(sns.scatterplot, 
-                x="total_counts", 
-                y="n_genes", 
-                hue="mito_ratio",
-                palette="viridis")
+                x = "total_counts", 
+                y = "n_genes", 
+                hue = "mito_ratio",
+                palette = "viridis")
 
 # Scale x,y axes by log10
 for ax in g.axes.flat:
-    ax.set(xscale="log", yscale="log")
+    ax.set(xscale = "log", yscale = "log")
 
 # Add threshold lines
-g.refline(x=500, y=300)
+g.refline(x = 500, y = 300)
 
 # Add colorbar for the legend 
 sm = g.axes[0, 0].collections[0]
-plt.colorbar(sm, ax=g.axes, 
-             label="mito_ratio")
+plt.colorbar(sm, ax = g.axes, 
+             label = "mito_ratio")
 plt.show()
 ```
 
@@ -630,10 +648,10 @@ To filter, we wil go back to our Seurat object and use the `subset()` function:
 # Filter out low quality cells using selected 
 # thresholds - these will change with experiment
 filtered_seurat <- subset(x = merged_seurat, 
-                          subset = (nCount_RNA >= 500) & 
-                           (nFeature_RNA >= 250) & 
-                           (log10GenesPerUMI > 0.80) & 
-                           (mitoRatio < 0.20))
+                          subset = (nCount_RNA >= 500) &
+                                   (nFeature_RNA >= 250) &
+                                   (log10GenesPerUMI > 0.80) &
+                                   (mitoRatio < 0.20))
 filtered_seurat
 ```
 
@@ -696,9 +714,10 @@ filtered_seurat
 
 ```{python}
 #| label: filter_genes
+# Remove lowly expressed genes
 sc.pp.filter_genes(filtered_adata, 
-                   inplace=True, 
-                   min_counts=10)
+                   inplace = True, 
+                   min_counts = 10)
 
 filtered_adata
 ```
@@ -730,8 +749,8 @@ Based on these QC metrics we would identify any failed samples and move forward 
 ```{r}
 #| label: save_filtered_seurat_object
 #| eval: false
-# Create .RData object to load at any time
-save(filtered_seurat, file="data/seurat_filtered.RData")
+# Create RDS object to load at any time
+saveRDS(filtered_seurat, file="data/seurat_filtered.rds")
 ```
 
 ## Python

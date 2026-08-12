@@ -21,7 +21,7 @@ page-layout: custom
 | 09:45 - 10:35| [Bioinformatics begins at the bench:<br> How experimental decisions shape single-cell RNA-seq analyses](../slides/08112026_scRNAseq_workshop_Arpita_Kulkarni.pdf) | [Dr. Arpita Kulkarni](https://research.bidmc.org/omics/news/introducing-dr-arpita-kulkarni-co-director-functional-genomics-and-bioinformatics-core) |
 | 10:35 - 10:40 | Break |
 | 10:40 - 11:00 | scRNA-seq pre-reading discussion | Noor |
-| 11:00 - 11:45 | [Quality Control Set-up](../lessons/03_quality_control-setup.qmd) | Will |
+| 11:00 - 11:45 | [Quality Control Set-up](../lessons/03_quality_control-setup.qmd) | Noor |
 | 11:45 - 12:00 | Overview of self-learning materials and homework submission | Will |
 
 ### Before the next class:
@@ -74,7 +74,7 @@ II. **Submit your work**:
 | 10:00 - 10:45 | [Quality Control with Additional Metrics](../lessons/05_quality_control.qmd) | Will |
 | 10:45 - 10:50 | Break |
 | 10:50 - 11:40 | [Normalization and Unwanted Variation](../lessons/07_normalization.qmd) | Noor |
-| 11:40 - 12:00 | [Introduction to Integration Theory](../lessons/08_integration_theory.qmd) | Will |
+| 11:40 - 12:00 | [Introduction to Integration Theory](../lessons/08_integration_theory.qmd) | Noor |
 
 
 ### Before the next class:
@@ -109,7 +109,7 @@ There are no exercises from this lesson, but please add any questions to [this G
 | Time |  Topic  | Instructor |
 |:-----------:|:----------:|:--------:|
 | 09:30 - 10:00 | Self-learning lessons discussion | Noor |
-| 10:00 - 11:00 | [Clustering](../lessons/10_clustering.qmd) | Elizabeth |
+| 10:00 - 11:00 | [Clustering](../lessons/10_clustering.qmd) | Noor |
 | 11:00 - 11:05 | Break |
 | 11:05 - 12:00 | [Clustering Quality Control](../lessons/11_clustering_quality_control.qmd) | Will |
 
