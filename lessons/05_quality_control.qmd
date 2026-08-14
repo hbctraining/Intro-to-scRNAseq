@@ -60,8 +60,8 @@ Approximate time: 90 minutes
 
 In this lesson, we will:
 
-- Construct quality control metrics and visually evaluate the quality of the data
-- Apply appropriate filters to remove low quality cells
+- Construct quality control metrics and visually evaluate the quality of the data.
+- Apply appropriate filters to remove low quality cells.
 
 
 ## Overview of lesson
@@ -76,7 +76,7 @@ Overview of the single-cell RNA-seq workflow.
 
 ## Updating metadata
 
-When data is loaded and the initial object is created, we have some basic metadata to work from for ecah of the cells in the count matrix. To take a close look at this metadata, let's view the data frame stored in the `metadata` slot of our `merged` object:
+When data is loaded and the initial object is created, we have some basic metadata to work from for each of the cells in the count matrix. To take a close look at this metadata, let's view the data frame stored in the `metadata` slot of our `merged` object:
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -138,7 +138,7 @@ However, we would also like to **include some additional information** that woul
 ::: callout-note
 # Storing metadata as separate dataframe
 
-When working with a large dataset, it can be helpful to extract the `metadata` dataframe into a separate variable. In this way we can work with the as a seperate entity from the object without the risk of affecting any other data stored inside.
+When working with a large dataset, it can be helpful to extract the `metadata` dataframe into a separate variable. In this way we can work with this as a separate entity from the object without the risk of affecting any other data stored inside.
 :::
 
 
@@ -158,7 +158,7 @@ merged_seurat$cells <- rownames(merged_seurat@meta.data)
 merged_seurat$sample <- merged_seurat$orig.ident
 ```
 
-Now you are **all setup with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
+Now you are **all set up with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
 
 ```{r}
 #| label: tbl-table_renamed_metadata
@@ -177,7 +177,7 @@ merged_seurat@meta.data %>%
 merged_adata.obs["cells"] = merged_adata.obs.index
 ```
 
-Now you are **all setup with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
+Now you are **all set up with the metrics you need to assess the quality of your data**! Your final metadata table will have rows that correspond to each cell, and columns with information about those cells:
 
 ```{python}
 #| label: tbl-table_renamed_metadata_py
@@ -201,13 +201,13 @@ Now that we have generated the various metrics to assess, we can explore them wi
 
 In order to create the appropriate plots for the quality control analysis, we need to calculate some additional metrics. These include:
 
-- **Number of genes detected per UMI:** this metric with give us an idea of the complexity of our dataset (more genes detected per UMI, more complex our data)
+- **Number of genes detected per UMI:** this metric will give us an idea of the complexity of our dataset (more genes detected per UMI, more complex our data)
 - **Mitochondrial ratio:** this metric will give us a percentage of cell reads originating from the mitochondrial genes
 
 ::: {.callout-note collapse="true"}
 # What about doublets?
 
-In single-cell RNA sequencing experiments, doublets are generated from two cells. They typically arise due to errors in cell sorting or capture, especially in droplet-based protocols involving thousands of cells. Doublets are obviously undesirable when the aim is to characterize populations at the single-cell level. In particular, they can incorrectly suggest the existence of intermediate populations or transitory states that do not actually exist. Thus, it is desirable to remove doublet libraries so that they do not compromise interpretation of the results.
+In single-cell RNA sequencing experiments, doublets are generated from two cells. They typically arise due to errors in cell sorting or capture, especially in droplet-based protocols involving thousands of cells. Doublets are obviously undesirable when the aim is to characterize populations at the single-cell level. In particular, they can incorrectly suggest the existence of intermediate populations or transitory states that do not actually exist. Thus, it is desirable to remove doublets so that they do not compromise interpretation of the results.
 
 Many workflows use maximum thresholds for UMIs or genes, with the idea that a much higher number of reads or genes detected indicate multiple cells. While this rationale seems to be intuitive, it is not accurate. Also, many of the tools used to detect doublets tend to get rid of cells with intermediate or continuous phenotypes, although they may work well on datasets with very discrete cell types. [Scrublet](https://github.com/AllonKleinLab/scrublet) is a popular tool for doublet detection. 
 
@@ -218,14 +218,14 @@ Currently, we recommend not including any thresholds at this point in time. When
 
 The cell counts are determined by the number of unique cellular barcodes detected. For this experiment, between 12,000 -13,000 cells are expected.
 
-In an ideal world, you would expect the number of unique cellular barcodes to correpsond to the number of cells you loaded. However, this is not the case as capture rates of cells are only a proportion of what is loaded. For example, the inDrops cell **capture efficiency** is higher (70-80%) compared to 10X which is between 50-60%.
+In an ideal world, you would expect the number of unique cellular barcodes to correspond to the number of cells you loaded. However, this is not the case as capture rates of cells are only a proportion of what is loaded. For example, the inDrops cell **capture efficiency** is higher (70-80%) compared to 10X which is between 50-60%.
 
 ::: {.callout-note collapse=true}
 # Automated cell counting
 The capture efficiency could appear much lower if the cell concentration used for library preparation was not accurate. Cell concentration should NOT be determined by FACS machine or Bioanalyzer (these tools are not accurate for concentration determination), instead use a hemocytometer or automated cell counter for calculation of cell concentration.
 :::
 
-The cell numbers can also vary by protocol, **producing cell numbers that are much higher than what we loaded**. For example, during the inDrops protocol, the cellular barcodes are present in the hydrogels, which are encapsulated in the droplets with a single cell and lysis/reaction mixture. While each hydrogel should have a single cellular barcode associated with it, occasionally a hydrogel can have more than one cellular barcode. Similarly, with the 10X protocol there is a chance of obtaining only a barcoded bead in the emulsion droplet (GEM) and no actual cell.  Both of these, in addition to the presence of dying cells can lead to a higher number of cellular barcodes than cells.
+The cell numbers can also vary by protocol, **producing cell numbers that are much higher than what we loaded**. For example, during the inDrops protocol, the cellular barcodes are present in the hydrogels, which are encapsulated in the droplets with a single cell and lysis/reaction mixture. While each hydrogel should have a single cellular barcode associated with it, occasionally a hydrogel can have more than one cellular barcode. Similarly, with the 10X protocol there is a chance of obtaining only a barcoded bead in the emulsion droplet (GEM) and no actual cell. Both of these, in addition to the presence of dying cells can lead to a higher number of cellular barcodes than cells.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -263,7 +263,7 @@ plt.show()
 
 :::
 
-We see over 15,000 cells per sample, which is quite a bit more than the 12-13,000 expected. It is clear that we likely have some _junk cells_ present.
+We see over 15,000 cells per sample, which is quite a bit more than the 12-13,000 expected. It is clear that we likely have some low-quality or empty-droplet “junk” cells present.
 
 ### UMI counts (transcripts) per cell
 
@@ -291,7 +291,7 @@ merged_seurat@meta.data %>%
 
 ```{python}
 #| label: fig-UMIs_per_cell_py
-#| fig-cap: Density plot showing the distribution of UMI counts per cell for each sample
+#| fig-cap: Histogram plot showing the distribution of UMI counts per cell for each sample
 # Visualize the number UMIs/transcripts per cell
 fig, ax = plt.subplots()
 ax = sns.histplot(merged_adata.obs, 
@@ -308,7 +308,7 @@ plt.show()
 
 :::
 
-We can see that majority of our cells in both samples have 1000 UMIs or greater, which is great. 
+We can see that majority of our cells in both samples have 1,000 UMIs or greater, which is great. 
 
 ### Genes detected per cell
 
@@ -335,7 +335,7 @@ merged_seurat@meta.data %>%
 
 ```{python}
 #| label: fig-genes_detected_py
-#| fig-cap: Density plot showing the distribution of genes detected per cell for each sample
+#| fig-cap: Histogram plot showing the distribution of genes detected per cell for each sample
 # Visualize the distribution of genes detected per cell via histogram
 ax = sns.histplot(merged_adata.obs, 
                   x = "n_genes", 
@@ -362,7 +362,7 @@ $$
 = \frac{\log_{10}(\text{Number of Genes})}{\log_{10}(\text{Number of UMIs})}
 $$
 
-This value is quite easy to calculate, as we take the log10 of the number of genes detected per cell and the log10 of the number of UMIs per cell, then divide the log10 number of genes by the log10 number of UMIs. The novelty score and how it relates to complexity of the RNA species, is described in more detail later in this lesson.
+This value is quite easy to calculate, as we take the log10 of the number of genes detected per cell and the log10 of the number of UMIs per cell, then divide the log10 number of genes by the log10 number of UMIs. The novelty score and how it relates to the complexity of the RNA species is described in more detail later in this lesson.
 
 
 ::: {.panel-tabset group="language"}
@@ -400,7 +400,7 @@ After calculating the complexity score, we can now visualize the distribution of
 
 ```{python}
 #| label: fig-complexity_score_plot_py
-#| fig-cap: Density plot showing the overall complexity of gene expression per cell for each sample
+#| fig-cap: Histogram plot showing the overall complexity of gene expression per cell for each sample
 ax = sns.histplot(merged_adata.obs, 
                   x = "log10GenesPerUMI", hue = "sample",
                   alpha = 0.2)
@@ -419,7 +419,7 @@ This metric can identify whether there is a large amount of **mitochondrial cont
 
 ::: {.callout-note collapse=true}
 # Think about your biological question
-While using a baseline score of 0.25 is an acceptable threshold for removing high mitochondrial content cells, it is important to always go back to your original biological question. What samples are you working with? Do you expect there to be high values of mitochondrial expression due to your experimental condition?
+While using a baseline score of 0.20 is an acceptable threshold for removing high mitochondrial content cells, it is important to always go back to your original biological question. What samples are you working with? Do you expect there to be high values of mitochondrial expression due to your experimental condition?
 
 For example, if you were studying renal oncocytomas, would you make this same choice? This disease is characterized as having [aberrantly high mitochondrial expression](https://www.nature.com/articles/modpathol2015101), so would it make sense to remove cells with high mitochondrial ratio?
 :::
@@ -463,7 +463,7 @@ merged_seurat@meta.data %>%
 
 ## Python
 
-The first step is to identify which genes are mitochondrial. We do this my identify any genes (from the `.var`) that starts with the character `MT-` and assign `True`/`False` values to genes that fit that criteria.
+The first step is to identify which genes are mitochondrial. We do this my identify any genes (from the `.var`) that starts with the characters `MT-` and assign `True`/`False` values to genes that fit that criteria.
 
 ```{python}
 #| label: label_mito
@@ -472,7 +472,7 @@ The first step is to identify which genes are mitochondrial. We do this my ident
 mito_genes = merged_adata.var_names.str.startswith('MT-')
 merged_adata.var['mito'] = mito_genes
 
-metadata_adata.var.head()
+merged_adata.var.head()
 ```
 
 ```{python}
@@ -492,7 +492,7 @@ We then use the `qc_vars` parameter in `pp.calculate_qc_metrics()` to tell the f
 #| label: calc_mito_ratio
 # Calculate number of counts coming from mito_genes
 sc.pp.calculate_qc_metrics(merged_adata, 
-                           qc_vars = ("mito"), 
+                           qc_vars = ["mito"],
                            inplace = True)
 
 # We want the value as a ratio
@@ -503,8 +503,8 @@ We can once again visualize this metric for each sample:
 
 ```{python}
 #| label: fig-mito_ratio_plot_py
-#| fig-cap: Density plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
-# Histogram of mitochondrial ration
+#| fig-cap: Histogram plot showing the distribution of mitochondrial gene expression detected per cell for each sample.
+# Histogram of mitochondrial ratio
 ax = sns.histplot(merged_adata.obs, 
                   x = "mito_ratio", hue = "sample",
                   alpha = 0.2)
@@ -527,7 +527,7 @@ The pattern provided ("^MT-") works for human gene names. You may need to adjust
 Considering any of these QC metrics in isolation can lead to misinterpretation of cellular signals. For example, cells with a comparatively high fraction of mitochondrial counts may be involved in respiratory processes and may be cells that you would like to keep. Likewise, other metrics can have other biological interpretations.  A general rule of thumb when performing QC is to **set thresholds for individual metrics to be as permissive as possible, and always consider the joint effects** of these metrics. In this way, you reduce the risk of filtering out any viable cell populations. 
 
 
-Two metrics that are often evaluated together are the number of UMIs and the number of genes detected per cell. Here, we have plotted the **number of genes versus the number of UMIs coloured by the fraction of mitochondrial reads**. Jointly visualizing the count and gene thresholds and additionally overlaying the mitochondrial fraction, gives a summarized persepective of the quality per cell.
+Two metrics that are often evaluated together are the number of UMIs and the number of genes detected per cell. Here, we have plotted the **number of genes versus the number of UMIs coloured by the fraction of mitochondrial reads**. Jointly visualizing the count and gene thresholds and additionally overlaying the mitochondrial fraction, gives a summarized perspective of the quality per cell.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -622,9 +622,9 @@ plt.show()
 
 :::
 
-Good cells will generally exhibit both higher number of genes per cell and higher numbers of UMIs (upper right quadrant of the plot). Cells that are **poor quality are likely to have low genes and UMIs per cell**, and correspond to the data points in the bottom left quadrant of the plot. With this plot we also evaluate the **slope of the line**, and any scatter of data points in the **bottom right hand quadrant** of the plot. These cells have a high number of UMIs but only a few number of genes. These could be dying cells, but also could represent a population of a low complexity celltype (i.e red blood cells).
+Good cells will generally exhibit both higher number of genes per cell and higher numbers of UMIs (upper right quadrant of the plot). Cells that are **poor quality are likely to have low genes and UMIs per cell**, and correspond to the data points in the bottom left quadrant of the plot. With this plot we also evaluate the **slope of the line**, and any scatter of data points in the **bottom right hand quadrant** of the plot. These cells have a high number of UMIs but only a few number of genes. These could be dying cells, but also could represent a population of a low-complexity celltype (i.e. red blood cells).
 
-**Mitochondrial read fractions are only high in particularly low count cells with few detected genes** (darker colored data points). This could be indicative of damaged/dying cells whose cytoplasmic mRNA has leaked out through a broken membrane, and thus, only mRNA located in the mitochondria is still conserved. We can see from the plot, that these cells are filtered out by our count and gene number thresholds. 
+**Mitochondrial read fractions are only high in particularly low count cells with few detected genes** (darker colored data points). This could be indicative of damaged/dying cells whose cytoplasmic mRNA has leaked out through a broken membrane, and thus, only mRNA located in the mitochondria is still conserved. We can see from the plot that these cells are filtered out by our count and gene number thresholds. 
 
 ## Filtering
 
@@ -639,7 +639,7 @@ Now that we have visualized the various metrics, we can decide on the thresholds
 
 ::: {.panel-tabset group="language"}
 
-To filter, we wil go back to our Seurat object and use the `subset()` function:
+To filter, we will go back to our Seurat object and use the `subset()` function:
 
 ## R
 
@@ -657,7 +657,7 @@ filtered_seurat
 
 ## Python
 
-Now let's filter our cells based upon our metadata columns.
+Now let's filter our cells based on our metadata columns.
 
 ```{python}
 #| label: filtered_adata_object
@@ -688,7 +688,7 @@ counts <- GetAssayData(object = filtered_seurat, layer = "counts")
 nonzero <- counts > 0
 ```
 
-Now, we will perform some filtering by prevalence. If a gene is only expressed in a handful of cells, it is not particularly meaningful as it still brings down the averages for all other cells it is not expressed in. For our data we choose to **keep only genes which are expressed in 10 or more cells.** By using this filter, genes which have zero counts in all cells will effectively be removed.
+Now, we will perform some filtering by prevalence. If a gene is only expressed in a handful of cells, it is not particularly meaningful as it still brings down the averages for all other cells it is not expressed in. For our data we choose to **only keep genes which are expressed in 10 or more cells.** By using this filter, genes which have zero counts in all cells will effectively be removed.
 
 ```{r}
 #| label: retain_expressed_genes
@@ -702,7 +702,7 @@ filtered_counts <- counts[keep_genes, ]
 Finally, take those filtered counts and create a new Seurat object for downstream analysis.
 
 ```{r}
-#| label: reassign_filtered counts
+#| label: reassign_filtered_counts
 # Reassign to filtered Seurat object
 filtered_seurat <- CreateSeuratObject(filtered_counts, 
                                       meta.data = filtered_seurat@meta.data)
