@@ -1,5 +1,5 @@
 ---
-title: "Normalization and exploring data for unwanted variation"
+title: "Normalization, Variance, and PCA"
 description: |
   This lesson introduces normalization strategies for single-cell RNA-seq data and how to explore and correct for unwanted sources of variation. Participants will perform simple log normalization, identify highly variable genes, and apply PCA to assess technical and biological covariates such as sequencing depth, mitochondrial content and cell cycle.
 author:
@@ -173,35 +173,35 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ```
 
-Before we do any normalization, we want to ensure that the raw counts matrix is properly stores as a `layer` without our object. By default, when we loaded in our dataset, the counts were stored to the `.X` slot of our object. So now we are going to store it in the `layers` slot under the name `counts` for easy reference in the future.
+Before we do any normalization, we want to ensure that the raw counts matrix is properly stores as a `layer`. By default, when we loaded in our dataset, the counts were stored to the `.X` slot of our object. So now we are going to store it in the `layers` slot under the name `counts` for easy reference in the future.
 
 ```{python}
 #| label: copy_adata
+# Create new adata object for normalized results
+adata_phase = filtered_adata.copy()
+
 # Saving count data
-filtered_adata.layers["counts"] = filtered_adata.X.copy()
-filtered_adata
+adata_phase.layers["counts"] = adata_phase.X.copy()
+adata_phase
 ```
 
 Within the scanpy library, we will make use of two different function for the scaling `pp.normalize_total()` and then transform with `pp.log1p()`. 
 
 ```{python}
 #| label: normalize_data_py
-# Create new adata object for normalized results
-adata_phase = filtered_adata.copy()
-
 # Normalizing to median total counts
-adata_phase.layers['median'] = adata_phase.layers['counts'].copy()
-sc.pp.normalize_total(adata_phase, layer = 'median')
+adata_phase.layers["median"] = adata_phase.layers["counts"].copy()
+sc.pp.normalize_total(adata_phase, layer = "median")
 
 # Logarithmize the data
-adata_phase.layers['log'] = adata_phase.layers['median'].copy()
-sc.pp.log1p(adata_phase, layer = 'log')
+adata_phase.layers["log"] = adata_phase.layers["median"].copy()
+sc.pp.log1p(adata_phase, layer = "log")
 
 # Print adata information
 adata_phase
 ```
 
-So now we have three layers, each with different counts:
+So now we have three layers, each with the different counts matrices:
 
 - counts
 - median
@@ -211,14 +211,14 @@ So now we have three layers, each with different counts:
 
 ## Highly variable genes
 
-Highly variable gene selection is extremely important since many downstream steps are computed only on these genes.  We can additionally visualize the dispersion of all genes, which shows a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels helps us understand which genes will be driving shape of our data.
+Highly variable gene selection is **extremely important** since many downstream steps are computed only on these genes. We calculate scores based upon how much a gene changes acrros the total populations of cells. Genes that vary a lot between populations will ranked more highly amongst all the genes.
 
-The variance is computed from the raw counts matrix.
+We can additionally visualize the dispersion of all genes, which shows a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels helps us understand which genes will be driving shape of our data.
+
+
 
 ::: {.panel-tabset group="language"}
 ## R
-
-TODO: flush out this text
 
 ```{r}
 #| label: find_variable_genes
@@ -265,27 +265,25 @@ The parameters we are specifying refer to:
 #| label: find_variable_genes_py
 # Identify the most variable genes
 sc.pp.highly_variable_genes(adata_phase, 
-                            layer='counts', 
-                            flavor='seurat_v3', 
-                            n_top_genes=2000, 
-                            batch_key='sample')
+                            layer = "counts", 
+                            flavor = "seurat_v3", 
+                            n_top_genes = 2000, 
+                            batch_key = "sample")
 ```
 
 We can now see which genes are labeled as highly variable from the `.var` dataframe of our scanpy object. The new columns are:
 
-TODO: add information about each column
-
-- `highly_variable`:
-- `highly_variable_rank`:
-- `means`:
-- `variances`:
-- `variances_norm`:
-- `highly_variable_nbatches`:
-
+- `highly_variable_rank`: Rank ordering of genes based on their variability
+- `highly_variable`: True/False based on if the ranking is within the `n_top_genes`
+- `means`: Average expression of the gene across all cells
+- `variances`: Variance of the gene's expression across all cells
+- `variances_norm`: Variance normalized for mean–variance dependence (dispersion) to compare genes with different means
+- `highly_variable_nbatches`: Number of batches in which this gene was selected as highly variable (when `batch_key` is used)
 
 ```{python}
 #| label: hvg_column_py
 #| eval: false
+# Show newly compute highly variable columns
 adata_phase.var.head()
 ```
 
@@ -301,69 +299,69 @@ To visualize the variable genes we calculated, we can make use of the scanpy's `
 
 ```{python}
 #| label: plot_hvgs_scanpy
+# Default HVG figure
 sc.pl.highly_variable_genes(adata_phase)
 ```
 
-Alternatively, we can create our own custom plot to represent this data. Where we can  visualize the dispersion of all genes, showing a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels using the `text()` helps us understand which genes will be driving shape of our data.
+Alternatively, we can create our own custom plot to represent this data. Where we can visualize the dispersion of all genes, showing a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels using the `text()` helps us understand which genes will be driving shape of our data.
 
 ```{python}
 #| label: fig-top_15_variable_genes_py
 #| fig-cap: Average expression and variance for each gene, labelling the top most variable genes.
+#| fig-width: 8
+#| fig-height: 5
 # Grab mean and variance for each gene
-mean_expression = adata_phase.var['means']
-norm_variance = adata_phase.var['variances_norm']
+mean_expression = adata_phase.var["means"]
+norm_variance = adata_phase.var["variances_norm"]
 
 # Create a new canvas to plot on
-fig, ax = plt.subplots(figsize=(5, 5), dpi=150)
+fig, ax = plt.subplots(figsize = (5, 8), dpi = 150)
 
 # Plot all genes in blue
-sns.scatterplot(x=mean_expression,
-                y=norm_variance,
-                ax=ax,
-                color='blue',
-                label='All genes')
+sns.scatterplot(x = mean_expression,
+                y = norm_variance,
+                ax = ax,
+                color = "blue",
+                label = "All genes")
 
 # Grab highly variable genes
 # values that are True for `highly_variable`
-hvg_mask = adata_phase.var['highly_variable']
+hvg_mask = adata_phase.var["highly_variable"]
 
-# Plot HVGs as red
-sns.scatterplot(x=mean_expression[hvg_mask],
-                y=norm_variance[hvg_mask],
-                ax=ax,
-                color='red',
-                label='HVGs')
+# Plot HVGs on top of original plot as red
+sns.scatterplot(x = mean_expression[hvg_mask],
+                y = norm_variance[hvg_mask],
+                ax = ax,
+                color = "red",
+                label = "HVGs")
 
 # Plot axes and titles
-ax.set_xlabel('Mean Expression')
-ax.set_ylabel('Normalized Variance')
-ax.set_title('Mean Expression vs. Normalized Variance of Genes')
+ax.set_xlabel("Mean Expression")
+ax.set_ylabel("Normalized Variance")
+ax.set_title("Mean Expression vs. Normalized Variance of Genes")
 # log10 scale x-axis
-ax.set_xscale('log')
+ax.set_xscale("log")
 
-# Label the top N most variable genes on the plot
+# Grab top N genes
 N = 15
-top_genes = adata_phase.var['highly_variable_rank'].nsmallest(N).index
+top_genes = adata_phase.var["highly_variable_rank"].nsmallest(N).index
 
+# Add text labels to figure
 for gene_name in top_genes:
     x_value = mean_expression[gene_name]
     y_value = norm_variance[gene_name]
-    ax.text(x_value, 
-            y_value, 
+    ax.text(x_value, y_value, 
             gene_name, 
-            fontsize=8, 
-            color='black')
+            fontsize = 8, color = "black")
 
-# Display figure
+# Show legend
 plt.legend()
-plt.tight_layout()
-plt.show()
 ```
 
 
 :::
 
-Now, we can perform the PCA analysis. These highly variable genes are part fo the input necessary for this next step.
+Now, we can perform the PCA analysis on the highly variable genes that we just scored.
 
 
 ## PCA
@@ -372,7 +370,7 @@ Principal Component Analysis (PCA) is a technique used to emphasize variation as
 
 ::: {.callout-note}
 # PCA
-For a more **detailed explanation on PCA**,  there is a [lesson in self-learning](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding.
+For a more **detailed explanation on PCA**,  there is a [self-learning lesson](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding.
 :::
 
 Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells* and you have quantified the expression of *20,000 genes*. The schematic below demonstrates how you would go from a cell x gene matrix to principal component (PC) scores for each inividual cell.
@@ -397,14 +395,14 @@ Example of visualizing cells using the first two principal components (PC1 vs PC
 For datasets with a larger number of cells, only the PC1 and PC2 scores for each cell are usually plotted, or used for visualization. Since these PCs explain the most variation in the dataset, the expectation is that the cells that are more similar to each other will cluster together with PC1 and PC2.
 :::
 
-Since highly expressed genes exhibit the highest amount of variation and we don't want our 'highly variable genes' only to reflect high expression, we need to scale the data to scale variation with expression level. 
-
-- Adjusting the expression of each gene to give a mean expression across cells to be 0
-- Scaling expression of each gene to give a variance across cells to be 1
-
 
 ::: {.panel-tabset group="language"}
 ## R
+
+Since highly expressed genes exhibit the highest amount of variation and we don't want our _highly variable genes_ only to reflect high expression, we need to scale the data to scale variation with expression level. 
+
+- Adjusting the expression of each gene to give a mean expression across cells to be 0
+- Scaling expression of each gene to give a variance across cells to be 1
 
 The Seurat `ScaleData()` function will do this scaling automatically.
 
@@ -439,12 +437,13 @@ To run PCA, we first want to set our `.X` default count matrix to be the log-nor
 ```{python}
 #| label: calc_pca_show
 #| eval: false
+# Ensure log-normalized counts are in default .X slot
 adata_phase.X = adata_phase.layers["log"].copy()
 
 # Calculate PCA score
 sc.pp.pca(adata_phase,
-          n_comps=50,
-          mask_var="highly_variable")
+          n_comps = 50,
+          mask_var = "highly_variable")
 ```
 
 ```{python}
@@ -456,41 +455,43 @@ sc.pp.pca(adata_phase,
 adata_phase = sc.read_h5ad("intermediate/07_adata_phase_pca.h5ad")
 ```
 
-In running this function, we have create 2 new slots in our scanpy object. The `obsm` and `varm`.
+In running this function, we have create 2 new slots in our scanpy object. The `obsm` (observation matrices) and `varm` (variable/feature matrices).
 
 ```{python}
 #| label: show_adata_phase
+# Observe newly created obsm and varm slots
 adata_phase
 ```
-
-TODO: What do those stand for?
 
 The `X_pca` contains the scores for each cell and Principal Component.
 
 ```{python}
 #| label: show_pca
+# First 5 PC score for first 5 cells in the dataset
 adata_phase.obsm["X_pca"][1:5, 1:5]
 ```
 
-With these scores, we can plot how the cells lay on PC1 and PC2 with `pp.pca` where the `color` argument tells us which metadata column to color the cells by.
-
-```{python}
-#| label: plot_pca_sample
-sc.pl.pca(adata_phase, 
-          color="sample")
-```
-
-:::
-
-TODO: discuss the splitting by sample
-
-You can also use the PC scores from the first 40 PCs for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. We will be talking a lot more about this later in this workshop.
+Typically, the first 40 PCs are used for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. We will be talking a lot more about this future lessons.
 
 ::: {#fig-pca-many-pcs .figure}
 ![](../img/PCA_scrnaseq_3.png){width=600}
 
 Using multiple principal components for downstream analyses such as clustering and marker identification.
 :::
+
+With these scores, we can plot how the cells lay on PC1 and PC2 with `pp.pca` where the `color` argument tells us which metadata column to color the cells by.
+
+```{python}
+#| label: fig-plot_pca_sample_py
+#| fig-cap: Cells plotted on PC1 vs PC2 and colored by sample.
+# PC1 vs PC2, colored by sample
+sc.pl.pca(adata_phase, 
+          color = "sample")
+```
+
+:::
+
+We can clearly see that there is a split in our PC visualization based upon sample. Therefore, we know moving forward that we will have to integrate the samples together as there is technical noise causing our two datasets to not align well together (batch effect). Knowing this, we can also evaluate other metadata that could be contributing to the differences between samples.
 
 
 ## Batch effect
@@ -517,7 +518,7 @@ This loads in 2 vectors `g2m_genes` and `s_genes` that contain genes that are kn
 ```{r}
 #| label: cell_cycle_genes
 # Load cell cycle markers
-load("data/cycle.rda")
+load("data/additional_data/cycle.rda")
 
 # preview s_genes
 s_genes
@@ -584,6 +585,7 @@ To assign each cell a score based on its expression of G2/M and S phase markers,
 
 ```{python}
 #| label: cell_cycle_score_py
+# Cell cycle scoring
 sc.tl.score_genes_cell_cycle(adata_phase, 
                              s_genes, 
                              g2m_genes)
@@ -600,6 +602,7 @@ In this case, we can see we have new column in our `.obs` dataframe:
 ```{python}
 #| label: inspect_cell_cycle_scores_py
 #| eval: false
+# Observe newly created cell cycle columns
 adata_phase.obs.head()
 ```
 
@@ -678,9 +681,11 @@ We can see that each phase is well dispersed throughout the PCA space, indicatin
 We once again plot PC1 vs PC2, but this time `color` each of our cells by which phase of the cell cycle they belong to.
 
 ```{python}
-#| label: plot_pca_phase
+#| label: fig-plot_pca_phase_py
+#| fig-cap: Cells plotted on PC1 vs PC2 and colored by cell cycle phase.
+# PC1 vs PC2, colored by cell cycle phase
 sc.pl.pca(adata_phase, 
-          color="phase")
+          color = "phase")
 ```
 
 To more clearly see the distribution for each phase, we can emphasize the `groups` and put the plots side-by-side as `subplots`.
@@ -692,15 +697,15 @@ To more clearly see the distribution for each phase, we can emphasize the `group
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
 # Plot the PCA colored by cell cycle phase
-sc.pl.pca(adata_phase, color="phase", 
-          groups="G1", ax=axes[0], 
-          show=False, title="G1 Phase")
-sc.pl.pca(adata_phase, color="phase", 
-          groups="G2M", ax=axes[1], 
-          show=False, title="G2M Phase")
-sc.pl.pca(adata_phase, color="phase", 
-          groups="S", ax=axes[2], 
-          show=False, title="S Phase")
+sc.pl.pca(adata_phase, color = "phase", 
+          groups = "G1", ax = axes[0], 
+          show = False, title = "G1 Phase")
+sc.pl.pca(adata_phase, color = "phase", 
+          groups = "G2M", ax = axes[1], 
+          show = False, title = "G2M Phase")
+sc.pl.pca(adata_phase, color = "phase", 
+          groups = "S", ax = axes[2], 
+          show = False, title = "S Phase")
 
 plt.tight_layout()
 plt.show()
@@ -729,13 +734,14 @@ summary(seurat_phase@meta.data$mitoRatio)
 # Turn mitoRatio into categorical factor vector based on quartile values
 seurat_phase@meta.data$mitoFr <- cut(seurat_phase@meta.data$mitoRatio, 
                    breaks=c(-Inf, 0.0144, 0.0199, 0.0267, Inf), 
-                   labels=c("Low","Medium","Medium high", "High"))
+                   labels=c("Low", "Medium", "Medium high", "High"))
 ```
 
 ## Python
 
 ```{python}
 #| label: mt_quartiles
+# Calculate quartiles of mitochondrial ratio values
 np.percentile(adata_phase.obs["pct_counts_mito"], 
               [0, 25, 50, 75, 100])
 ```
@@ -744,10 +750,11 @@ We then add categorical labels to cells based upon where they fall within the qu
 
 ```{python}
 #| label: mitoFr_calc
-adata_phase.obs['mitoFr'] = pd.cut(
-    adata_phase.obs['pct_counts_mito'],
-    bins=[-np.inf, 1.44, 1.99, 2.67, np.inf],
-    labels=["Low", "Medium", "Medium high", "High"])
+# Group cells into labels based upon mitochondrial ratio scores
+adata_phase.obs["mitoFr"] = pd.cut(
+    adata_phase.obs["pct_counts_mito"],
+    bins = [-np.inf, 1.44, 1.99, 2.67, np.inf],
+    labels = ["Low", "Medium", "Medium high", "High"])
 ```
 
 :::
@@ -795,7 +802,7 @@ Now that we have established which effects are observed in our data, we can use 
 As described earlier, all genes cannot be treated the same. As such, the **SCTransform method constructs a generalized linear model (GLM) for each gene** with UMI counts as the response and sequencing depth as the explanatory variable. Information is pooled across genes with similar abundances, to regularize parameter estimates and **obtain residuals which represent effectively normalized data values** which are no longer correlated with sequencing depth.
 
 ::: {#fig-sct-umap .figure}
-![](../img/SCT_UMAP.png){width=400}
+![](../img/SCT_UMAP.png){width=550}
 
 Example UMAP visualization demonstrating improved normalization and variance stabilization with SCTransform.<br>
 _Source: [Hafemeister & Satija, 2019](https://doi.org/10.1101/576827)_
@@ -847,7 +854,7 @@ ctrl_reps <- split_seurat[c("ctrl_1", "ctrl_2")]
 ```
 :::
 
-Now we will **use a 'for loop'** to run the `SCTransform()` on each sample, and regress out mitochondrial expression by specifying in the `vars.to.regress` argument of the `SCTransform()` function.
+Now we will **use a `for` loop** to run the `SCTransform()` on each sample, and regress out mitochondrial expression by specifying in the `vars.to.regress` argument of the `SCTransform()` function.
 
 Before we run this `for loop`, we know that the output can generate large R objects/variables in terms of memory. If we have a large dataset, then we might need to **adjust the limit for allowable object sizes within R** (*Default is 500 x 1024 ^2 = 500 Mb*) using the following code:
 
@@ -906,20 +913,9 @@ Now we can see that in addition to the raw RNA counts, we now have a SCT compone
 
 ## Python
 
-TODO: flush out this text
+The scanpy workflow does not have the exact `SCTranform` algorithm built into its workfow. However, there is an analagous [Analytic Pearson Residuals](https://www.sc-best-practices.org/preprocessing_visualization/normalization.html#analytic-pearson-residuals) normalization that follows the same logic. 
 
-Within the scanpy workflow, there is not analogous normalization method that follows SCTransform. 
-
-- scran
-- Analytic Pearson residuals
-
-There is no SCTransform implementation in python where we could directly re-use the materials. The best I've found is this, but it would require dependencies to be installed and does not appear to be actively maintained
-https://github.com/atarashansky/SCTransformPy
-
-Maybe - https://www.sc-best-practices.org/preprocessing_visualization/normalization.html#analytic-pearson-residuals
-
-
-We will be following an alternative method to deal with integration and batch correction in the next lesson. This technique, called SCVI requires different inputs.
+We will be following an alternative method to deal with integration and batch correction in the next lesson. The technique we will used is called SCVI and does not require the output of this normalization step.
 
 :::
 
