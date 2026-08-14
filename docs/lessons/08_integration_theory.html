@@ -5837,11 +5837,11 @@ Figure 9: Schematic of the architecture for an autoencoder, showcasing the enco
 </figcaption>
 </figure>
 </div>
-<p>Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth and update the values in the bottleneck until the output reconstructs the original input. This back and forth is part of the training step, which then allows you to apply the architecture to larger datasets.</p>
+<p>Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth to optimize the neural network, ultimately updating the values in the bottleneck until the output reconstructs the original input. This process repeats many times until the reconstruction is accurate.</p>
 </section>
 <section id="variational-autoencoders" class="level3">
 <h3 class="anchored" data-anchor-id="variational-autoencoders">Variational autoencoders</h3>
-<p>Variational autoencoders build upon these concepts by computing the mean (<span class="math inline">\(\mu\)</span>) and standard deviation (<span class="math inline">\(\sigma^{2}\)</span>) for each input. Typically, this distribution is Gaussian.</p>
+<p>Variational autoencoders build upon these concepts by computing the mean (<span class="math inline">\(\mu\)</span>) and variation (<span class="math inline">\(\sigma^{2}\)</span>) for each input. Typically, this distribution is Gaussian.</p>
 <div id="fig-vae_architecture" class="figure quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-vae_architecture-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -5856,7 +5856,7 @@ Figure 10: Schematic of the architecture for a variational autoencoder.<br> <em
 </section>
 <section id="scvi-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="scvi-algorithm">scVI algorithm</h3>
-<p>As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch information (sample, phase, mitochondrial ratio).</p>
+<p>As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch (sample, donor, etc.) and unwanted variation (cell cycle phase, mitochondrial ratio, etc.).</p>
 <div id="fig-scvi_schematic" class="figure quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-scvi_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -5870,16 +5870,16 @@ Figure 11: Schematic of the scVI algorithm.<br> <em>Image source: <a href="http
 <p>The broad steps of the scVI algorithm are as following:</p>
 <ol type="1">
 <li>We assume there is a low-dimensional latent space <span class="math inline">\(z\)</span> that can represent our dataset (similar to PCA).</li>
-<li>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a zero-inflated negative binomial distribution.</li>
-<li>This distribution is fed into the decoder with the batch labels to try and reconstruct the original counts matrix.</li>
-<li>Multiple back and forths between the encoder and decoder to update the distributions such that the counts are reconstructed accurate.</li>
+<li>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of <span class="math inline">\(z\)</span>.</li>
+<li>A latent representation <span class="math inline">\(z\)</span> is sampled from this distribution and passed, along with the batch labels, into the decoder. The decoder tries to reconstruct the original counts, modelling gene expression as a zero-inflated negative binomial distribution.</li>
+<li>The reconstructed counts are compared to the real counts, and the network weights are updated to minimise the difference. This is repeated many times until reconstruction is accurate.</li>
 </ol>
 <ul>
 <li><strong>Encoder:</strong> counts + batch -&gt; <span class="math inline">\(z\)</span></li>
 <li><strong>Decoder</strong>: <span class="math inline">\(z\)</span> + batch → reconstructed counts</li>
 </ul>
 <ol start="5" type="1">
-<li>Once the counts are reconstructed, the posterior mean of the <span class="math inline">\(z\)</span> distribution for each cell is used as the latent space values (which can then be used to downstream analyses).</li>
+<li>Once the counts are reconstructed, the posterior mean of the <span class="math inline">\(z\)</span> distribution for each cell is used as the latent space values for downstream analyses (clustering, UMAP, etc.).</li>
 </ol>
 </section>
 </div>
@@ -6656,11 +6656,11 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>_Image source: [Lil’Log](https://lilianweng.github.io/posts/2018-08-12-vae/)_</span>
 <span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth and update the values in the bottleneck until the output reconstructs the original input. This back and forth is part of the training step, which then allows you to apply the architecture to larger datasets.</span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth to optimize the neural network, ultimately updating the values in the bottleneck until the output reconstructs the original input. This process repeats many times until the reconstruction is accurate.</span>
 <span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a><span class="fu">### Variational autoencoders</span></span>
 <span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>Variational autoencoders build upon these concepts by computing the mean ($\mu$) and standard deviation ($\sigma^{2}$) for each input. Typically, this distribution is Gaussian.</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>Variational autoencoders build upon these concepts by computing the mean ($\mu$) and variation ($\sigma^{2}$) for each input. Typically, this distribution is Gaussian.</span>
 <span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>::: {#fig-vae_architecture .figure}</span>
 <span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/vae_architecture.webp)</span>{width=80%}</span>
@@ -6673,7 +6673,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="fu">### scVI algorithm</span></span>
 <span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch information (sample, phase, mitochondrial ratio).</span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch (sample, donor, etc.) and unwanted variation (cell cycle phase, mitochondrial ratio, etc.).</span>
 <span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>::: {#fig-scvi_schematic .figure}</span>
 <span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/scVI_schematic.png)</span>{width=60%}</span>
@@ -6685,14 +6685,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>The broad steps of the scVI algorithm are as following:</span>
 <span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>We assume there is a low-dimensional latent space $z$ that can represent our dataset (similar to PCA).</span>
-<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a zero-inflated negative binomial distribution.</span>
-<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>This distribution is fed into the decoder with the batch labels to try and reconstruct the original counts matrix.</span>
-<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Multiple back and forths between the encoder and decoder to update the distributions such that the counts are reconstructed accurate.</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of $z$.</span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>A latent representation $z$ is sampled from this distribution and passed, along with the batch labels, into the decoder. The decoder tries to reconstruct the original counts, modelling gene expression as a zero-inflated negative binomial distribution.</span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>The reconstructed counts are compared to the real counts, and the network weights are updated to minimise the difference. This is repeated many times until reconstruction is accurate.</span>
 <span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Encoder:** counts + batch -&gt; $z$</span>
 <span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Decoder**: $z$ + batch → reconstructed counts </span>
 <span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Once the counts are reconstructed, the posterior mean of the $z$ distribution for each cell is used as the latent space values (which can then be used to downstream analyses).</span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Once the counts are reconstructed, the posterior mean of the $z$ distribution for each cell is used as the latent space values for downstream analyses (clustering, UMAP, etc.).</span>
 <span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a></span>

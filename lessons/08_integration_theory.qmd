@@ -265,11 +265,11 @@ Schematic of the architecture for an autoencoder, showcasing the encoder and dec
 _Image source: [Lil’Log](https://lilianweng.github.io/posts/2018-08-12-vae/)_
 :::
 
-Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth and update the values in the bottleneck until the output reconstructs the original input. This back and forth is part of the training step, which then allows you to apply the architecture to larger datasets.
+Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth to optimize the neural network, ultimately updating the values in the bottleneck until the output reconstructs the original input. This process repeats many times until the reconstruction is accurate.
 
 ### Variational autoencoders
 
-Variational autoencoders build upon these concepts by computing the mean ($\mu$) and standard deviation ($\sigma^{2}$) for each input. Typically, this distribution is Gaussian.
+Variational autoencoders build upon these concepts by computing the mean ($\mu$) and variation ($\sigma^{2}$) for each input. Typically, this distribution is Gaussian.
 
 ::: {#fig-vae_architecture .figure}
 ![](../img/vae_architecture.webp){width=80%}
@@ -282,7 +282,7 @@ So at this point, we have multiple distributions to represent the original input
 
 ### scVI algorithm
 
-As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch information (sample, phase, mitochondrial ratio).
+As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch (sample, donor, etc.) and unwanted variation (cell cycle phase, mitochondrial ratio, etc.).
 
 ::: {#fig-scvi_schematic .figure}
 ![](../img/scVI_schematic.png){width=60%}
@@ -294,14 +294,14 @@ _Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-
 The broad steps of the scVI algorithm are as following:
 
 1. We assume there is a low-dimensional latent space $z$ that can represent our dataset (similar to PCA).
-2. The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a zero-inflated negative binomial distribution.
-3. This distribution is fed into the decoder with the batch labels to try and reconstruct the original counts matrix.
-4. Multiple back and forths between the encoder and decoder to update the distributions such that the counts are reconstructed accurate.
+2. The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of $z$.
+3. A latent representation $z$ is sampled from this distribution and passed, along with the batch labels, into the decoder. The decoder tries to reconstruct the original counts, modelling gene expression as a zero-inflated negative binomial distribution.
+4. The reconstructed counts are compared to the real counts, and the network weights are updated to minimise the difference. This is repeated many times until reconstruction is accurate.
 
   - **Encoder:** counts + batch -> $z$
   - **Decoder**: $z$ + batch → reconstructed counts 
 
-5. Once the counts are reconstructed, the posterior mean of the $z$ distribution for each cell is used as the latent space values (which can then be used to downstream analyses).
+5. Once the counts are reconstructed, the posterior mean of the $z$ distribution for each cell is used as the latent space values for downstream analyses (clustering, UMAP, etc.).
 
 :::
 
