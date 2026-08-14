@@ -73,7 +73,7 @@ II. **Submit your work**:
 | 09:30 - 10:00 | Self-learning lessons discussion | All |
 | 10:00 - 10:45 | [Quality Control with Additional Metrics](../lessons/05_quality_control.qmd) | Will |
 | 10:45 - 10:50 | Break |
-| 10:50 - 11:40 | [Normalization and Unwanted Variation](../lessons/07_normalization.qmd) | Noor |
+| 10:50 - 11:40 | [Normalization, Variance, and PCA](../lessons/07_normalization.qmd) | Noor |
 | 11:40 - 12:00 | [Introduction to Integration Theory](../lessons/08_integration_theory.qmd) | Noor |
 
 

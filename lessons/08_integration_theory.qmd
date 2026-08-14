@@ -187,7 +187,7 @@ There are [many different integration](https://www.scrna-tools.org/tools?sort=na
 
 ::: {.panel-tabset}
 
-### R: Canonical Correlation Analysis (CCA)
+## R: Canonical Correlation Analysis (CCA)
 
 Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [[Stuart and Bulter et al. (2018)](https://www.biorxiv.org/content/early/2018/11/02/460147)]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).
 
@@ -246,11 +246,43 @@ Transformation of each cell uses a weighted average of the two cells of each anc
 If there are a substantial number of cells that do not have a match between groups or there are a large number of cells to integrate, an alternative approach recommended by the Seurat vignette is [reciprocal PCA (RPCA)](https://satijalab.org/seurat/articles/integration_rpca.html).
 :::
 
-### Python: single-cell Variational Inference (scVI)
+## Python: single-cell Variational Inference (scVI)
 
-TODO: edit
+[scVI](https://docs.scvi-tools.org/en/stable/) is a variational autoencoder that was published in [2018 by Lopez et. al](https://www.nature.com/articles/s41592-018-0229-2) to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoders is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.
 
-scVI is a neural-newtork based method that was published in [2018 by Lopez et. al](https://www.nature.com/articles/s41592-018-0229-2) to reduce technical noise.
+### Autoencoders
+
+Autoencoders are comprised of 3 main components:
+
+- **Encoder**: Neural network where you supply inputs (image, count matrix) to create lower-dimension latent space.
+- **Latent space (bottleneck)**: Reduced representation of high-dimensional data (similar to PCA). 
+- **Decoder**: Neural network takes the latent space as input to reconstruct the original input.
+
+::: {#fig-vae_schematic .figure}
+![](../img/autoencoder-architecture.png){width=90%}
+
+Schematic of the architecture for an autoencoder, showcasing the encoder and decoder neural networks with the central latent space.<br>
+_Image source: [Lil’Log](https://lilianweng.github.io/posts/2018-08-12-vae/)_
+:::
+
+Ultimately, the goal of this method is to calculate the latent space. As we know what the input looks like, we also know what the expected output is as well. The encoder and decoder go back and forth and update the values in the bottleneck until the output reconstructs the original input. This back and forth is part of the training step, which then allows you to apply the architecture to larger datasets.
+
+### Variational autoencoders
+
+Variational autoencoders build upon these concepts by computing the mean ($\mu$) and standard deviation ($\sigma^{2}$) for each input. Typically, this distribution is Gaussian.
+
+::: {#fig-vae_architecture .figure}
+![](../img/vae_architecture.webp){width=80%}
+
+Schematic of the architecture for a variational autoencoder.<br>
+_Image source: [Roger Yong](https://medium.com/geekculture/variational-autoencoder-vae-9b8ce5475f68)_
+:::
+
+So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation ($z$) of our input. So the guassian distribution is randomly sampled and used as the latent space before being passed to the decoder.
+
+### scVI algorithm
+
+As mentioned earlier, scVI is a variational autoencoder. The inputs supplied are the counts matrix as well as any batch information (sample, phase, mitochondrial ratio).
 
 ::: {#fig-scvi_schematic .figure}
 ![](../img/scVI_schematic.png){width=60%}
@@ -259,22 +291,17 @@ Schematic of the scVI algorithm.<br>
 _Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-0229-2)_
 :::
 
-> You tell scVI which cells belong to which sample, choose a 2‑dimensional latent space, train the model so that a 2D vector plus the batch can reconstruct each cell’s counts, and then take those 2D vectors as your new batch‑corrected embedding.
+The broad steps of the scVI algorithm are as following:
 
+1. We assume there is a low-dimensional latent space $z$ that can represent our dataset (similar to PCA).
+2. The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a zero-inflated negative binomial distribution.
+3. This distribution is fed into the decoder with the batch labels to try and reconstruct the original counts matrix.
+4. Multiple back and forths between the encoder and decoder to update the distributions such that the counts are reconstructed accurate.
 
-1. We assume that there is a batch-corrected latent space (`X`) that we can map our cells to. This is simlar to how we flattened our cells into 2 principal components from our entire counts matrix.
-2. Given a batch variable (`sample`) and `total_counts`, genes are modelled as a zero-inflated negative binomial distribution.
+  - **Encoder:** counts + batch -> $z$
+  - **Decoder**: $z$ + batch → reconstructed counts 
 
-_If I know a cell's latent representation and batch, I can generate its gene expression profile._
-
-3. Create a decoder neural network that takes in the latent space and batch label to generate a parameter for **each gene**.
-4. Use an encoder neural network to take the _actual_ counts and its batch label to create a distribution over the latent space for each cell.
-5. Run multiple iteration of encoder and decoder to optimize parameters, where:
-
-  - counts -> `X` (encoder)
-  - `X` + batch → counts (decoder)
-
-6. Use the posterior mean of `X` distribution as each cell's latent space coordinates.
+5. Once the counts are reconstructed, the posterior mean of the $z$ distribution for each cell is used as the latent space values (which can then be used to downstream analyses).
 
 :::
 
