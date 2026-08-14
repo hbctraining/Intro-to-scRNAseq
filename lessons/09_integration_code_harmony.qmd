@@ -1,7 +1,7 @@
 ---
 title: "Performing Integration"
 description: |
-  his lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.
+  This lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.
 author:
   - Mary Piper
   - Lorena Pantano
@@ -108,7 +108,7 @@ Let's recall where we left off. We created a new object called `split_seurat` wh
 split_seurat
 ```
 
-Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seuart performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.
+Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seurat performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.
 
 ```{r}
 #| label: integration_example
@@ -163,7 +163,7 @@ seurat_integrated[["RNA"]] <- JoinLayers(seurat_integrated[["RNA"]])
 
 To run scVI, we first need to specify what our `batch_key` (sample) and `categorical_covariate_keys` (unwanted variation) are. This information gets stored in the AnnData object with the `scvi.model.SCVI.setup_anndata()` function. Then, we initialize the model (variational autoencoder architecture) so that we can run the next step, which is training the model.
 
-We can see the basic information about the model by printing out the `model` varaible created:
+We can see the basic information about the model by printing out the `model` variable created:
 
 ```{python}
 #| label: scvi_model
@@ -183,7 +183,7 @@ model = scvi.model.SCVI(adata_integrated,
 model
 ```
 
-scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that is capable to reconstructing the original counts information. To accomplish this goal, several back and forth interations between the two networks is necessary in order to ensure the accuracy of the reconstrucion.
+scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that are capable of reconstructing the original count information. To accomplish this goal, several back‑and‑forth iterations between the two networks are necessary in order to ensure the accuracy of the reconstruction.
 
 ::: callout-note
 # Epochs
@@ -228,7 +228,7 @@ adata_integrated
 
 ## Dimensionality reduction assessment
 
-After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch variables overlay nicely in the reduced dimensions. 
+After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch overlay nicely in the reduced dimensions.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -248,7 +248,7 @@ seurat_integrated <- RunPCA(object = seurat_integrated)
 saveRDS(seurat_integrated, "intermediate/09_seurat_integrated.RDS")
 ```
 
-Using the `seurat_phase` object, we can direcly compare the before and after integration PCA representation.
+Using the `seurat_phase` object, we can directly compare the before and after integration PCA representation.
 
 ```{r}
 #| label: fig-pca_integration
@@ -291,11 +291,11 @@ plt.show()
 
 :::
 
-We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subject, so we will use several different ways to confirm whether or not the integration was succesful in future lessons.
+We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subjective, so we will use several different ways to confirm whether or not the integration was successful in future lessons.
 
-## Save
+## Save integrated object
 
-Since integration requires a lot of compute resources and can take a lot of time to run, it is a to **save the integrated object** so that you do not have to re-run this step many times.
+Since integration requires a lot of compute resources and can take a lot of time to run, it is a good idea to **save the integrated object** so that you do not have to re-run this step many times.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -321,7 +321,7 @@ adata_integrated.write_h5ad("data/adata_integrated.h5ad")
 
 ## Complex Integration Tasks
 
-In the section above, we've presented the `Seurat` integration workflow, which uses canonical correlation analysis (CCA) and multiple nearest neighbors (MNN) to find "anchors" and integrate across samples, conditions, modalities, etc. While the `Seurat` integration approach is widely used and several benchmarking studies support its great performance in many cases, it is important to recognize that **alternative integration algorithms exist and may work better for more complex integration tasks** (see [Luecken et al. (2022)](https://doi.org/10.1038/s41592-021-01336-8) for a comprehensive review). 
+It is important to recognize that **alternative integration algorithms exist and may work better for more complex integration tasks** (see [Luecken et al. (2022)](https://doi.org/10.1038/s41592-021-01336-8) for a comprehensive review). 
 
 Not all integration algorithms rely on the same methodology, and they do not always provide the same type of corrected output (embeddings, count matrix...). Their performance is also affected by preliminary data processing steps, including which normalization method was used and how highly variable genes (HVGs) were determined. All those considerations are important to keep in mind when selecting a data integration approach for your study.
 
@@ -335,7 +335,7 @@ In their benchmarking study, [Luecken et al. (2022)](https://doi.org/10.1038/s41
 Examples of complex single-cell integration scenarios across donors, technologies, tissues, and conditions.
 :::
 
-In these **more complex scenarios**, you want to select a data integration approach that successfully balances out the challenges
+In these more **complex scenarios**, you want to select a data integration approach that successfully balances out the challenges of batch correction while preserving meaningful biological variation.
 
 Not all tools may perform as well on every task, and complex datasets may require testing several data integration approaches. You might want to analyze independently each of the batches you consider to integrate across, in order to define cell identities at this level before integrating and checking that the initially annotated cell types are mixed as expected.
 
@@ -423,7 +423,7 @@ merged_seurat <- RunPCA(merged_seurat, assay = "SCT", npcs = 50)
 
 ::: callout-note
 # Make an educated choice on which integration method to use
-As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example [here](https://github.com/immunogenomics/harmony/issues/41") and [here](https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730). We recommend that you check GitHub forums to make your own opinion and for updates.
+As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example [here](https://github.com/immunogenomics/harmony/issues/41) and [here](https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730)). We recommend that you check GitHub forums to make your own opinion and for updates.
 :::
 
 Regardless of the approach, we now have a merged Seurat object containing normalized data for all the samples we need to integrate, as well as defined variable features and PCs.

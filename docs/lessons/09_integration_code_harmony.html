@@ -16,7 +16,7 @@
 <meta name="author" content="Noor Sohail">
 <meta name="dcterms.date" content="2026-08-03">
 <meta name="keywords" content="R, Seurat, Scanpy, Integration, CCA, scVI, UMAP, PCA, Harmony">
-<meta name="description" content="his lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.">
+<meta name="description" content="This lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.">
 
 <title>Performing Integration – Introduction to single-cell RNA-seq</title>
 <style>
@@ -5356,7 +5356,7 @@ width: 100%;
   <li><a href="#overview-of-lesson" id="toc-overview-of-lesson" class="nav-link" data-scroll-target="#overview-of-lesson">Overview of lesson</a></li>
   <li><a href="#running-integration-code" id="toc-running-integration-code" class="nav-link" data-scroll-target="#running-integration-code">Running integration code</a></li>
   <li><a href="#dimensionality-reduction-assessment" id="toc-dimensionality-reduction-assessment" class="nav-link" data-scroll-target="#dimensionality-reduction-assessment">Dimensionality reduction assessment</a></li>
-  <li><a href="#save" id="toc-save" class="nav-link" data-scroll-target="#save">Save</a></li>
+  <li><a href="#save-integrated-object" id="toc-save-integrated-object" class="nav-link" data-scroll-target="#save-integrated-object">Save integrated object</a></li>
   <li><a href="#complex-integration-tasks" id="toc-complex-integration-tasks" class="nav-link" data-scroll-target="#complex-integration-tasks">Complex Integration Tasks</a>
   <ul class="collapse">
   <li><a href="#harmony-integration" id="toc-harmony-integration" class="nav-link" data-scroll-target="#harmony-integration">Harmony integration</a></li>
@@ -5379,7 +5379,7 @@ width: 100%;
 
 <div>
   <div class="description">
-    <p>his lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.</p>
+    <p>This lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.</p>
   </div>
 </div>
 
@@ -5492,7 +5492,7 @@ Active assay: SCT (13695 features, 3000 variable features)
  1 dimensional reduction calculated: pca</code></pre>
 </div>
 </div>
-<p>Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seuart performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.</p>
+<p>Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seurat performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the most variable features to use for integration</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>integ_features <span class="ot">&lt;-</span> <span class="fu">SelectIntegrationFeatures</span>(<span class="at">object.list =</span> split_seurat,</span>
@@ -5525,7 +5525,7 @@ Active assay: SCT (13695 features, 3000 variable features)
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <p>To run scVI, we first need to specify what our <code>batch_key</code> (sample) and <code>categorical_covariate_keys</code> (unwanted variation) are. This information gets stored in the AnnData object with the <code>scvi.model.SCVI.setup_anndata()</code> function. Then, we initialize the model (variational autoencoder architecture) so that we can run the next step, which is training the model.</p>
-<p>We can see the basic information about the model by printing out the <code>model</code> varaible created:</p>
+<p>We can see the basic information about the model by printing out the <code>model</code> variable created:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create new anndata for integration</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>adata_integrated <span class="op">=</span> adata_phase.copy()</span>
@@ -5549,7 +5549,7 @@ Training status: Not Trained
 Model&#39;s adata is minified?: False</code></pre>
 </div>
 </div>
-<p>scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that is capable to reconstructing the original counts information. To accomplish this goal, several back and forth interations between the two networks is necessary in order to ensure the accuracy of the reconstrucion.</p>
+<p>scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that are capable of reconstructing the original count information. To accomplish this goal, several back‑and‑forth iterations between the two networks are necessary in order to ensure the accuracy of the reconstruction.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5594,7 +5594,7 @@ Epochs
 </section>
 <section id="dimensionality-reduction-assessment" class="level2">
 <h2 class="anchored" data-anchor-id="dimensionality-reduction-assessment">Dimensionality reduction assessment</h2>
-<p>After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch variables overlay nicely in the reduced dimensions.</p>
+<p>After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch overlay nicely in the reduced dimensions.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -5604,7 +5604,7 @@ Epochs
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run PCA</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>seurat_integrated <span class="ot">&lt;-</span> <span class="fu">RunPCA</span>(<span class="at">object =</span> seurat_integrated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Using the <code>seurat_phase</code> object, we can direcly compare the before and after integration PCA representation.</p>
+<p>Using the <code>seurat_phase</code> object, we can directly compare the before and after integration PCA representation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot unintegrated PCA</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>p_unint <span class="ot">&lt;-</span> <span class="fu">PCAPlot</span>(seurat_phase,</span>
@@ -5662,11 +5662,11 @@ Figure 3: Contrast the latent representation after scVI integration vs. uninte
 </div>
 </div>
 </div>
-<p>We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subject, so we will use several different ways to confirm whether or not the integration was succesful in future lessons.</p>
+<p>We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subjective, so we will use several different ways to confirm whether or not the integration was successful in future lessons.</p>
 </section>
-<section id="save" class="level2">
-<h2 class="anchored" data-anchor-id="save">Save</h2>
-<p>Since integration requires a lot of compute resources and can take a lot of time to run, it is a to <strong>save the integrated object</strong> so that you do not have to re-run this step many times.</p>
+<section id="save-integrated-object" class="level2">
+<h2 class="anchored" data-anchor-id="save-integrated-object">Save integrated object</h2>
+<p>Since integration requires a lot of compute resources and can take a lot of time to run, it is a good idea to <strong>save the integrated object</strong> so that you do not have to re-run this step many times.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -5687,7 +5687,7 @@ Figure 3: Contrast the latent representation after scVI integration vs. uninte
 </section>
 <section id="complex-integration-tasks" class="level2">
 <h2 class="anchored" data-anchor-id="complex-integration-tasks">Complex Integration Tasks</h2>
-<p>In the section above, we’ve presented the <code>Seurat</code> integration workflow, which uses canonical correlation analysis (CCA) and multiple nearest neighbors (MNN) to find “anchors” and integrate across samples, conditions, modalities, etc. While the <code>Seurat</code> integration approach is widely used and several benchmarking studies support its great performance in many cases, it is important to recognize that <strong>alternative integration algorithms exist and may work better for more complex integration tasks</strong> (see <a href="https://doi.org/10.1038/s41592-021-01336-8">Luecken et al. (2022)</a> for a comprehensive review).</p>
+<p>It is important to recognize that <strong>alternative integration algorithms exist and may work better for more complex integration tasks</strong> (see <a href="https://doi.org/10.1038/s41592-021-01336-8">Luecken et al. (2022)</a> for a comprehensive review).</p>
 <p>Not all integration algorithms rely on the same methodology, and they do not always provide the same type of corrected output (embeddings, count matrix…). Their performance is also affected by preliminary data processing steps, including which normalization method was used and how highly variable genes (HVGs) were determined. All those considerations are important to keep in mind when selecting a data integration approach for your study.</p>
 <p><strong>What do we mean by a “complex” integration task?</strong></p>
 <p>In their benchmarking study, <a href="https://doi.org/10.1038/s41592-021-01336-8">Luecken et al. (2022)</a> compared the performance of different scRNA-seq integration tools when confronted to different “complex” tasks. The “complexity” of integrating a dataset may relate to the number of samples (perhaps generated using different protocols) but also to the biological question the study seeks to address (e.g. comparing cell types across tissues, species…). In these contexts, you may <strong>need to integrate across multiple confounding factors before you can start exploring the biology of your system.</strong></p>
@@ -5701,7 +5701,7 @@ Figure 4: Examples of complex single-cell integration scenarios across donors, 
 </figcaption>
 </figure>
 </div>
-<p>In these <strong>more complex scenarios</strong>, you want to select a data integration approach that successfully balances out the challenges</p>
+<p>In these more <strong>complex scenarios</strong>, you want to select a data integration approach that successfully balances out the challenges of batch correction while preserving meaningful biological variation.</p>
 <p>Not all tools may perform as well on every task, and complex datasets may require testing several data integration approaches. You might want to analyze independently each of the batches you consider to integrate across, in order to define cell identities at this level before integrating and checking that the initially annotated cell types are mixed as expected.</p>
 <section id="harmony-integration" class="level3">
 <h3 class="anchored" data-anchor-id="harmony-integration">Harmony integration</h3>
@@ -5793,7 +5793,7 @@ Make an educated choice on which integration method to use
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example <a href="https://github.com/immunogenomics/harmony/issues/41%22">here</a> and <a href="https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730">here</a>. We recommend that you check GitHub forums to make your own opinion and for updates.</p>
+<p>As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example <a href="https://github.com/immunogenomics/harmony/issues/41">here</a> and <a href="https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730">here</a>). We recommend that you check GitHub forums to make your own opinion and for updates.</p>
 </div>
 </div>
 <p>Regardless of the approach, we now have a merged Seurat object containing normalized data for all the samples we need to integrate, as well as defined variable features and PCs.</p>
@@ -6339,7 +6339,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Performing Integration&quot;</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> |</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">  his lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">  This lesson guides participants through performing data integration using both canonical correlation analysis (CCA), single cell Variational Inference (scVI), and alternative approaches suitable for more complex integration tasks. Participants will also explore visualization methods such as PCA and UMAP to assess integration quality and gain an introduction to the Harmony algorithm as an alternative strategy for integrating across multiple conditions, batches or protocols.</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">  - Mary Piper</span></span>
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">  - Lorena Pantano</span></span>
@@ -6446,7 +6446,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a>split_seurat</span>
 <span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a>Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seuart performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.</span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a>Now, we need to identify the shared variable genes for the integration. By default, this function only selects the top 2,000 genes. In this step Seurat performs a more complex version of an intersect between the highly variable genes from each condition (based on SCTransform). We have specified 3,000 genes for the size of the intersect set.</span>
 <span id="cb25-120"><a href="#cb25-120" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-123"><a href="#cb25-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb25-124"><a href="#cb25-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: integration_example</span></span>
@@ -6501,7 +6501,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-181"><a href="#cb25-181" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-182"><a href="#cb25-182" aria-hidden="true" tabindex="-1"></a>To run scVI, we first need to specify what our <span class="in">`batch_key`</span> (sample) and <span class="in">`categorical_covariate_keys`</span> (unwanted variation) are. This information gets stored in the AnnData object with the <span class="in">`scvi.model.SCVI.setup_anndata()`</span> function. Then, we initialize the model (variational autoencoder architecture) so that we can run the next step, which is training the model.</span>
 <span id="cb25-183"><a href="#cb25-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a>We can see the basic information about the model by printing out the <span class="in">`model`</span> varaible created:</span>
+<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a>We can see the basic information about the model by printing out the <span class="in">`model`</span> variable created:</span>
 <span id="cb25-185"><a href="#cb25-185" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: scvi_model</span></span>
@@ -6521,7 +6521,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a>model</span>
 <span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a>scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that is capable to reconstructing the original counts information. To accomplish this goal, several back and forth interations between the two networks is necessary in order to ensure the accuracy of the reconstrucion.</span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a>scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that are capable of reconstructing the original count information. To accomplish this goal, several back‑and‑forth iterations between the two networks are necessary in order to ensure the accuracy of the reconstruction.</span>
 <span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
 <span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a><span class="fu"># Epochs</span></span>
@@ -6566,7 +6566,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dimensionality reduction assessment</span></span>
 <span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a>After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch variables overlay nicely in the reduced dimensions. </span>
+<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a>After integration, to visualize the integrated data we can use dimensionality reduction techniques, such as PCA and Uniform Manifold Approximation and Projection (UMAP). We are hoping to see that cells from each batch overlay nicely in the reduced dimensions.</span>
 <span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group=&quot;language&quot;}</span>
 <span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
@@ -6586,7 +6586,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(seurat_integrated, <span class="st">&quot;intermediate/09_seurat_integrated.RDS&quot;</span>)</span>
 <span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a>Using the <span class="in">`seurat_phase`</span> object, we can direcly compare the before and after integration PCA representation.</span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a>Using the <span class="in">`seurat_phase`</span> object, we can directly compare the before and after integration PCA representation.</span>
 <span id="cb25-284"><a href="#cb25-284" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-pca_integration</span></span>
@@ -6629,11 +6629,11 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a>We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subject, so we will use several different ways to confirm whether or not the integration was succesful in future lessons.</span>
+<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a>We now have good overlapping of each batch in our dataset! However, this visual representation is a bit subjective, so we will use several different ways to confirm whether or not the integration was successful in future lessons.</span>
 <span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a><span class="fu">## Save</span></span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a><span class="fu">## Save integrated object</span></span>
 <span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>Since integration requires a lot of compute resources and can take a lot of time to run, it is a to **save the integrated object** so that you do not have to re-run this step many times.</span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>Since integration requires a lot of compute resources and can take a lot of time to run, it is a good idea to **save the integrated object** so that you do not have to re-run this step many times.</span>
 <span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group=&quot;language&quot;}</span>
 <span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
@@ -6659,7 +6659,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complex Integration Tasks</span></span>
 <span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a>In the section above, we&#39;ve presented the <span class="in">`Seurat`</span> integration workflow, which uses canonical correlation analysis (CCA) and multiple nearest neighbors (MNN) to find &quot;anchors&quot; and integrate across samples, conditions, modalities, etc. While the <span class="in">`Seurat`</span> integration approach is widely used and several benchmarking studies support its great performance in many cases, it is important to recognize that **alternative integration algorithms exist and may work better for more complex integration tasks** (see <span class="co">[</span><span class="ot">Luecken et al. (2022)</span><span class="co">](https://doi.org/10.1038/s41592-021-01336-8)</span> for a comprehensive review). </span>
+<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a>It is important to recognize that **alternative integration algorithms exist and may work better for more complex integration tasks** (see <span class="co">[</span><span class="ot">Luecken et al. (2022)</span><span class="co">](https://doi.org/10.1038/s41592-021-01336-8)</span> for a comprehensive review). </span>
 <span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a>Not all integration algorithms rely on the same methodology, and they do not always provide the same type of corrected output (embeddings, count matrix...). Their performance is also affected by preliminary data processing steps, including which normalization method was used and how highly variable genes (HVGs) were determined. All those considerations are important to keep in mind when selecting a data integration approach for your study.</span>
 <span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a></span>
@@ -6673,7 +6673,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a>Examples of complex single-cell integration scenarios across donors, technologies, tissues, and conditions.</span>
 <span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a>In these **more complex scenarios**, you want to select a data integration approach that successfully balances out the challenges</span>
+<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a>In these more **complex scenarios**, you want to select a data integration approach that successfully balances out the challenges of batch correction while preserving meaningful biological variation.</span>
 <span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a>Not all tools may perform as well on every task, and complex datasets may require testing several data integration approaches. You might want to analyze independently each of the batches you consider to integrate across, in order to define cell identities at this level before integrating and checking that the initially annotated cell types are mixed as expected.</span>
 <span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a></span>
@@ -6761,7 +6761,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb25-467"><a href="#cb25-467" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-468"><a href="#cb25-468" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
 <span id="cb25-469"><a href="#cb25-469" aria-hidden="true" tabindex="-1"></a><span class="fu"># Make an educated choice on which integration method to use</span></span>
-<span id="cb25-470"><a href="#cb25-470" aria-hidden="true" tabindex="-1"></a>As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example <span class="co">[</span><span class="ot">here</span><span class="co">](https://github.com/immunogenomics/harmony/issues/41&quot;)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730)</span>. We recommend that you check GitHub forums to make your own opinion and for updates.</span>
+<span id="cb25-470"><a href="#cb25-470" aria-hidden="true" tabindex="-1"></a>As mentioned above, there is active discussion within the community regarding which of those 2 approaches to use (see for example <span class="co">[</span><span class="ot">here</span><span class="co">](https://github.com/immunogenomics/harmony/issues/41)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](https://github.com/satijalab/sctransform/issues/55#issuecomment-633843730)</span>). We recommend that you check GitHub forums to make your own opinion and for updates.</span>
 <span id="cb25-471"><a href="#cb25-471" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-472"><a href="#cb25-472" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-473"><a href="#cb25-473" aria-hidden="true" tabindex="-1"></a>Regardless of the approach, we now have a merged Seurat object containing normalized data for all the samples we need to integrate, as well as defined variable features and PCs.</span>
