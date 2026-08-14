@@ -5495,7 +5495,7 @@ width: 100%;
   <li><a href="#overview-of-lesson" id="toc-overview-of-lesson" class="nav-link" data-scroll-target="#overview-of-lesson">Overview of lesson</a></li>
   <li><a href="#to-integrate-or-not-to-integrate" id="toc-to-integrate-or-not-to-integrate" class="nav-link" data-scroll-target="#to-integrate-or-not-to-integrate">To integrate or not to integrate?</a>
   <ul class="collapse">
-  <li><a href="#examples-scenarios-for-integration" id="toc-examples-scenarios-for-integration" class="nav-link" data-scroll-target="#examples-scenarios-for-integration">Examples scenarios for integration</a></li>
+  <li><a href="#example-scenarios-for-integration" id="toc-example-scenarios-for-integration" class="nav-link" data-scroll-target="#example-scenarios-for-integration">Example scenarios for integration</a></li>
   <li><a href="#integration-in-our-dataset" id="toc-integration-in-our-dataset" class="nav-link" data-scroll-target="#integration-in-our-dataset">Integration in our dataset</a></li>
   </ul></li>
   <li><a href="#integration-methods" id="toc-integration-methods" class="nav-link" data-scroll-target="#integration-methods">Integration methods</a></li>
@@ -5565,13 +5565,13 @@ width: 100%;
 <p>In this lesson, we will:</p>
 <ul>
 <li>Describe when integration is necessary</li>
-<li>Integration using either CCA or scVI to control for batch effect</li>
+<li>Perform integration using either CCA or scVI to control for batch effects</li>
 <li>Plot UMAP representation of the cells</li>
 </ul>
 </section>
 <section id="overview-of-lesson" class="level2">
 <h2 class="anchored" data-anchor-id="overview-of-lesson">Overview of lesson</h2>
-<p>At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This <strong>integration</strong> is sometimes necessary in order to proceed with the analysis, but is not always required.</p>
+<p>At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This <strong>integration</strong> is sometimes necessary in order to proceed with the analysis, but is not always required.</p>
 <div id="fig-sc-workflow" class="figure quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sc-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -5588,8 +5588,8 @@ Figure 1: Overview of the single-cell RNA-seq workflow.
 <p>Generally, we always look at our clustering <strong>without integration</strong> before deciding whether we need to perform any alignment. It can be helpful to first run through clustering with samples from different sample classes together to see whether there are condition-specific clusters for cell types present in both conditions. Oftentimes, when clustering cells from multiple conditions there are condition-specific clusters and integration can help ensure the same cell types cluster together.</p>
 <p><strong>Do not just always perform integration because you think there might be differences - explore the data.</strong> If we had performed the normalization on both conditions together in a Seurat object and visualized the similarity between cells, we would have seen in our dataset there is condition-specific clustering.</p>
 <p>Condition-specific clustering of the cells indicates that we need to integrate the cells across conditions to ensure that cells of the same cell type cluster together. If cells cluster by sample, condition, batch, dataset, modality, performing integration can help align cells across the groups to greatly improve the clustering and the downstream analyses.</p>
-<section id="examples-scenarios-for-integration" class="level3">
-<h3 class="anchored" data-anchor-id="examples-scenarios-for-integration">Examples scenarios for integration</h3>
+<section id="example-scenarios-for-integration" class="level3">
+<h3 class="anchored" data-anchor-id="example-scenarios-for-integration">Example scenarios for integration</h3>
 <ul>
 <li>Different <strong>conditions</strong> (e.g. control and stimulated)</li>
 </ul>
@@ -5670,7 +5670,7 @@ Figure 5: Sample-specific clustering in PCA space, before integration.
 </div>
 </div>
 </div>
-<p>In this dataset, we know that the gene <code>LYZ</code> is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monoctyes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.</p>
+<p>In this dataset, we know that the gene <code>LYZ</code> is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monocytes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -5742,7 +5742,7 @@ Figure 7: Expression of gene LYZ on the unintegrated PCA to show when integrati
 </section>
 <section id="integration-methods" class="level2">
 <h2 class="anchored" data-anchor-id="integration-methods">Integration methods</h2>
-<p>There are <a href="https://www.scrna-tools.org/tools?sort=name&amp;cats=Integration">many different integration</a> methods that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.</p>
+<p>There are <a href="https://www.scrna-tools.org/tools?sort=name&amp;cats=Integration">many different integration methods</a> that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -5760,7 +5760,7 @@ Start with method for your programming language
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R: Canonical Correlation Analysis (CCA)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python: single-cell Variational Inference (scVI)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
-<p>Integration is a powerful method that <strong>uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets</strong> [<a href="https://www.biorxiv.org/content/early/2018/11/02/460147">Stuart and Bulter et al. (2018)</a>]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</p>
+<p>Integration is a powerful method that <strong>uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets</strong> <a href="https://www.biorxiv.org/content/early/2018/11/02/460147">Stuart and Butler et al. (2018)</a>. The goal of integration is to ensure that the cell types of one condition/dataset align with the same cell types of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</p>
 <p>The integration method that is available in the Seurat package utilizes the <strong>canonical correlation analysis</strong> (CCA); a method that expects “correspondences” or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat <strong>does not modify the underlying expression data, but instead projects continuous data across experiments</strong>.</p>
 <p>The steps in the <code>Seurat</code> integration workflow are outlined in the figure below:</p>
 <div id="fig-integration-workflow" class="figure quarto-float quarto-figure quarto-figure-center anchored">
@@ -5774,7 +5774,7 @@ Figure 8: Overview of the Seurat integration workflow using canonical correlati
 </figure>
 </div>
 <p><strong>1. Identify shared variable genes</strong>:</p>
-<p>Integration aims to take the matrix for each dataset (Ctrl and Stim) and identify correlated structures across them and align them in a common space. The <strong>shared highly variable genes from each dataset are used to form the intersection set</strong>, because they are the most likely to represent those genes distinguishing the different cell types present.</p>
+<p>Integration aims to take the matrix for each dataset (<code>ctrl</code> and <code>stim</code>) and identify correlated structures across them and align them in a common space. The <strong>shared highly variable genes from each dataset are used to form the intersection set</strong>, because they are the most likely to represent those genes distinguishing the different cell types present.</p>
 <p><em>Each dataset can have a different number of cells, but must have the same number of genes.</em></p>
 <p><strong>2. Perform canonical correlation analysis (CCA):</strong></p>
 <p>Next, Seurat will jointly reduce the dimensionality of both datasets using diagonalized canonical correlation analysis (CCA) which is a form of PCA. Similar to principal components in PCA, the CCA will result in canonical correlation vectors. An L2-normalization is applied to the canonical correlation vectors, to use as input for the next step (identifying MNNs).</p>
@@ -5818,7 +5818,7 @@ Reciprocal PCA
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<p><a href="https://docs.scvi-tools.org/en/stable/">scVI</a> is a variational autoencoder that was published in <a href="https://www.nature.com/articles/s41592-018-0229-2">2018 by Lopez et. al</a> to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoders is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.</p>
+<p><a href="https://docs.scvi-tools.org/en/stable/">scVI</a> is a variational autoencoder that was published in <a href="https://www.nature.com/articles/s41592-018-0229-2">2018 by Lopez et. al</a> to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoder is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.</p>
 <section id="autoencoders" class="level3">
 <h3 class="anchored" data-anchor-id="autoencoders">Autoencoders</h3>
 <p>Autoencoders are comprised of 3 main components:</p>
@@ -5852,7 +5852,7 @@ Figure 10: Schematic of the architecture for a variational autoencoder.<br> <em
 </figcaption>
 </figure>
 </div>
-<p>So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation (<span class="math inline">\(z\)</span>) of our input. So the guassian distribution is randomly sampled and used as the latent space before being passed to the decoder.</p>
+<p>So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation (<span class="math inline">\(z\)</span>) of our input. So the Gaussian distribution is randomly sampled and used as the latent space before being passed to the decoder.</p>
 </section>
 <section id="scvi-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="scvi-algorithm">scVI algorithm</h3>
@@ -5867,7 +5867,7 @@ Figure 11: Schematic of the scVI algorithm.<br> <em>Image source: <a href="http
 </figcaption>
 </figure>
 </div>
-<p>The broad steps of the scVI algorithm are as following:</p>
+<p>The broad steps of the scVI algorithm are as follows:</p>
 <ol type="1">
 <li>We assume there is a low-dimensional latent space <span class="math inline">\(z\)</span> that can represent our dataset (similar to PCA).</li>
 <li>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of <span class="math inline">\(z\)</span>.</li>
@@ -6445,12 +6445,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>In this lesson, we will:</span>
 <span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Describe when integration is necessary</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Integration using either CCA or scVI to control for batch effect</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Perform integration using either CCA or scVI to control for batch effects</span>
 <span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Plot UMAP representation of the cells</span>
 <span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview of lesson</span></span>
 <span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This **integration** is sometimes necessary in order to proceed with the analysis, but is not always required.</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This **integration** is sometimes necessary in order to proceed with the analysis, but is not always required.</span>
 <span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>::: {#fig-sc-workflow .figure}</span>
 <span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="al">![](../img/sc_workflow_2022.jpg)</span>{width=630}</span>
@@ -6468,7 +6468,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>Condition-specific clustering of the cells indicates that we need to integrate the cells across conditions to ensure that cells of the same cell type cluster together. If cells cluster by sample, condition, batch, dataset, modality, performing integration can help align cells across the groups to greatly improve the clustering and the downstream analyses.</span>
 <span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="fu">### Examples scenarios for integration</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example scenarios for integration</span></span>
 <span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Different **conditions** (e.g. control and stimulated)</span>
 <span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
@@ -6524,7 +6524,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>In this dataset, we know that the gene <span class="in">`LYZ`</span> is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monoctyes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>In this dataset, we know that the gene <span class="in">`LYZ`</span> is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monocytes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.</span>
 <span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group=&quot;language&quot;}</span>
 <span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
@@ -6569,7 +6569,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Integration methods</span></span>
 <span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>There are <span class="co">[</span><span class="ot">many different integration</span><span class="co">](https://www.scrna-tools.org/tools?sort=name&amp;cats=Integration)</span> methods that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.</span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>There are <span class="co">[</span><span class="ot">many different integration methods</span><span class="co">](https://www.scrna-tools.org/tools?sort=name&amp;cats=Integration)</span> that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.</span>
 <span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a><span class="fu"># Start with method for your programming language</span></span>
@@ -6580,7 +6580,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## R: Canonical Correlation Analysis (CCA)</span></span>
 <span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [<span class="co">[</span><span class="ot">Stuart and Bulter et al. (2018)</span><span class="co">](https://www.biorxiv.org/content/early/2018/11/02/460147)</span>]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** <span class="co">[</span><span class="ot">Stuart and Butler et al. (2018)</span><span class="co">](https://www.biorxiv.org/content/early/2018/11/02/460147)</span>. The goal of integration is to ensure that the cell types of one condition/dataset align with the same cell types of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).</span>
 <span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>The integration method that is available in the Seurat package utilizes the **canonical correlation analysis** (CCA); a method that expects &quot;correspondences&quot; or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat **does not modify the underlying expression data, but instead projects continuous data across experiments**.</span>
 <span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
@@ -6596,7 +6596,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>**1. Identify shared variable genes**:</span>
 <span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>Integration aims to take the matrix for each dataset (Ctrl and Stim) and identify correlated structures across them and align them in a common space. The **shared highly </span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>Integration aims to take the matrix for each dataset (<span class="in">`ctrl`</span> and <span class="in">`stim`</span>) and identify correlated structures across them and align them in a common space. The **shared highly </span>
 <span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>variable genes from each dataset are used to form the intersection set**, because they are the most likely to represent those genes distinguishing the different cell types present.</span>
 <span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>_Each dataset can have a different number of cells, but must have the same number of genes._</span>
@@ -6639,7 +6639,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python: single-cell Variational Inference (scVI)</span></span>
 <span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">scVI</span><span class="co">](https://docs.scvi-tools.org/en/stable/)</span> is a variational autoencoder that was published in <span class="co">[</span><span class="ot">2018 by Lopez et. al</span><span class="co">](https://www.nature.com/articles/s41592-018-0229-2)</span> to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoders is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">scVI</span><span class="co">](https://docs.scvi-tools.org/en/stable/)</span> is a variational autoencoder that was published in <span class="co">[</span><span class="ot">2018 by Lopez et. al</span><span class="co">](https://www.nature.com/articles/s41592-018-0229-2)</span> to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoder is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.</span>
 <span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a><span class="fu">### Autoencoders</span></span>
 <span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a></span>
@@ -6669,7 +6669,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a>_Image source: [Roger Yong](https://medium.com/geekculture/variational-autoencoder-vae-9b8ce5475f68)_</span>
 <span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation ($z$) of our input. So the guassian distribution is randomly sampled and used as the latent space before being passed to the decoder.</span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation ($z$) of our input. So the Gaussian distribution is randomly sampled and used as the latent space before being passed to the decoder.</span>
 <span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="fu">### scVI algorithm</span></span>
 <span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
@@ -6682,7 +6682,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>_Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-0229-2)_</span>
 <span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>The broad steps of the scVI algorithm are as following:</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>The broad steps of the scVI algorithm are as follows:</span>
 <span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>We assume there is a low-dimensional latent space $z$ that can represent our dataset (similar to PCA).</span>
 <span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of $z$.</span>

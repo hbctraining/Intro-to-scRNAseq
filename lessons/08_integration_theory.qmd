@@ -54,12 +54,12 @@ Approximate time: 90 minutes
 In this lesson, we will:
 
 - Describe when integration is necessary
-- Integration using either CCA or scVI to control for batch effect
+- Perform integration using either CCA or scVI to control for batch effects
 - Plot UMAP representation of the cells
 
 ## Overview of lesson
 
-At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This **integration** is sometimes necessary in order to proceed with the analysis, but is not always required.
+At this point in the analysis, we want to move onto the next step of annotating cells that are similar to one another (cell types). However, sometimes a detour is necessary to address technical effects due to differences between samples, conditions, modalities, or batches. In these cases, differences caused by unwanted variation may cause similar cells to be dissimilar. This **integration** is sometimes necessary in order to proceed with the analysis, but is not always required.
 
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
@@ -77,7 +77,7 @@ Generally, we always look at our clustering **without integration** before decid
 Condition-specific clustering of the cells indicates that we need to integrate the cells across conditions to ensure that cells of the same cell type cluster together. If cells cluster by sample, condition, batch, dataset, modality, performing integration can help align cells across the groups to greatly improve the clustering and the downstream analyses.
 
 
-### Examples scenarios for integration
+### Example scenarios for integration
 
 - Different **conditions** (e.g. control and stimulated)
 
@@ -133,7 +133,7 @@ sc.pl.pca(adata_phase,
 
 :::
 
-In this dataset, we know that the gene `LYZ` is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monoctyes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.
+In this dataset, we know that the gene `LYZ` is a marker for monocytes. Even if the monocyte populations differ slightly between experimental conditions, we still expect monocytes from all batches to be biologically similar. Because of this, these cells should be considered comparable and should occupy the same region in the PCA embedding.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -178,7 +178,7 @@ We can clearly see that there is a split in the grouping of monocytes that is dr
 
 ## Integration methods
 
-There are [many different integration](https://www.scrna-tools.org/tools?sort=name&cats=Integration) methods that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.
+There are [many different integration methods](https://www.scrna-tools.org/tools?sort=name&cats=Integration) that can be used to align single-cell RNA-seq datasets together. Some of the most popular methods include canonical correlation analysis (CCA) (Seurat based), single-cell Variational Inference (scVI) (scanpy based), and harmony. Here, we will discuss the underpinning logic of each method, before applying them practically in the next lesson.
 
 ::: callout-important
 # Start with method for your programming language
@@ -189,7 +189,7 @@ There are [many different integration](https://www.scrna-tools.org/tools?sort=na
 
 ## R: Canonical Correlation Analysis (CCA)
 
-Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [[Stuart and Bulter et al. (2018)](https://www.biorxiv.org/content/early/2018/11/02/460147)]. The goal of integration is to ensure that the cell types of one condition/dataset align with the same celltypes of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).
+Integration is a powerful method that **uses shared highly variable genes from each group to identify shared subpopulations across conditions or datasets** [Stuart and Butler et al. (2018)](https://www.biorxiv.org/content/early/2018/11/02/460147). The goal of integration is to ensure that the cell types of one condition/dataset align with the same cell types of the other conditions/datasets (e.g. control macrophages align with stimulated macrophages).
 
 The integration method that is available in the Seurat package utilizes the **canonical correlation analysis** (CCA); a method that expects "correspondences" or shared biological states among at least a subset of single cells across the groups. The result of this integration approach is a corrected data matrix for all datasets, enabling them to be analyzed jointly in a single workflow. To transfer information from a reference to query dataset, Seurat **does not modify the underlying expression data, but instead projects continuous data across experiments**.
 
@@ -205,7 +205,7 @@ _Source: [Stuart & Butler et al., 2018](https://doi.org/10.1101/460147)_
 
 **1. Identify shared variable genes**:
 
-Integration aims to take the matrix for each dataset (Ctrl and Stim) and identify correlated structures across them and align them in a common space. The **shared highly 
+Integration aims to take the matrix for each dataset (`ctrl` and `stim`) and identify correlated structures across them and align them in a common space. The **shared highly 
 variable genes from each dataset are used to form the intersection set**, because they are the most likely to represent those genes distinguishing the different cell types present.
 
 _Each dataset can have a different number of cells, but must have the same number of genes._
@@ -248,7 +248,7 @@ If there are a substantial number of cells that do not have a match between grou
 
 ## Python: single-cell Variational Inference (scVI)
 
-[scVI](https://docs.scvi-tools.org/en/stable/) is a variational autoencoder that was published in [2018 by Lopez et. al](https://www.nature.com/articles/s41592-018-0229-2) to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoders is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.
+[scVI](https://docs.scvi-tools.org/en/stable/) is a variational autoencoder that was published in [2018 by Lopez et. al](https://www.nature.com/articles/s41592-018-0229-2) to reduce technical noise and integrate disparate batches together. The method utilizes a variety of artificial intelligence methods to accomplish this task. To better understand the steps being used, we will first define what an autoencoder is, build upon the concept to define what variational autoencoders are, before lastly going through the scVI algorithm.
 
 ### Autoencoders
 
@@ -278,7 +278,7 @@ Schematic of the architecture for a variational autoencoder.<br>
 _Image source: [Roger Yong](https://medium.com/geekculture/variational-autoencoder-vae-9b8ce5475f68)_
 :::
 
-So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation ($z$) of our input. So the guassian distribution is randomly sampled and used as the latent space before being passed to the decoder.
+So at this point, we have multiple distributions to represent the original input. However, what we ultimately want is that low-dimensional representation ($z$) of our input. So the Gaussian distribution is randomly sampled and used as the latent space before being passed to the decoder.
 
 ### scVI algorithm
 
@@ -291,7 +291,7 @@ Schematic of the scVI algorithm.<br>
 _Image source: [Lopez et al. (2018)](https://www.nature.com/articles/s41592-018-0229-2)_
 :::
 
-The broad steps of the scVI algorithm are as following:
+The broad steps of the scVI algorithm are as follows:
 
 1. We assume there is a low-dimensional latent space $z$ that can represent our dataset (similar to PCA).
 2. The raw counts matrix and batch information are fed into the encoder, with the genes modelled as a Gaussian distribution of $z$.
