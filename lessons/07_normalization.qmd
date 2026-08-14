@@ -76,7 +76,7 @@ Overview of the single-cell RNA-seq workflow.
 
 ## Normalization
 
-An essential first step in the majority of mRNA expression analyses is normalization, whereby systematic variations are adjusted for to **make expression counts comparable across genes and/or samples**. The counts of mapped reads for each gene is proportional to the expression of RNA ("interesting") in addition to many other factors ("uninteresting"). Normalization is the process of adjusting raw count values to account for the "uninteresting" factors. 
+An essential first step in the majority of mRNA expression analyses is normalization, whereby systematic variations are adjusted for to **make expression counts comparable across genes and/or samples**. The counts of mapped reads for each gene are proportional to the expression of RNA ("interesting") in addition to many other factors ("uninteresting"). Normalization is the process of adjusting raw count values to account for the "uninteresting" factors. 
 
 The main factors often considered during normalization are:
  
@@ -173,7 +173,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ```
 
-Before we do any normalization, we want to ensure that the raw counts matrix is properly stores as a `layer`. By default, when we loaded in our dataset, the counts were stored to the `.X` slot of our object. So now we are going to store it in the `layers` slot under the name `counts` for easy reference in the future.
+Before we do any normalization, we want to ensure that the raw counts matrix is properly stored as a `layer`. By default, when we loaded in our dataset, the counts were stored to the `.X` slot of our object. So now we are going to store it in the `layers` slot under the name `counts` for easy reference in the future.
 
 ```{python}
 #| label: copy_adata
@@ -185,7 +185,7 @@ adata_phase.layers["counts"] = adata_phase.X.copy()
 adata_phase
 ```
 
-Within the scanpy library, we will make use of two different function for the scaling `pp.normalize_total()` and then transform with `pp.log1p()`. 
+Within the scanpy library, we will make use of two different functions: first to scale with `pp.normalize_total()`, and then to transform with `pp.log1p()`.
 
 ```{python}
 #| label: normalize_data_py
@@ -211,7 +211,7 @@ So now we have three layers, each with the different counts matrices:
 
 ## Highly variable genes
 
-Highly variable gene selection is **extremely important** since many downstream steps are computed only on these genes. We calculate scores based upon how much a gene changes acrros the total populations of cells. Genes that vary a lot between populations will ranked more highly amongst all the genes.
+Highly variable gene selection is **extremely important** since many downstream steps are computed only on these genes. We calculate scores based upon how much a gene changes across the total populations of cells. Genes that vary a lot between populations will be ranked the highest.
 
 We can additionally visualize the dispersion of all genes, which shows a gene's average expression across all cells on the x-axis and variance on the y-axis. Ideally we want to use genes that have high variance since this can indicate a change in expression depending on populations of cells. Adding labels helps us understand which genes will be driving shape of our data.
 
@@ -233,7 +233,7 @@ seurat_phase
 
 ::: callout-note
 # `FindVariableFeatures` arguments
-For the `selection.method` and `nfeatures` arguments the values specified are the default settings. Therefore, you do not necessarily need to include these in your code. We have included it here for transparency and inform you what you are using.
+For the `selection.method` and `nfeatures` arguments the values specified are the default settings. Therefore, you do not necessarily need to include these in your code. We have included it here for transparency and to inform you what you are using.
 :::
 
 Seurat allows us to access the ranked highly variable genes with the `VariableFeatures()` function. We can additionally visualize the dispersion of all genes using Seurat's `VariableFeaturePlot()`. To finish the visualization, we then label the top 15 genes.
@@ -289,7 +289,7 @@ adata_phase.var.head()
 
 ```{python}
 #| label: tbl-hvg_column_py
-#| tbl-cap: First several rows of a the `merged_adata.obs` to show the newly created `highly variable` column
+#| tbl-cap: First several rows of the `merged_adata.var` to show the newly created `highly_variable` column.
 #| echo: false
 #| results: asis
 print(adata_phase.var.head().to_markdown())
@@ -370,10 +370,10 @@ Principal Component Analysis (PCA) is a technique used to emphasize variation as
 
 ::: {.callout-note}
 # PCA
-For a more **detailed explanation on PCA**,  there is a [self-learning lesson](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) for a more thorough understanding.
+For a more **detailed explanation on PCA**,  there is a [self-learning lesson](06_theory_of_PCA.qmd) outlining the method. We also strongly encourage you to explore the video [StatQuest's video](https://www.youtube.com/watch?v=_UVHneBUBW0) as an alternative, step-by-step explanation of PCA.
 :::
 
-Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells* and you have quantified the expression of *20,000 genes*. The schematic below demonstrates how you would go from a cell x gene matrix to principal component (PC) scores for each inividual cell.
+Let's say you are working with a single-cell RNA-seq dataset with *12,000 cells* and you have quantified the expression of *20,000 genes*. The schematic below demonstrates how you would go from a cell x gene matrix to principal component (PC) scores for each individual cell.
 
 ::: {#fig-pca-schematic .figure}
 ![](../img/PCA_scrnaseq_1_updated.png){width=900}
@@ -413,7 +413,7 @@ seurat_phase <- ScaleData(seurat_phase)
 seurat_phase
 ```
 
-Notice is creates a new layer automatically called `scale.data`
+Notice we now have a new layer that was automatically named `scale.data`
 
 Now, we can perform the PCA analysis with `RunPCA()` and plot the first two principal components against each other with `DimPlot()`.
 
@@ -453,6 +453,14 @@ sc.pp.pca(adata_phase,
 # R and python installation of PCA colliding
 # So I ran all the above code and then saved intermediate file
 adata_phase = sc.read_h5ad("intermediate/07_adata_phase_pca.h5ad")
+
+# Old version of the function have different arguments
+# If participants run into problems, try running
+# sc.pp.pca(
+#     adata_phase,
+#     n_comps=50,
+#     use_highly_variable=True
+# )
 ```
 
 In running this function, we have create 2 new slots in our scanpy object. The `obsm` (observation matrices) and `varm` (variable/feature matrices).
@@ -471,14 +479,6 @@ The `X_pca` contains the scores for each cell and Principal Component.
 adata_phase.obsm["X_pca"][1:5, 1:5]
 ```
 
-Typically, the first 40 PCs are used for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. We will be talking a lot more about this future lessons.
-
-::: {#fig-pca-many-pcs .figure}
-![](../img/PCA_scrnaseq_3.png){width=600}
-
-Using multiple principal components for downstream analyses such as clustering and marker identification.
-:::
-
 With these scores, we can plot how the cells lay on PC1 and PC2 with `pp.pca` where the `color` argument tells us which metadata column to color the cells by.
 
 ```{python}
@@ -493,15 +493,22 @@ sc.pl.pca(adata_phase,
 
 We can clearly see that there is a split in our PC visualization based upon sample. Therefore, we know moving forward that we will have to integrate the samples together as there is technical noise causing our two datasets to not align well together (batch effect). Knowing this, we can also evaluate other metadata that could be contributing to the differences between samples.
 
+Typically, the first 40 PCs are used for downstream analysis like clustering, marker identification etc., since these represent the majority of the variation in the data. Those steps will be discussed in more depth in future lessons.
+
+::: {#fig-pca-many-pcs .figure}
+![](../img/PCA_scrnaseq_3.png){width=600}
+
+Using multiple principal components for downstream analyses such as clustering and marker identification.
+:::
 
 ## Batch effect
 
-Oftentimes we need to apply corrections to ensure that sources of "uninteristing" variation are not introducing batch effects in our dataset. Here, we will to explore the data to identify if there are any variables that are introducing such effects in our dataset by making use of the PCA visualizations.
+Oftentimes we need to apply corrections to ensure that sources of "uninteresting" variation are not introducing batch effects in our dataset. Here, we will explore the data to identify if there are any variables that are introducing such effects in our dataset by making use of the PCA visualizations.
 
 
 ### Cell cycle
 
-In single cell RNA-seq, one of the most common biological data corrections is the effects of the cell cycle on the trascriptome. So we will evaluate if this needs to be accounted for as we continue through the workflow.
+In single cell RNA-seq, one of the most common biological data corrections is the effects of the cell cycle on the transcriptome. So we will evaluate if this needs to be accounted for as we continue through the workflow.
 
 ::: callout-note
 # Identify genes in each cell cycle phase
@@ -524,7 +531,7 @@ load("data/additional_data/cycle.rda")
 s_genes
 ```
 
-To assign each cell a score based on its expression of G2/M and S phase markers, we can use the Seuart function `CellCycleScoring()`. This function calculates cell cycle phase scores based on canonical markers that required as input.
+To assign each cell a score based on its expression of G2/M and S phase markers, we can use the Seurat function `CellCycleScoring()`. This function calculates cell cycle phase scores based on canonical markers that are required as input.
 
 ```{r}
 #| label: cell_cycle_score
@@ -591,7 +598,7 @@ sc.tl.score_genes_cell_cycle(adata_phase,
                              g2m_genes)
 ```
 
-Whenever we run a new function, it is a good idea to observer how our scanpy object changes. Since this is a score being calculated for each cell, we can take a look at the metadata to see which new columns have been generated.
+Whenever we run a new function, it is a good idea to observe how our scanpy object changes. Since this is a score being calculated for each cell, we can take a look at the metadata to see which new columns have been generated.
 
 In this case, we can see we have new column in our `.obs` dataframe:
 
@@ -663,7 +670,7 @@ DimPlot(seurat_phase,
 Another helpful way to visualize these different phase categories is to use the `split.by` argument to create multiple plots containing each of the unique values of `Phase`.
 
 ```{r}
-#| label: fig-pca_cell_cycle_py
+#| label: fig-pca_cell_cycle_split
 #| fig-cap: Cells plotted on PC1 vs PC2 and colored by cell cycle phase.
 #| fig-width: 9
 # Plot the PCA colored and split by cell cycle phase
@@ -913,9 +920,9 @@ Now we can see that in addition to the raw RNA counts, we now have a SCT compone
 
 ## Python
 
-The scanpy workflow does not have the exact `SCTranform` algorithm built into its workfow. However, there is an analagous [Analytic Pearson Residuals](https://www.sc-best-practices.org/preprocessing_visualization/normalization.html#analytic-pearson-residuals) normalization that follows the same logic. 
+The scanpy workflow does not have the exact `SCTransform` algorithm built into its workflow. However, there is an analagous [Analytic Pearson Residuals](https://www.sc-best-practices.org/preprocessing_visualization/normalization.html#analytic-pearson-residuals) normalization that follows the same logic. 
 
-We will be following an alternative method to deal with integration and batch correction in the next lesson. The technique we will used is called SCVI and does not require the output of this normalization step.
+We will be following an alternative method to deal with integration and batch correction in the next lesson. The technique we will use is called svVI and does not require the output of this normalization step.
 
 :::
 
@@ -959,7 +966,7 @@ adata_phase.write_h5ad("data/adata_phase.h5ad")
 # Loading dataset
 To load the `.h5ad` file back into your environment you would use the following code:
 
-```{r}
+```{python}
 #| label: load_adata_object_example
 #| eval: false
 ## DO NOT RUN
