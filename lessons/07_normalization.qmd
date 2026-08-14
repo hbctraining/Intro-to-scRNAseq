@@ -49,6 +49,12 @@ filtered_seurat <- readRDS("intermediate/05_filtered_seurat.RDS")
 #| echo: false
 # Load libraries and data
 import scanpy as sc
+import scvi
+
+import seaborn as sns
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 filtered_adata = sc.read_h5ad("intermediate/05_filtered_adata.h5ad")
 ```
@@ -159,6 +165,7 @@ Let's start by creating a new script for the normalization and integration steps
 
 ```{python}
 #| label: set-up_script_py
+#| eval: false
 # Normalization and integration
 # Introduction to scRNA-seq
 # Author: Harvard Chan Bioinformatics Core
@@ -171,6 +178,9 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# Load dataset
+filtered_adata = sc.read_h5ad("data/filtered_adata.h5ad")
 ```
 
 Before we do any normalization, we want to ensure that the raw counts matrix is properly stored as a `layer`. By default, when we loaded in our dataset, the counts were stored to the `.X` slot of our object. So now we are going to store it in the `layers` slot under the name `counts` for easy reference in the future.
