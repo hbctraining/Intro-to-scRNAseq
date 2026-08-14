@@ -161,9 +161,9 @@ seurat_integrated[["RNA"]] <- JoinLayers(seurat_integrated[["RNA"]])
 
 ## Python
 
-TODO: text on what SCVI does - to represent cells and can also do batch correction
+To run scVI, we first need to specify what our `batch_key` (sample) and `categorical_covariate_keys` (unwanted variation) are. This information gets stored in the AnnData object with the `scvi.model.SCVI.setup_anndata()` function. Then, we initialize the model (variational autoencoder architecture) so that we can run the next step, which is training the model.
 
-SCVI makes use of Variational Auto-Encoders in order to construct a model that best fits the data according to the parameters set. We can see the basic informatin about the model before running the train step.
+We can see the basic information about the model by printing out the `model` varaible created:
 
 ```{python}
 #| label: scvi_model
@@ -177,11 +177,13 @@ scvi.model.SCVI.setup_anndata(adata_integrated,
                               categorical_covariate_keys =[ "phase", "mitoFr"])
 
 model = scvi.model.SCVI(adata_integrated, 
-                        n_layers=2, 
-                        n_latent=30, 
-                        gene_likelihood="nb")
+                        n_layers = 2, 
+                        n_latent = 30, 
+                        gene_likelihood = "nb")
 model
 ```
+
+scVI uses the concept of variational autoencoders to build neural networks (encoder and decoder) that is capable to reconstructing the original counts information. To accomplish this goal, several back and forth interations between the two networks is necessary in order to ensure the accuracy of the reconstrucion.
 
 ::: callout-note
 # Epochs
@@ -195,7 +197,7 @@ By default the number of epochs is typically greater than 200.
 #| eval: false
 # Train encoder and decoder neural networks
 # This step will take several minutes
-model.train(max_epochs=100)
+model.train(max_epochs = 100)
 ```
 
 We use the `get_latent_representation()` function to generate a new latent space (like PCA) that reduces the dimensionality of our dataset while taking into consideration the batch variable we specified earlier. This new latent space, which we store as `X_scvi` can later be used to calculate our nearest neighbors and UMAP coordinates.
@@ -207,13 +209,19 @@ We use the `get_latent_representation()` function to generate a new latent space
 adata_integrated.obsm["X_scvi"] = model.get_latent_representation()
 ```
 
-We now have our new scVI values stores in our `adata_integrated` object, just like we did for PCA.
+We now have our new scVI values stores in our `adata_integrated` object within the `obsm` slot, just like we had when we ran PCA.
 
 ```{python}
 #| label: instructor_scVI
 #| echo: false
 # adata_integrated.write_h5ad("intermediate/09_adata_integrated.h5ad")
 adata_integrated = sc.read_h5ad("intermediate/09_adata_integrated.h5ad")
+```
+
+```{python}
+#| label: adata_integrated_obsm
+# Note the new scVI value stored in the obsm slot
+adata_integrated
 ```
 
 :::
