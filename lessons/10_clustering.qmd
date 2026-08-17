@@ -172,7 +172,7 @@ DimHeatmap(seurat_integrated,
 
 ## Python
 
-TODO: there is no anaalgous to plot this simply with scanpy. Should we just print the plot and move on?
+These types of figures are subjective and cannot show a summary of many principal components all at once.
 
 ```{r}
 #| label: fig-integrated_DimHeatmap_py
@@ -207,7 +207,7 @@ print(x = seurat_integrated[["pca"]],
 #| fig-cap: Ranking of top genes in the first 3 principal components, showing the top and bottom genes.
 # Print top and bottom ranked genes for first 3 PCs
 sc.pl.pca_loadings(adata_integrated,
-                   components = '1,2,3')
+                   components = "1,2,3")
 ```
 
 :::
@@ -241,7 +241,7 @@ In theory, with SCTransform, the more PCs we choose the more variation is accoun
 #| fig-cap: Plot showing the standard deviation represented with each component to determine a cutoff value for the number of PCs.
 # Elbow plot visualization
 sc.pl.pca_variance_ratio(adata_integrated, 
-                         n_pcs=50, log=True)
+                         n_pcs = 50, log = True)
 ```
 
 :::
@@ -308,8 +308,8 @@ kNN are calculate in one step with the `sc.pp.neighbors()` function. Importantly
 #| eval: false
 # Calculate neighbors
 sc.pp.neighbors(adata_integrated, 
-                use_rep="X_scvi", 
-                key_added="scvi",
+                use_rep = "X_scvi", 
+                key_added = "scvi",
                 random_state = 1234)
 ```
 
@@ -317,6 +317,7 @@ We specified `key_added` as "scvi" so that we do not overwrite any previous neig
 
 ```{python}
 #| label: show_adata
+# Print new obsp slot where neighbors are stored
 adata_integrated.obsp
 ```
 
@@ -400,9 +401,10 @@ We are supplying the neighbors computed from the scVI latent space. Therefore, w
 ```{python}
 #| label: fig-umap_sample_py
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
+# UMAP colored by sample
 sc.pl.embedding(adata_integrated, 
-                color="sample", 
-                basis="umap_scvi")
+                color = "sample", 
+                basis = "umap_scvi")
 ```
 
 
@@ -476,7 +478,13 @@ seurat_integrated@meta.data %>%
 
 We will run the `tl.leiden()` function at a variety fo different resolutions. This will calculate the "granularity" of the clustering. 
 
-TODO: explain parameters
+| Parameter              | Description                                                                                              |
+|------------------------|----------------------------------------------------------------------------------------------------------|
+| `flavor="igraph"`      | Chooses which package the Leiden implementation is used by Scanpy.              |
+| `n_iterations`       | Number of refinement iterations of the Leiden community detection algorithm.                            |
+| `neighbors_key` | Uses the precomputed neighbor graph stored under the key set instead of the default neighbors.     |
+| `resolution`       | Controls clustering granularity; higher values usually produce more, smaller clusters.                  |
+| `key_added` | Name of the column in `adata_integrated.obs` where cluster labels are stored (e.g. `"leiden_0.4"`). |
 
 ```{python}
 #| label: cluster_res
@@ -486,11 +494,11 @@ resolutions = [0.4, 0.6, 0.8, 1.0, 1.4]
 
 for res in resolutions:
     sc.tl.leiden(adata_integrated,
-                 flavor="igraph", 
-                 n_iterations=2, 
-                 neighbors_key="scvi", 
-                 resolution=res,
-                 key_added=f'leiden_{res}')
+                 flavor = "igraph", 
+                 n_iterations = 2, 
+                 neighbors_key = "scvi", 
+                 resolution = res,
+                 key_added = f"leiden_{res}")
 ```
 
 If we take a look at the columns in our `.obs` metadata, we see that several new columns were added corresponding with each resolution of interest.
@@ -537,6 +545,7 @@ To **choose a resolution to start with**, we often pick something in the middle 
 
 ```{r}
 #| label: n_cells_cluster
+# Number of cells per cluster
 table(seurat_integrated$integrated_snn_res.0.8)
 ```
 
@@ -544,6 +553,7 @@ table(seurat_integrated$integrated_snn_res.0.8)
 
 ```{python}
 #| label: n_cells_cluster_py
+# Number of cells per cluster
 adata_integrated.obs["leiden_0.8"].value_counts()
 ```
 
@@ -557,7 +567,7 @@ One of the most popular ways to show clusters is to color the cluster identity o
 ```{r}
 #| label: fig-integrated_DimPlot_0.8
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
-# Plot the UMAP
+# Plot the UMAP colored by resolution 0.8
 DimPlot(seurat_integrated,
         group.by = "integrated_snn_res.0.8",
         reduction = "umap",
@@ -572,11 +582,11 @@ DimPlot(seurat_integrated,
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8.
 # Plot the UMAP
 sc.pl.embedding(adata_integrated, 
-                color="leiden_0.8", 
-                basis="umap_scvi",
-                legend_loc='on data',
-                legend_fontsize=14,
-                legend_fontoutline=3)
+                color = "leiden_0.8", 
+                basis = "umap_scvi",
+                legend_loc = "on data",
+                legend_fontsize = 14,
+                legend_fontoutline = 3)
 ```
 
 :::
@@ -604,17 +614,17 @@ DimPlot(seurat_integrated,
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.4.
 # Plot the UMAP
 sc.pl.embedding(adata_integrated, 
-                color="leiden_0.4", 
-                basis="umap_scvi",
-                legend_loc='on data',
-                legend_fontsize=14,
-                legend_fontoutline=3)
+                color = "leiden_0.4", 
+                basis = "umap_scvi",
+                legend_loc = "on data",
+                legend_fontsize = 14,
+                legend_fontoutline = 3)
 ```
 
 :::
 
 :::{.callout-tip}
-# [**Exercise 1**](tmp-Answer_key.qmd#exercise-1)
+# [**Exercise 1**](10_clustering-Answer_key.qmd#exercise-1)
 1. What differences do you notice between resolution `0.4` and `0.8`?
 :::
 
@@ -637,6 +647,7 @@ Inside your `data` folder you will see a folder called `additional_data`. It con
 
 ```{r}
 #| label: load_data
+# Load integrated object
 seurat_integrated <- readRDS("data/additional_data/seurat_integrated.rds")
 ```
 
@@ -644,6 +655,7 @@ seurat_integrated <- readRDS("data/additional_data/seurat_integrated.rds")
 
 ```{python}
 #| label: load_data_py
+# Load integrated object
 adata_integrated = sc.read_h5ad("data/additional_data/adata_integrated.h5ad")
 ```
 
@@ -690,18 +702,18 @@ Plot the UMAP again to make sure your image now (or still) matches what you see 
 #| fig-cap: UMAP plot, representing each cell as a colored point corresponding with the cluster identified at resolution 0.8 for the downloaded, processed data.
 # Plot the UMAP
 sc.pl.embedding(adata_integrated, 
-                color="leiden_0.8", 
-                basis="umap_scvi",
-                legend_loc='on data',
-                legend_fontsize=14,
-                legend_fontoutline=3)
+                color = "leiden_0.8", 
+                basis = "umap_scvi",
+                legend_loc = "on data",
+                legend_fontsize = 14,
+                legend_fontoutline = 3)
 ```
 
 :::
 
 :::{.callout-tip}
-# [**Exercise 2**](tmp-Answer_key.qmd#exercise-2)
-2. check the object clusters with different resolution (0.4, 0.6, 0.8, 1.0, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe.
+# [**Exercise 2**](10_clustering-Answer_key.qmd#exercise-2)
+2. Check the object at each different resolution (0.4, 0.6, 0.8, 1.0, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe.
 :::
 
 ***

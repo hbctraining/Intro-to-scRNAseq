@@ -1,0 +1,106 @@
+---
+title: "Clustering Analysis - Answer Key"
+author:
+  - Noor Sohail
+date: "2026-08-17"
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: load_libraries_data_R
+#| echo: false
+# Load libraries and data
+library(Seurat)
+library(tidyverse)
+seurat_integrated <- readRDS("data/additional_data/seurat_integrated.rds")
+```
+
+```{python}
+#| label: load_libraries_data_py
+#| echo: false
+# Load libraries and data
+import scanpy as sc
+adata_integrated = sc.read_h5ad("data/additional_data/adata_integrated.h5ad")
+```
+
+# Exercise 1
+
+1. What differences do you notice between resolution `0.4` and `0.8`?
+
+There are more clusters in resolution `0.8` compared to `0.4`
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: fig-umap_res
+#| fig-cap: Cells colored by leiden resolutions 0.4 and 0.8 on the UMAP.
+# UMAP resolution 0.4 and 0.8
+DimPlot(seurat_integrated,
+        reduction = "umap",
+        group.by = c("integrated_snn_res.0.4",
+                     "integrated_snn_res.0.8"))
+```
+
+## Python
+
+```{python}
+#| label: fig-umap_res_py
+#| fig-cap: Cells colored by leiden resolutions 0.4 and 0.8 on the UMAP.
+# UMAP resolution 0.4 and 0.8
+sc.pl.embedding(adata_integrated, 
+                color = ["leiden_0.4" ,"leiden_0.8"], 
+                basis = "umap_scvi")
+```
+
+:::
+
+# Exercise 2
+
+2. Check the object at each different resolution (0.4, 0.6, 0.8, 1.0, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe.
+
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+resolutions <- c(0.4, 0.6, 0.8, 1.0, 1.4)
+
+for (res in resolutions) {
+  p <- DimPlot(seurat_integrated,
+        reduction = "umap",
+        group.by = paste0("integrated_snn_res.", res))
+  print(p)
+
+  n_clust <- seurat_integrated@meta.data[paste0("integrated_snn_res.", res)] %>%
+    unique() %>% unname() %>% unlist() %>% length()
+  print(paste("Resolution", res, "=", n_clust, "clusters"))
+}
+```
+
+## Python
+
+```{python}
+resolutions = [0.4, 0.6, 0.8, 1.0, 1.4]
+
+for res in resolutions:
+
+  # Number of clusters at this resolution
+  n_clust = adata_integrated.obs[f"leiden_{res}"].nunique()
+  print(f"Resolution {res}: {n_clust} clusters")
+
+  sc.pl.embedding(adata_integrated, 
+                color = f"leiden_{res}", 
+                basis = "umap_scvi")
+```
+
+:::
+
+***
+
+[Back to Lesson >>](10_clustering.qmd)
+
+[Back to Schedule](../schedule/schedule.qmd)
