@@ -74,7 +74,7 @@ In this lesson, we will:
 
 ## Overview of lesson
 
-Now that we have our high quality cells integrated, we want to know the different cell types present within our population of cells. To this end, our next steps will be to identify similarity between our cells using networks. With this representation, we can run clutering and UMAP algorithms to represent transcriptionally unique populations of cells in our dataset.
+Now that we have our high quality cells integrated, we want to know the different cell types present within our population of cells. To this end, our next steps will be to identify similarity between our cells using networks. With this representation, we can run clustering and UMAP algorithms to represent transcriptionally unique populations of cells in our dataset.
 
 ::: {#fig-sc-workflow .figure}
 ![](../img/sc_workflow_2022.jpg){width=630}
@@ -158,7 +158,7 @@ We are looking for a PC where the heatmap starts to look more "fuzzy", i.e. wher
 ::: {.panel-tabset group="language"}
 ## R
 
-The `cells` argument for `DimHeatmap()` specifies the number of cells with the most negative or postive PCA scores to use for the plotting. 
+The `cells` argument for `DimHeatmap()` specifies the number of cells with the most negative or positive PCA scores to use for the plotting. 
 
 ```{r}
 #| label: fig-integrated_DimHeatmap
@@ -271,7 +271,7 @@ _Image source: [Analysis of Single cell RNA-seq data](https://biocellgen-public.
 
 1. Each cell is a point in latent/PCA (n-dimensional) space.
 2. We calculate the distance (euclidean) between each cell and all other cells in this latent/PCA space.
-3. We then connect cells together (edges) that are close to each other. cells that are close together in latent/PCA space will have similar gene expression profiles, and thus are likely to be similar.
+3. We then connect cells together (edges) that are close to each other. Cells that are close together in latent/PCA space will have similar gene expression profiles, and thus are likely to be similar.
 4. To further confirm the similarity of cells, we ask, _do these two cells also share nearby neighbors (cells)?_ These shared neighbors are an additional layer of confirmation that cell A and cell B are similar to one another if they are connected to the same cells (neighbors). We use this to recalculate the edge weights between cells, **creating a shared nearest neighbor (SNN) graph**.
 
 This means that if two cells are close together in PCA space and have similar neighbors, they will have a stronger connection (higher edge weight) than two cells that are close together but do not share similar neighbors.
@@ -301,7 +301,7 @@ We use the SNN graph because it considers both the distance between two cells an
 
 ## Python
 
-kNN are calculate in one step with the `sc.pp.neighbors()` function. Importantly, we must specify the `use_rep` argument to be the integrated `X_scvi` latent space that was computed in the previous lesson.
+kNN are calculated in one step with the `sc.pp.neighbors()` function. Importantly, we must specify the `use_rep` argument to be the integrated `X_scvi` latent space that was computed in the previous lesson.
 
 ```{python}
 #| label: calc_neighbors
@@ -313,7 +313,7 @@ sc.pp.neighbors(adata_integrated,
                 random_state = 1234)
 ```
 
-We specified `key_added` as "scvi" so that we do not overwrite any previous neighborhoods that may have calculated. This can more clearly be seen when we look at the `obsp` slot of our adata object.
+We specified `key_added` as "scvi" so that we do not overwrite any previous neighborhoods that may have been calculated. This can more clearly be seen when we look at the `obsp` slot of our adata object.
 
 ```{python}
 #| label: show_adata
@@ -353,7 +353,7 @@ Each method aims to place cells with similar local neighborhoods in high-dimensi
 ::: {.panel-tabset group="language"}
 ## R
 
-First we compute the 
+First we compute the UMAP embedding using the integrated PCA space.
 
 ```{r}
 #| label: RunUMAP
@@ -369,7 +369,7 @@ Recall that our `pca` was generated after integration. Therefore, when we color 
 
 ```{r}
 #| label: fig-umap_sample
-#| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding to each sample.
 # Plot the UMAP
 DimPlot(seurat_integrated,
         reduction = "umap",
@@ -400,7 +400,7 @@ sc.tl.umap(adata_integrated,
 We are supplying the neighbors computed from the scVI latent space. Therefore, when we color cells, there should not be a strong bias by batch (sample) as we have already run integration.
 ```{python}
 #| label: fig-umap_sample_py
-#| fig-cap: UMAP plot, representing each cell as a colored point corresponding each sample.
+#| fig-cap: UMAP plot, representing each cell as a colored point corresponding to each sample.
 # UMAP colored by sample
 sc.pl.embedding(adata_integrated, 
                 color = "sample", 
@@ -410,7 +410,7 @@ sc.pl.embedding(adata_integrated,
 
 :::
 
-Effectively, we are summarizing the information accross multiple PCs into 2D space for this representation.
+Effectively, we are summarizing the information across multiple PCs into 2D space for this representation.
 
 ::: {.callout-note collapse="true"}
 # My UMAP plot looks rotated!
@@ -424,9 +424,9 @@ So if you got different UMAP coordinates, that is to be expected as long as the 
 
 The next step in the workflow is to **group cells into clusters based on the neighborhood graph**.
 
-Most clustering algorithms will iteratively groups cells with the goal of optimizing the standard modularity function (a measure of how well a network is partitioned into clusters). Higher modularity values indicate a clearer cluster structure. In other words, we want clusters to be well-separated from one another, yet, internally, tightly knit. 
+Most clustering algorithms will iteratively group cells with the goal of optimizing the standard modularity function (a measure of how well a network is partitioned into clusters). Higher modularity values indicate a clearer cluster structure. In other words, we want clusters to be well-separated from one another, yet, internally, tightly knit. 
 
-The two most popular clustering methods are Louvain and Leiden. In the past few years, the [Leiden algorithm has become more popular]((https://www.nature.com/articles/s41598-019-41695-z)) due to its increased speed and ability to connect communities.
+The two most popular clustering methods are Louvain and Leiden. In the past few years, the [Leiden algorithm has become more popular]((https://www.nature.com/articles/s41598-019-41695-z) due to its increased speed and ability to connect communities.
 
 
 ::: {#fig-leiden .figure}
@@ -441,7 +441,7 @@ Another key parameter is `resolution`, which controls the **granularity of the c
 ::: {.panel-tabset group="language"}
 ## R
 
-By default, the `FindClusters()` function using Louvain clustering. So, we will set `algorithm = 4` in order to make use of the Leiden implementation.
+By default, the `FindClusters()` function uses Louvain clustering. So, we will set `algorithm = 4` in order to make use of the Leiden implementation.
 
 ```{r}
 #| label: FindClusters
@@ -464,7 +464,6 @@ View(seurat_integrated@meta.data)
 ```{r}
 #| label: tbl-head_meta_data_clusters_kable
 #| tbl-cap: Updated `@meta.data` with Leiden clusters.
-#| eval: false
 #| echo: false
 seurat_integrated@meta.data %>% 
   head() %>% 
@@ -476,7 +475,7 @@ seurat_integrated@meta.data %>%
 
 ## Python
 
-We will run the `tl.leiden()` function at a variety fo different resolutions. This will calculate the "granularity" of the clustering. 
+We will run the `tl.leiden()` function at a  range of resolutions. This will calculate the "granularity" of the clustering. 
 
 | Parameter              | Description                                                                                              |
 |------------------------|----------------------------------------------------------------------------------------------------------|
@@ -638,7 +637,7 @@ It is possible that there is some variability in the way your clusters look comp
 
 **If your clusters do look different from what we have in the lesson**, please follow the instructions provided below. 
 
-Inside your `data` folder you will see a folder called `additional_data`. It contains the seurat_integrated object that we have created for the class. 
+Inside your `data` folder you will see a folder called `additional_data`. It contains the integrated objects that we have created for the class. 
 
 **Load in the object to your session and overwrite the existing one**: 
 
