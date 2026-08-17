@@ -715,6 +715,18 @@ sc.pl.embedding(adata_integrated,
 2. Check the object at each different resolution (0.4, 0.6, 0.8, 1.0, 1.4). For each resolution plot the corresponding UMAP and report how many clusters you observe.
 :::
 
+## Spatial transcriptomics
+
+At first glance, the clustering results may seem somewhat arbitrary. However, applying these same steps to a spatial transcriptomics dataset (both RNA and location of cells are captured) demonstrates that clustering based on RNA expression can reveal meaningful biology. In the example shown here, the identified clusters are overlaid on a cortical cross-section of the brain, where they correspond closely to anatomical and biological boundaries.
+
+
+::: {#fig-sc-workflow .figure}
+![](../img/spatial_clustering.png){width=700}
+
+Overlaid clusters onto spatial slide, showcasing how clustering captures biological structure.<br>
+_Image source: [Introduction to Spatial Transcriptomics](https://hbctraining.github.io/Intro-to-spatial-transcriptomics/lessons/08_clustering.html)_
+:::
+
 ***
 
 [Next Lesson >>](11_clustering_quality_control.qmd)

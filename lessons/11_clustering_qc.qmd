@@ -56,8 +56,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Set tight_layout universally
-plt.rcParams['figure.autolayout'] = True
-plt.rcParams['figure.constrained_layout.use'] = True
+plt.rcParams["figure.autolayout"] = True
+plt.rcParams["figure.constrained_layout.use"] = True
 
 # Load data
 adata_integrated = sc.read_h5ad("data/additional_data/adata_integrated.h5ad")
@@ -78,7 +78,7 @@ In this lesson, we will:
 
 ## Overview of lesson
 
-Now that we have performed the integration, we want to know the different cell types present within our population of cells. This process will require us to map our clusters to cell types based upon gene expression. Therefore, it is key that we assess the quality of our clusters and being to characterize the gene expression of each one.
+Now that we have performed the integration, we want to know the different cell types present within our population of cells. This process will require us to map our clusters to cell types based upon gene expression. Therefore, it is key that we assess the quality of our clusters and begin to characterize the gene expression of each one.
 
 
 ::: {#fig-sc-workflow .figure}
@@ -117,27 +117,27 @@ DimPlot(seurat_integrated,
 #| fig.width: 3
 #| fig.height: 3
 # Create plot with the correct dimensions
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+fig, axes = plt.subplots(1, 3, figsize = (15, 5))
 
 # Plot UMAP
 # All cells together
 sc.pl.embedding(adata_integrated, 
-                color="leiden_0.8", 
-                ax=axes[0], 
-                show=False, basis="umap_scvi",
-                legend_loc='on data', 
-                legend_fontsize=14,
-                legend_fontoutline=3)
+                color = "leiden_0.8", 
+                ax = axes[0], 
+                show = False, basis = "umap_scvi",
+                legend_loc = "on data", 
+                legend_fontsize = 14,
+                legend_fontoutline = 3)
 # Control cells
-sc.pl.embedding(adata_integrated, color="sample", 
-                groups="ctrl", ax=axes[1], 
-                show=False, title="Ctrl", 
-                basis="umap_scvi")
+sc.pl.embedding(adata_integrated, color = "sample", 
+                groups = "ctrl", ax = axes[1], 
+                show = False, title = "Ctrl", 
+                basis = "umap_scvi")
 # Stim cells
-sc.pl.embedding(adata_integrated, color="sample", 
-                groups="stim", ax=axes[2], 
-                show=False, title="Stim", 
-                basis="umap_scvi")
+sc.pl.embedding(adata_integrated, color = "sample", 
+                groups = "stim", ax = axes[2], 
+                show = False, title = "Stim", 
+                basis = "umap_scvi")
 
 plt.show()
 ```
@@ -159,13 +159,13 @@ n_cells <- seurat_integrated@meta.data %>%
 
 # Barplot of number of cells per cluster by sample
 ggplot(n_cells, 
-       aes(x=integrated_snn_res.0.8, y=n, 
-       fill=sample)) +
-    geom_bar(position=position_dodge(), 
-             stat="identity") +
+       aes(x = integrated_snn_res.0.8, y = n, 
+       fill = sample)) +
+    geom_bar(position = position_dodge(), 
+             stat = "identity") +
     theme_classic() +
-    geom_text(aes(label=n), vjust = -.2, 
-              position=position_dodge(1))
+    geom_text(aes(label = n), vjust = -.2, 
+              position = position_dodge(1))
 ```
 
 ## Python
@@ -175,12 +175,12 @@ ggplot(n_cells,
 #| fig-cap: Barplot representing the number of cells found in each cluster, split by sample identity.
 #| fig.width: 15
 # Initialize figure
-plt.figure(figsize=(12,4))
+plt.figure(figsize = (12,4))
 
 # Barplot of cells per cluster x sample
-sns.countplot(data=adata_integrated.obs, 
-              x='leiden_0.8', hue='sample')
-plt.ylabel('Number of Cells')
+sns.countplot(data = adata_integrated.obs, 
+              x = "leiden_0.8", hue = "sample")
+plt.ylabel("Number of Cells")
 plt.show()
 ```
 
@@ -196,8 +196,8 @@ Generally, we expect to see the majority of the cell type clusters to be present
 #| fig-cap: Barplot representing the proportion of cells from each samples for every cluster.
 # Barplot of proportion of cells in each cluster by sample
 ggplot(seurat_integrated@meta.data) +
-    geom_bar(aes(x=integrated_snn_res.0.8, fill=sample), 
-             position=position_fill())  +
+    geom_bar(aes(x = integrated_snn_res.0.8, fill = sample), 
+             position = position_fill())  +
     theme_classic()
 ```
 
@@ -208,20 +208,20 @@ ggplot(seurat_integrated@meta.data) +
 # Number of cells per cluster and sample
 cell_counts = (
     adata_integrated.obs
-    .groupby(['leiden_0.8', 'sample'], observed=True)
+    .groupby(["leiden_0.8", "sample"], observed = True)
     .size()
-    .unstack(fill_value=0)
+    .unstack(fill_value = 0)
 )
 
 # Number of cells per cluster (across all samples)
 cells_per_cluster = (
     adata_integrated.obs
-    .groupby('leiden_0.8', observed=True)
+    .groupby("leiden_0.8", observed = True)
     .size()
 )
 
 # Proportion of cells per cluster and sample
-prop_df = cell_counts.div(cells_per_cluster, axis=0)
+prop_df = cell_counts.div(cells_per_cluster, axis = 0)
 ```
 
 Let us take a look at what our new `prop_df` variable looks to ensure that we are computing proportions.
@@ -234,7 +234,7 @@ prop_df.head()
 
 ```{python}
 #| label: tbl-prop_df
-#| tbl-cap: First several rows of `prop_df` which contails proportions of cells belonging to each sample and cluster.
+#| tbl-cap: First several rows of `prop_df` which contains proportions of cells belonging to each sample and cluster.
 #| echo: false
 #| results: asis
 print(prop_df.head().to_markdown())
@@ -246,15 +246,15 @@ Now that we have confirmed that `prop_df` has our proportion scores we can plot 
 #| label: fig-cell_proportion_barplot_py
 #| fig-cap: Barplot representing the proportion of cells from each samples for every cluster.
 # Plot
-prop_df.plot(kind='bar',
-                stacked=True,
-                figsize=(10, 5))
-plt.ylabel('Proportion')
-plt.xlabel('Leiden 0.8')
+prop_df.plot(kind = "bar",
+                stacked = True,
+                figsize = (10, 5))
+plt.ylabel("Proportion")
+plt.xlabel("Leiden 0.8")
 
 # Move legend to the right
-plt.legend(title='Sample', bbox_to_anchor=(1.02, 1), 
-           loc='upper left', borderaxespad=0)
+plt.legend(title = "Sample", bbox_to_anchor = (1.02, 1), 
+           loc = "upper left", borderaxespad = 0)
 
 plt.show()
 ```
@@ -287,19 +287,19 @@ DimPlot(seurat_integrated,
 
 ```{python}
 #| label: fig-clusters_DimPlot_py
-#| fig-cap: UMAP splity cell cycle phase with cluster identity side-by-side.
+#| fig-cap: UMAP split by cell cycle phase with cluster identity side-by-side.
 #| fig.width: 3
 #| fig.height: 3
 # Create plot with the correct dimensions
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+fig, axes = plt.subplots(1, 3, figsize = (15, 5))
 
 # Plot each phase
-sc.pl.embedding(adata_integrated, color=["phase"], groups=["G1"], ax=axes[0], 
-          show=False, title="G1 Phase", basis="umap_scvi")
-sc.pl.embedding(adata_integrated, color=["phase"], groups=["G2M"], ax=axes[1], 
-          show=False, title="G2M Phase", basis="umap_scvi")
-sc.pl.embedding(adata_integrated, color=["phase"], groups=["S"], ax=axes[2], 
-          show=False, title="S Phase", basis="umap_scvi")
+sc.pl.embedding(adata_integrated, color = ["phase"], groups = ["G1"], ax = axes[0], 
+          show = False, title = "G1 Phase", basis = "umap_scvi")
+sc.pl.embedding(adata_integrated, color = ["phase"], groups = ["G2M"], ax = axes[1], 
+          show = False, title = "G2M Phase", basis = "umap_scvi")
+sc.pl.embedding(adata_integrated, color = ["phase"], groups = ["S"], ax = axes[2], 
+          show = False, title = "S Phase", basis = "umap_scvi")
 
 plt.show()
 ```
@@ -310,7 +310,7 @@ We do not see much clustering by cell cycle score, so we can proceed with the QC
 
 ### By uninteresting variation
 
-Next we will explore additional metrics, such as the number of UMIs and genes per cell, S-phase and G2M-phase markers, and mitochondrial gene expression by UMAP. Looking at the individual S and G2M scores can give us additional information to checking the phase as we did previously.
+Next we will explore additional metrics, such as the number of UMIs and genes per cell, S-phase and G2M-phase markers, and mitochondrial gene expression by UMAP. Looking at the individual S and G2M scores can give us additional information when checking the phase as we did previously.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -329,7 +329,7 @@ FeaturePlot(seurat_integrated,
             features = metrics,
             pt.size = 0.4, 
             order = TRUE,
-            min.cutoff = 'q10',
+            min.cutoff = "q10",
             label = TRUE)
 ```
 
@@ -348,9 +348,9 @@ metrics = ["total_counts", "n_genes", "S_score",
 
 sc.pl.embedding(
     adata_integrated,
-    color=metrics,
-    basis="umap_scvi",
-    sort_order=True,
+    color = metrics,
+    basis = "umap_scvi",
+    sort_order = True,
     legend_loc = "on data",
     size = 8,
     ncols = 2)
@@ -373,26 +373,26 @@ When we looked at the UMAP, cluster 2, 4, 10, and 13 all appeared to have higher
 
 ```{r}
 #| label: fig-genes_per_cluster_boxplot
-#| fig-cap: Boxplot distribution of nGenes for each cluster.
+#| fig-cap: Boxplot distribution of genes detected per cell for each cluster.
 # Boxplot of nGene per cluster
 ggplot(seurat_integrated@meta.data) +
-    geom_boxplot(aes(x=integrated_snn_res.0.8, y=nFeature_RNA, 
-                     fill=integrated_snn_res.0.8)) +
+    geom_boxplot(aes(x = integrated_snn_res.0.8, y = nFeature_RNA, 
+                     fill = integrated_snn_res.0.8)) +
     theme_classic() +
     NoLegend()
 ```
 
-When we look at the boxplot representation, we can also see that cluster 16 also has higher than average `n_genes`. This is on the benefits of using different visuals to understand your data. 
+When we look at the boxplot representation, we can also see that cluster 16 also has higher than average `n_genes`. This is one of the benefits of using different visuals to understand your data. 
 
 ## Python
 
 ```{python}
 #| label: fig-genes_per_cluster_boxplot_py
-#| fig-cap: Boxplot distribution of nGenes for each cluster.
+#| fig-cap: Boxplot distribution of genes detected per cell for each cluster.
 # Boxplot of nGene per cluster
-sns.boxplot(data=adata_integrated.obs, 
-            x="leiden_0.8", y="n_genes",
-            hue="leiden_0.8")
+sns.boxplot(data = adata_integrated.obs, 
+            x = "leiden_0.8", y = "n_genes",
+            hue = "leiden_0.8")
 ```
 
 :::
@@ -510,21 +510,21 @@ n_pcs = 16
 
 # Add PC score columns to adata.obs
 for pc_ix in range(n_pcs):
-    adata_integrated.obs[f'PC{pc_ix+1}_score'] = adata_integrated.obsm['X_pca'][:, pc_ix]
+    adata_integrated.obs[f"PC{pc_ix+1}_score"] = adata_integrated.obsm["X_pca"][:, pc_ix]
 
 # Create 4x4 grid
-fig, axes = plt.subplots(4, 4, figsize=(16, 16))
+fig, axes = plt.subplots(4, 4, figsize = (16, 16))
 
 for ix in range(n_pcs):
     row, col = divmod(ix, 4)
     ax = axes[row, col]
     sc.pl.embedding(
         adata_integrated,
-        color=f'PC{ix+1}_score',
-        ax=ax,
-        show=False,
-        title=f"PC{ix+1}",
-        basis="umap_scvi")
+        color = f"PC{ix+1}_score",
+        ax = ax,
+        show = False,
+        title = f"PC{ix+1}",
+        basis = "umap_scvi")
 
 plt.show()
 ```
@@ -571,9 +571,9 @@ For instance, the genes driving `PC_3` exhibit higher expression in most cluster
 # UMAP of PC3 and cluster scores
 sc.pl.embedding(
     adata_integrated,
-    color=['PC3_score', "leiden_0.8"],
-    legend_loc='on data',
-    basis="umap_scvi")
+    color = ["PC3_score", "leiden_0.8"],
+    legend_loc = "on data",
+    basis = "umap_scvi")
 ```
 
 We could look back at our genes driving this PC to get an idea of what the cell types might be:
@@ -584,7 +584,7 @@ We could look back at our genes driving this PC to get an idea of what the cell 
 #| fig.height: 5
 # Top and bottom genes for PCs
 sc.pl.pca_loadings(adata_integrated, 
-                   components = '1,2,3')
+                   components = "1,2,3")
 ```
 
 With the `GNLY` and `NKG7` genes as negative markers of `PC_3`, we can hypothesize that clusters 8 and 9 correspond to NK cells. This just hints at what the clusters identity could be, with the identities of the clusters being determined through a combination of the PCs. 
@@ -665,9 +665,9 @@ Assay is a slot defined in the Seurat object, it has multiple slots within it. I
 # UMAP of clusters
 sc.pl.embedding(
     adata_integrated,
-    color="leiden_0.8",
-    legend_loc='on data',
-    basis="umap_scvi")
+    color = "leiden_0.8",
+    legend_loc = "on data",
+    basis = "umap_scvi")
 ```
 
 :::
@@ -678,20 +678,20 @@ For the markers used here, we are looking for positive markers and consistency o
 
 ### CD14+ monocytes
 
-We can utilize the UMAP plotting fuctions of these known genes to explore the expression of known gene markers in each cluster. Let us go through and start determining the identites of the clusters.
+We can utilize the UMAP plotting functions of these known genes to explore the expression of known gene markers in each cluster. Let us go through and start determining the identites of the clusters.
 
 ::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
-#| label: fig-CD4_FeaturePlot
+#| label: fig-CD14_mono_FeaturePlot
 #| fig-cap: UMAP `FeaturePlot()` of top CD14+ monocyte markers.
 #| fig.width: 8
 FeaturePlot(seurat_integrated, 
             reduction = "umap", 
             features = c("CD14", "LYZ"), 
             order = TRUE,
-            min.cutoff = 'q10', 
+            min.cutoff = "q10", 
             label = TRUE)
 ```
 
@@ -700,15 +700,15 @@ CD14+ monocytes appear to correspond to clusters 2 and 4. We wouldn't include cl
 ## Python
 
 ```{python}
-#| label: fig-CD4_FeaturePlot_py
+#| label: fig-CD14_mono_FeaturePlot_py
 #| fig-cap: UMAP `FeaturePlot()` of top CD14+ monocyte markers.
 #| fig.width: 4
 #| fig.height: 4
 sc.pl.embedding(adata_integrated, 
-                color=["leiden_0.8", 
+                color = ["leiden_0.8", 
                        "CD14", "LYZ"],
-                basis="umap_scvi", 
-                legend_loc='on data',
+                basis = "umap_scvi", 
+                legend_loc = "on data",
                 ncols = 2)
 ```
 
@@ -730,7 +730,7 @@ FeaturePlot(seurat_integrated,
             reduction = "umap", 
             features = c("FCGR3A", "MS4A7"), 
             order = TRUE,
-            min.cutoff = 'q10', 
+            min.cutoff = "q10", 
             label = TRUE)
 ```
 
@@ -745,10 +745,10 @@ FCGR3A+ monocytes markers distinctly highlight cluster 10, although we do see so
 #| fig.width: 4
 #| fig.height: 4
 sc.pl.embedding(adata_integrated, 
-                color=["leiden_0.8", 
+                color = ["leiden_0.8", 
                        "FCGR3A", "MS4A7"],
-                basis="umap_scvi", 
-                legend_loc='on data',
+                basis = "umap_scvi", 
+                legend_loc = "on data",
                 ncols = 2)
 ```
 
@@ -769,13 +769,31 @@ FeaturePlot(seurat_integrated,
             reduction = "umap", 
             features = c("MARCO", "ITGAM", "ADGRE1"), 
             order = TRUE,
-            min.cutoff = 'q10', 
+            min.cutoff = "q10", 
             label = TRUE)
 ```
 
-We don't see much overlap of our markers, so no clusters appear to correspond to macrophages; perhaps cell culture conditions negatively selected for macrophages (more highly adherent).
+## Python
 
-To clearly see the expression levels of these genes, we can generate a `VlnPlot()` of these genes to more clearly see the distribution of expression.
+```{python}
+#| label: fig-Macrophages_plot_py
+#| fig-cap: UMAP `FeaturePlot()` of top FCGR3A+ Macrophages markers.
+#| fig.width: 4
+#| fig.height: 4
+sc.pl.embedding(adata_integrated, 
+                color = ["leiden_0.8", 
+                       "MARCO", "ITGAM", "ADGRE1"],
+                basis = "umap_scvi", 
+                legend_loc = "on data",
+                ncols = 2)
+```
+
+:::
+
+We don’t see much overlap of our markers, so no clusters appear to correspond to macrophages; perhaps cell culture conditions negatively selected for macrophages (more highly adherent). To clearly see the expression levels of these genes, we can generate a violin plot of these genes see averages and trends of expression for our marker genes.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r}
 #| label: fig-Macrophages_plot_vln
@@ -789,16 +807,12 @@ VlnPlot(seurat_integrated,
 ## Python
 
 ```{python}
-#| label: fig-Macrophages_plot_py
-#| fig-cap: UMAP `FeaturePlot()` of top FCGR3A+ Macrophages markers.
-#| fig.width: 4
-#| fig.height: 4
-sc.pl.embedding(adata_integrated, 
-                color=["leiden_0.8", 
-                       "MARCO", "ITGAM", "ADGRE1"],
-                basis="umap_scvi", 
-                legend_loc='on data',
-                ncols = 2)
+#| label: fig-Macrophages_plot_vln_py
+#| fig-cap: Violin plot of top FCGR3A+ Macrophages markers.
+#| fig.height: 6
+sc.pl.violin(adata_integrated,
+             keys = ["MARCO", "ITGAM", "ADGRE1"],
+             groupby = "leiden_0.8")
 ```
 
 :::
@@ -816,26 +830,38 @@ FeaturePlot(seurat_integrated,
             reduction = "umap", 
             features = c("FCER1A", "CST3"), 
             order = TRUE,
-            min.cutoff = 'q10', 
+            min.cutoff = "q10", 
             label = TRUE)
 ```
 
 The markers corresponding to conventional dendritic cells identify cluster 13 (both markers consistently show expression).
 
+```{r}
+#| label: fig-conv_plot_vln
+#| fig-cap: Violin plot of top conventional dendritic cell markers.
+#| fig.height: 6
+VlnPlot(seurat_integrated,
+        c("FCER1A", "CST3"),
+        ncol = 1)
+```
+
 ## Python
 
 ```{python}
 #| label: fig-conventional_dendritic_cell_plot_py
-#| fig-cap: UMAP `FeaturePlot()` of top Conventional dendritic cell markers.
+#| fig-cap: UMAP of top conventional dendritic cell markers.
 #| fig.width: 4
 #| fig.height: 4
 sc.pl.embedding(adata_integrated, 
-                color=["leiden_0.8", 
+                color = ["leiden_0.8", 
                        "FCER1A", "CST3"],
-                basis="umap_scvi", 
-                legend_loc='on data',
+                basis = "umap_scvi", 
+                legend_loc = "on data",
                 ncols = 2)
 ```
+
+
+The markers corresponding to conventional dendritic cells identify cluster 3 (both markers consistently show expression).
 
 :::
 
@@ -852,20 +878,10 @@ FeaturePlot(seurat_integrated,
             reduction = "umap", 
             features = c("IL3RA", "GZMB", "SERPINF1", "ITM2C"), 
             order = TRUE,
-            min.cutoff = 'q10', 
+            min.cutoff = "q10", 
             label = TRUE)
 ```
 
-At first glance it may be challening to identify where this subtype of dendritic cells are, but we can once again use our violin plot to see if we can find a suitable cluster.
-
-```{r}
-#| label: fig-plasmacytoid_dendritic_cell_plot_vln
-#| fig-cap: Violin plot of top Plasmacytoid dendritic cell markers.
-#| fig.height: 6
-VlnPlot(seurat_integrated,
-        c("MARCO", "ITGAM", "ADGRE1"),
-        ncol = 1)
-```
 
 Plasmacytoid dendritic cells represent cluster 16. While there are a lot of differences in the expression of these markers, we see cluster 16 (though small) is consistently strongly expressed.
 
@@ -877,15 +893,19 @@ Plasmacytoid dendritic cells represent cluster 16. While there are a lot of diff
 #| fig.width: 4
 #| fig.height: 4
 sc.pl.embedding(adata_integrated, 
-                color=["leiden_0.8", 
+                color = ["leiden_0.8", 
                        "IL3RA", "GZMB", "SERPINF1", "ITM2C"],
-                basis="umap_scvi", 
-                legend_loc='on data',
+                basis = "umap_scvi", 
+                legend_loc = "on data",
                 ncols = 2)
 ```
 
+Plasmacytoid dendritic cells represent cluster 5. While there are a lot of differences in the expression of these markers, we see cluster 5 (though small) is consistently strongly expressed. An alternative visualization that makes expression of smaller populations more visible are known as dotplots.
+
+
 :::
 
+ An alternative visualization that makes expression of smaller populations more visible are known as dotplots.
 
 ## Dotplot visualizations
 
@@ -896,7 +916,7 @@ Dotplots are a built-in visualization tool which allows us to view the average e
 
 ```{r}
 #| label: fig-DotPlot_known_markers
-#| fig-cap: DotPlot representing top marker genes for a variety of celltypes, with each circle reprsenting the average expression of that cluster and the size showing the percentage of cells that express that gene.
+#| fig-cap: DotPlot representing top marker genes for a variety of cell types, with each circle representing the average expression of that cluster and the size showing the percentage of cells that express that gene.
 #| fig.width: 15
 # List of known celltype markers
 markers <- list()
@@ -907,14 +927,14 @@ markers[["Conventional dendritic"]] <- c("FCER1A", "CST3")
 markers[["Plasmacytoid dendritic"]] <- c("IL3RA", "GZMB", "SERPINF1", "ITM2C")
 
 # Create dotplot based on RNA expression
-DotPlot(seurat_integrated, markers, assay="RNA")
+DotPlot(seurat_integrated, markers, assay = "RNA")
 ```
 
 ## Python
 
 ```{python}
 #| label: fig-DotPlot_known_markers_py
-#| fig-cap: DotPlot representing top marker genes for a variety of celltypes, with each circle reprsenting the average expression of that cluster and the size showing the percentage of cells that express that gene.
+#| fig-cap: DotPlot representing top marker genes for a variety of cell types, with each circle representing the average expression of that cluster and the size showing the percentage of cells that express that gene.
 #| fig.width: 15
 # List of known celltype markers
 markers = {
@@ -926,23 +946,25 @@ markers = {
 
 sc.pl.dotplot(adata_integrated, 
               markers, 
-              groupby='leiden_0.8')
+              groupby = "leiden_0.8")
 ```
 
 :::
 
+Having more marker genes per cell type is a great way to bolster confidence in the assignments being made.
+
 ::: {.callout-tip}
-# [**Exercise 1**](tmp-Answer_key.qmd#exercise-1)
+# [**Exercise 1**](11_clustering_quality_control-Answer_key.qmd#exercise-1)
 
 1. Hypothesize the clusters corresponding to each of the different clusters in the table:
 
 | Cell Type | Clusters |
 |:---:|:---:|
-| CD14+ monocytes | 1, 3 | 
-| FCGR3A+ monocytes | 10 |
-| Conventional dendritic cells | 14 |
-| Plasmacytoid dendritic cells | 16 |
-| Marcrophages | - |
+| CD14+ monocytes | ? | 
+| FCGR3A+ monocytes | ? |
+| Conventional dendritic cells | ? |
+| Plasmacytoid dendritic cells | ? |
+| Macrophages | - |
 | B cells | ? |
 | T cells | ? |
 | CD4+ T cells | ? |
@@ -955,12 +977,13 @@ sc.pl.dotplot(adata_integrated,
 :::
 
 ::: callout-note
-If any cluster appears to contain two separate cell types, it's helpful to increase our clustering resolution to properly subset the clusters. Alternatively, if we still can't separate out the clusters using increased resolution, then it's possible that we had used too few principal components such that we are just not separating out these cell types of interest. To inform our choice of PCs, we could look at our PC gene expression overlapping the UMAP plots and determine whether our cell populations are separating by the PCs included.
+# Changing resolutions
+If any cluster appears to contain two separate cell types, it's helpful to _increase our clustering resolution_ to properly subset the clusters. Alternatively, if we still can't separate out the clusters using increased resolution, then it's possible that we had used too few principal components such that we are just not separating out these cell types of interest. To inform our choice of PCs, we could look at our PC gene expression overlapping the UMAP plots and determine whether our cell populations are separating by the PCs included.
 :::
 
 Now we have a decent idea as to the cell types corresponding to the majority of the clusters, but some questions remain:
 
-1. T cell markers appear to be highly expressed in may clusters. How can we differentiate and subset the larger group into smaller subset of cells?
+1. T cell markers appear to be highly expressed in many clusters. How can we differentiate and subset the larger group into smaller subset of cells?
 2. Do the clusters corresponding to the same cell types have biologically meaningful differences? Are there subpopulations of these cell types?
 3. Can we acquire higher confidence in these cell type identities by identifying other marker genes for these clusters?
 
@@ -970,6 +993,6 @@ The next step will be to perform marker identification analysis, which will outp
 
 ***
 
-[Next Lesson >>](tmp.qmd)
+[Next Lesson >>](13_marker_identification.qmd)
 
 [Back to Schedule](../schedule/schedule.qmd)
