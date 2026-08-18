@@ -2329,7 +2329,7 @@
     "href": "lessons/10_clustering.html#spatial-transcriptomics",
     "title": "Clustering Analysis",
     "section": "Spatial transcriptomics",
-    "text": "Spatial transcriptomics\nAt first glance, the clustering results may seem somewhat arbitrary. However, applying these same steps to a spatial transcriptomics dataset (both RNA and location of cells are captured) demonstrates that clustering based on RNA expression can reveal meaningful biology. In the example shown here, the identified clusters are overlaid on a cortical cross-section of the brain, where they correspond closely to anatomical and biological boundaries.\n\n\n\n\n\n\nFigure 18: Overlaid clusters onto spatial slide, showcasing how clustering captures biological structure. Image source: Introduction to Spatial Transcriptomics\n\n\n\n\nNext Lesson &gt;&gt;\nBack to Schedule",
+    "text": "Spatial transcriptomics\nAt first glance, the clustering results may seem somewhat arbitrary. However, applying these same steps to a spatial transcriptomics dataset (both RNA and location of cells are captured) demonstrates that clustering based on RNA expression can reveal meaningful biology. In the example shown here, the identified clusters are overlaid on a cross section of the colon, where they correspond closely to anatomical and biological boundaries.\n\n\n\n\n\n\nFigure 18: Overlaid clusters onto spatial slide, showcasing how clustering captures biological structure. Image source: Introduction to Spatial Transcriptomics\n\n\n\n\nNext Lesson &gt;&gt;\nBack to Schedule",
     "crumbs": [
       "Day 3:",
       "Clustering Analysis"

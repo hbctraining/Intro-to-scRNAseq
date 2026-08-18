@@ -717,7 +717,7 @@ sc.pl.embedding(adata_integrated,
 
 ## Spatial transcriptomics
 
-At first glance, the clustering results may seem somewhat arbitrary. However, applying these same steps to a spatial transcriptomics dataset (both RNA and location of cells are captured) demonstrates that clustering based on RNA expression can reveal meaningful biology. In the example shown here, the identified clusters are overlaid on a cortical cross-section of the brain, where they correspond closely to anatomical and biological boundaries.
+At first glance, the clustering results may seem somewhat arbitrary. However, applying these same steps to a spatial transcriptomics dataset (both RNA and location of cells are captured) demonstrates that clustering based on RNA expression can reveal meaningful biology. In the example shown here, the identified clusters are overlaid on a cross section of the colon, where they correspond closely to anatomical and biological boundaries.
 
 
 ::: {#fig-sc-workflow .figure}
