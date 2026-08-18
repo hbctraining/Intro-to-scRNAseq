@@ -426,7 +426,7 @@ The next step in the workflow is to **group cells into clusters based on the nei
 
 Most clustering algorithms will iteratively group cells with the goal of optimizing the standard modularity function (a measure of how well a network is partitioned into clusters). Higher modularity values indicate a clearer cluster structure. In other words, we want clusters to be well-separated from one another, yet, internally, tightly knit. 
 
-The two most popular clustering methods are Louvain and Leiden. In the past few years, the [Leiden algorithm has become more popular]((https://www.nature.com/articles/s41598-019-41695-z) due to its increased speed and ability to connect communities.
+The two most popular clustering methods are Louvain and Leiden. In the past few years, the [Leiden algorithm has become more popular](https://www.nature.com/articles/s41598-019-41695-z) due to its increased speed and ability to connect communities.
 
 
 ::: {#fig-leiden .figure}
@@ -479,7 +479,7 @@ We will run the `tl.leiden()` function at a  range of resolutions. This will cal
 
 | Parameter              | Description                                                                                              |
 |------------------------|----------------------------------------------------------------------------------------------------------|
-| `flavor="igraph"`      | Chooses which package the Leiden implementation is used by Scanpy.              |
+| `flavor`      | Chooses which package the Leiden implementation is used by Scanpy.              |
 | `n_iterations`       | Number of refinement iterations of the Leiden community detection algorithm.                            |
 | `neighbors_key` | Uses the precomputed neighbor graph stored under the key set instead of the default neighbors.     |
 | `resolution`       | Controls clustering granularity; higher values usually produce more, smaller clusters.                  |
