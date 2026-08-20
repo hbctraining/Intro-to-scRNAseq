@@ -34,11 +34,14 @@ editor_options:
 
 Approximate time: 20 minutes
 
-## Learning Objectives:
+## Learning objectives 
+
+In this lesson, we will:
 
 - Describe the workflow for single-cell RNA-seq analysis 
 
-# Single-cell RNA-seq Workflow
+## Overview of lesson
+
 In this workshop we have walked through an end-to-end workflow for the analysis of single cell RNA-seq data. For each step, code was provided along with in-depth information on the background and theory. Here, we review each step and highlight important concepts beginning with the count matrix.
 
 For more information on how to generate the count matrix from raw reads, please see [this lesson](02_generation_of_count_matrix.qmd) from the pre-reading.
@@ -47,7 +50,6 @@ For more information on how to generate the count matrix from raw reads, please 
 ![](../img/sc_workflow_2022.jpg){width=630}
 
 Overview of the single-cell RNA-seq workflow.  
-_Source: [HBC Training Intro-to-scRNAseq](https://hbctraining.github.io/Intro-to-scRNAseq/) materials._
 :::
 
 ## Filtering data
@@ -71,11 +73,11 @@ The first step in the workflow is to see if our data contains any unwanted varia
 
 ### 2. Normalization and regressing out sources of unwanted variation
 
- Normalization is required to scale the raw count data to obtain correct relative gene expression abundances between cells. The `sctransform` function implements an advanced normalization and variance stabilization of the data. The `sctransform` function also regresses out sources of unwanted variation in our data. In the previous step, we had identified these sources of variability, and here we specify what those covariates are. 
+ Normalization is required to scale the raw count data to obtain correct relative gene expression abundances between cells. We discussed several different normalization methods, emphasizing the use cases for simple log-normalized expression and more advanced pearson residual corrected expression (`SCTransform`). With these expression values, we are able to begin corrected for any instances of unwanted variation in our dataset. In the previous step, we had identified these sources of variability, and here we specify what those covariates are. 
 
 ### 3. Integration
 
-Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets ((Stuart and Butler et al., 2018)[https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8]). There are several steps involved in performing integration. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.
+Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets [(Stuart and Butler et al., 2018)](https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8). There are several steps involved in performing integration. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.
 
 ::: callout-note
 # Is integration required?
@@ -90,9 +92,14 @@ Clusters of cells are obtained by grouping cells based on the similarity of thei
 
 The clusters identified in our data represent groups of cells that presumably belong to a similar cell type. Before we can confirm the celltype of a group of member cells, the following steps are taken:
 
-   * **a.** Check to see that clusters are not influenced by sources of uninteresting variation.
-   * **b.** Check to see whether the major principal components are driving the different clusters.
-   * **c.** Explore the cell type identities by looking at the expression for known markers across the clusters. 
+   - **a.** Check to see that clusters are not influenced by sources of uninteresting variation.
+   - **b.** Check to see whether the major principal components are driving the different clusters.
+   - **c.** Explore the cell type identities by looking at the expression for known markers across the clusters. 
 
 ## Marker Identification and Celltype Assignment
+
 Often the known marker expression evaluation gives us some hints as to which celltype is represented within a cluster, but sometimes it is not so obvious. In situations where there is uncertainty of the cell type assignment it is good practice to check which genes exhibit a high expression profile among cells. The list of genes can provide insight on celltype and/or can be the impetus for removal of a group of cells. After this step we hope to obtain a fully annotated dataset that we can move forward with for downstream analysis.
+
+***
+
+[Back to Schedule](../schedule/schedule.qmd)

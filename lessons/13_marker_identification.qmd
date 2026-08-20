@@ -206,6 +206,7 @@ markers <- FindAllMarkers(seurat_integrated,
 ```{r}
 #| label: load_FindAllMarkers
 #| eval: true
+#| echo: false
 # write.csv(markers, "intermediate/13_findallmarkers.csv")                     
 markers <- read.csv("intermediate/13_findallmarkers.csv",
                     row.names = 1)
@@ -432,6 +433,7 @@ annotations %>%
 #| label: annotations
 #| eval: false
 # Load pre-generated annotations file
+import pandas as pd
 annotations = pd.read_csv("data/additional_data/annotation.csv")
 
 annotations.head()
@@ -1216,5 +1218,7 @@ EnhancedVolcano(b_markers,
 	- Cell state changes in expression
 
 ***
+
+[Next Lesson >>](14_scRNAseq_workflow.qmd)
 
 [Back to Schedule](../schedule/schedule.qmd)
