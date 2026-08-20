@@ -1,7 +1,7 @@
 ---
 title: "Workflow Overview"
 description: |
-    This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization and variance stabilization with sctransform, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.
+    This lesson reviews the complete single-cell RNA-seq analysis workflow covered in the workshop, from raw count matrices through clustering and cell type annotation. It summarizes key steps including quality control and filtering, exploration of unwanted sources of variation (e.g., cell cycle, mitochondrial content), normalization, data integration across samples or conditions, clustering and cluster quality assessment and marker-based cell type assignment. The overview emphasizes how these components fit together into an end-to-end pipeline for reliable single-cell RNA-seq analysis.
 author:
   - Meeta Mistry
   - Noor Sohail
@@ -9,9 +9,13 @@ author:
 date: "2025-05-30"
 categories: 
   - R Programming
+  - Python Programming
   - Single-cell RNA-seq
 keywords:
   - R
+  - Python
+  - Seurat
+  - Scanpy
   - Single-cell RNA-seq
   - Workflow
   - Quality control
@@ -71,7 +75,7 @@ The first step in the workflow is to see if our data contains any unwanted varia
 
 ### 3. Integration
 
-Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets [Stuart and Butler et al. (2018)]. There are several steps involved in performing intergration in Seurat. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.
+Often with single cell RNA-seq we are working with multiple samples which correspond to different sample groups, multiple experiments or different modalities. If we want to ultimately compare celltype expression between groups it is recommended to integrate the data. Integration is a powerful method that uses these shared sources of greatest variation to identify shared sub-populations across conditions or datasets ((Stuart and Butler et al., 2018)[https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8]). There are several steps involved in performing integration. Once complete, we use visualization methods to ensure a good integration before we proceed to cluster cells.
 
 ::: callout-note
 # Is integration required?
@@ -80,7 +84,7 @@ Integration is optional. We recommend going through the workflow without integra
 
 ### 4. Clustering cells
 
-Clusters of cells are obtained by grouping cells based on the similarity of their gene expression profiles. Expression profile similarity is determined via distance metrics, which often take dimensionality‐reduced representations as input. Seurat assigns cells to clusters based on their PCA scores derived from the expression of the integrated most variable genes. 
+Clusters of cells are obtained by grouping cells based on the similarity of their gene expression profiles. Expression profile similarity is determined via distance metrics, which often take dimensionality‐reduced representations as input. We assign cells to clusters based on their PCA scores derived from the expression of the integrated most variable genes. 
 
 ### 5. Cluster quality evaluation
 
@@ -91,4 +95,4 @@ The clusters identified in our data represent groups of cells that presumably be
    * **c.** Explore the cell type identities by looking at the expression for known markers across the clusters. 
 
 ## Marker Identification and Celltype Assignment
-Often the known marker expression evaluation gives us some hints as to which celltype is represented within a cluster, but sometimes it is not so obvious. In situations where there is uncertainty of the cell type assignment it is good practice to check which genes exhibit a high expression profile among cells (i.e FindMarkers). The list of genes can provide insight on celltype and/or can be the impetus for removal of a group of cells. After this step we hope to obtain a fully annotated dataset that we can move forward with for downstream analysis.
+Often the known marker expression evaluation gives us some hints as to which celltype is represented within a cluster, but sometimes it is not so obvious. In situations where there is uncertainty of the cell type assignment it is good practice to check which genes exhibit a high expression profile among cells. The list of genes can provide insight on celltype and/or can be the impetus for removal of a group of cells. After this step we hope to obtain a fully annotated dataset that we can move forward with for downstream analysis.
