@@ -61,7 +61,13 @@ When doing XYZ...
 ## Python
 
 ```{python}
-
+# Grab top 10 genes from CD4+ T cell clusters
+top10_markers = (
+    markers_filtered[markers_filtered["group"].isin(["0", "1", "4", "6"])]
+    .groupby("group")
+    .apply(lambda x: x.nlargest(10, "logfoldchanges"))
+    .reset_index(drop=True)
+)
 ```
 
 :::
