@@ -350,7 +350,7 @@ The weight (loadings) for each feature is also stored and can be accessed with `
 
 ```{r}
 #| label: show_loadings
-# pbmc[['pca]]@feature.loadings
+# seurat_integrated[['pca']]@feature.loadings
 Loadings(seurat_integrated, reduction="pca")[1:5, 1:5]
 ```
 
